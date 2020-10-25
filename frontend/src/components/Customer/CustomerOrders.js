@@ -3,6 +3,7 @@ import axios from 'axios';
 import StarRatings from 'react-star-ratings';
 import { CheckBoxMenu } from '../../CheckBoxMenu.js';
 import {Redirect} from 'react-router';
+import configurePath from '../../config';
 
 class CustomerOrders extends Component {
 
@@ -44,7 +45,7 @@ class CustomerOrders extends Component {
         const data = {
             restaurantId: this.state.restaurant.RestaurantId
         }
-        axios.post('http://localhost:3001/getMenu', data)
+        axios.post(configurePath.api_host+'/getMenu', data)
             .then((response) => {
 
                 console.log("Status Code : ", response.status);

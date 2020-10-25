@@ -113,11 +113,11 @@ class RestaurantLogin extends Component {
 }
 
 const mapStateToProps = (state) => {
-    console.log("state login reducer:",state.auth);
+    console.log("state login reducer:",state.resState);
     return {
-        res:  state.auth.restaurant ||  "",
-        loginFlag: state.auth.loginFlag,
-        error_msg: state.auth.error_msg || ""
+        res:  state.resState.restaurant ||  "",
+        loginFlag: state.resState.loginFlag,
+        error_msg: state.resState.error_msg || ""
     };
 };
 

@@ -76,7 +76,7 @@ class RestaurantProfile extends Component {
             redirectVar = <Redirect to={{ pathname: "/restaurantEvents", state: { restaurant: this.state.restaurant } }} />
         }
         if (this.state.redirectToMenu) {
-            redirectVar = <Redirect to={{ pathname: "/restaurantMenu", state: { restaurant: this.state.restaurant } }} />
+            redirectVar = <Redirect to={{ pathname: "/restaurantMenu"}} />
         }
 
         if ((!this.state.restaurant.Review1 || this.state.restaurant.Review1.length === 0) && (!this.state.restaurant.Review2 || this.state.restaurant.Review2.length === 0) && (!this.state.restaurant.Review3 || this.state.restaurant.Review3.length === 0)) {
@@ -232,9 +232,9 @@ class RestaurantProfile extends Component {
 }
 
 const mapStateToProps = (state) => {
-    console.log("state rest profile reducer:",state.auth);
+    console.log("state rest profile reducer:",state.resState);
     return {
-        restaurant:  state.auth.restaurant ||  "",
+        restaurant:  state.resState.restaurant ||  "",
         updateProfile: false
     };
 };

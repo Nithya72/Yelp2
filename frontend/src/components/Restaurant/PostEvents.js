@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import '../../App.css';
 import { Redirect } from 'react-router';
 import axios from 'axios';
+import configurePath from '../../config';
 
 class PostEvents extends Component {
 
@@ -47,7 +48,7 @@ class PostEvents extends Component {
             eventDetails: this.state.eventDetails
         }
 
-        axios.post('http://localhost:3001/postEvents', data)
+        axios.post(configurePath.api_host+'/postEvents', data)
             .then((response) => {
 
                 console.log("Status Code : ", response.status);
@@ -108,7 +109,7 @@ class PostEvents extends Component {
                                         <li style={{ display: "block", padding: "3px 20px", lineHeight: "1.42857143", color: "#333", fontWeight: "400" }} onClick={this.redirectHandler}>About me</li>
                                         <li><a href="/">Orders</a></li>
                                         <li><a href="/">Events</a></li>
-                                        <li><a href="/customerLogin">Sign Out</a></li>
+                                        <li><a href="/restaurantLogout">Sign Out</a></li>
                                     </ul>
                                 </div>
                             </div>

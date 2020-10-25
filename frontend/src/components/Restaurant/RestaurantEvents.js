@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import '../../App.css';
 import { Redirect } from 'react-router';
 import axios from 'axios';
+import configurePath from '../../config';
 
 class RestaurantEvents extends Component {
 
@@ -33,7 +34,7 @@ class RestaurantEvents extends Component {
             id: this.state.restaurant.RestaurantId,
             user: "restaurant"
         }
-        axios.post('http://localhost:3001/getEvents', data)
+        axios.post(configurePath.api_host+'/getEvents', data)
             .then((response) => {
 
                 console.log("Status Code : ", response.status);
@@ -59,7 +60,7 @@ class RestaurantEvents extends Component {
         const data = {
             id: eventId
         }
-        axios.post('http://localhost:3001/getRegisteredUsers', data)
+        axios.post(configurePath.api_host+'/getRegisteredUsers', data)
             .then((response) => {
 
                 console.log("Status Code : ", response.status);
@@ -161,7 +162,7 @@ class RestaurantEvents extends Component {
                                         <li style={{ display: "block", padding: "3px 20px", lineHeight: "1.42857143", color: "#333", fontWeight: "400" }} onClick={this.redirectHandler}>About me</li>
                                         <li><a href="/">Orders</a></li>
                                         <li><a href="/">Events</a></li>
-                                        <li><a href="/customerLogin">Sign Out</a></li>
+                                        <li><a href="/restaurantLogout">Sign Out</a></li>
                                     </ul>
                                 </div>
                             </div>

@@ -141,10 +141,10 @@ class RestaurantSignUp extends Component {
 }
 
 const mapStateToProps = (state) => {
-    console.log("state sign up reducer:",state.auth);
+    console.log("state sign up reducer:",state.resState);
     return {
-        res:  state.auth.response_msg ||  "",
-        registerFlag: state.auth.registerFlag || null
+        res:  state.resState.response_msg ||  "",
+        registerFlag: state.resState.registerFlag || null
     };
 };
 

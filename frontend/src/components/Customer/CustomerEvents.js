@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import '../../App.css';
 import { Redirect } from 'react-router';
 import axios from 'axios';
+import configurePath from '../../config';
+import configPath from '../../config';
 
 class CustomerEvents extends Component {
 
@@ -29,7 +31,7 @@ class CustomerEvents extends Component {
         const data = {
             user: "customer"
         }
-        axios.post('http://localhost:3001/getEvents', data)
+        axios.post(configPath.api_host+'/getEvents', data)
             .then((response) => {
 
                 console.log("Status Code : ", response.status);

@@ -1,16 +1,19 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
+import { updateMenuDetails } from '../../actions/menuActions/updateMenuActions';
+import configPath from '../../config';
 
-class AddUpdateMenu extends Component {
+class UpdateMenu extends Component {
 
     constructor(props) {
         super(props);
 
         this.state = {
 
-            actionType: this.props.location.state.actionType,
-            restaurant: this.props.location.state.restaurant,
+            actionType: "edit",
+            restaurant: this.props.restaurant[0],
             dish: this.props.location.state.dish,
             submitted: false,
             redirectToProfile: false,
@@ -22,7 +25,6 @@ class AddUpdateMenu extends Component {
         this.updateDishHandler = this.updateDishHandler.bind(this);
         this.formChangeHandler = this.formChangeHandler.bind(this);
         this.redirectToProfile = this.redirectToProfile.bind(this);
-        this.addDishHandler = this.addDishHandler.bind(this);
         this.pictureHandler = this.pictureHandler.bind(this);
         this.submitProfilePic = this.submitProfilePic.bind(this);
     }
@@ -53,49 +55,8 @@ class AddUpdateMenu extends Component {
         })
         const { dish } = this.state;
 
-        axios.post('http://localhost:3001/updateMenu', dish)
-            .then((response) => {
-
-                console.log("Status Code : ", response.status);
-                if (response.status === 200) {
-                    console.log("After Customer Profile Updation: ", response.data);
-                    this.setState({
-                        successFlag: true
-                    })
-                }
-            })
-            .catch((error) => {
-                console.log("Error here: ", error)
-            });
+        this.props.updateMenu(dish);
     }
-
-    addDishHandler(e) {
-
-        e.preventDefault();
-        this.setState({
-            submitted: true
-        })
-        const data = {
-            dish: this.state.dish,
-            restaurantId: this.state.restaurant.RestaurantId
-        }
-
-        axios.post('http://localhost:3001/addMenu', data)
-            .then((response) => {
-
-                console.log("Status Code : ", response.status);
-                if (response.status === 200) {
-                    console.log("After Customer Profile Updation: ", response.data);
-                    this.setState({
-                        successFlag: true
-                    })
-                }
-            })
-            .catch((error) => {
-                console.log("Error here: ", error)
-            });
-    }
-
 
     pictureHandler(e) {
         console.log("Dish Image:", e.target.files[0]);
@@ -114,7 +75,7 @@ class AddUpdateMenu extends Component {
 
         const { customer } = this.state;
 
-        axios.post("http://localhost:3001/uploadProfilePic", picData)
+        axios.post(configPath.api_host +"/uploadProfilePic", picData)
             .then((response) => {
                 if (response.status === 200) {
                     this.setState({
@@ -172,8 +133,8 @@ class AddUpdateMenu extends Component {
             redirectVar = <Redirect to={{ pathname: "/restaurantProfile", state: { restaurant: this.state.restaurant, fromOrders: true } }} />
         }
 
-        if (this.state.successFlag) {
-            redirectVar = <Redirect to={{ pathname: "/restaurantMenu", state: { restaurant: this.state.restaurant } }} />
+        if (this.state.submitted && this.props.updateFlag) {
+            redirectVar = <Redirect to={{ pathname: "/restaurantMenu" }} />
         }
 
         if (this.state.successfulUpload === "true") {
@@ -218,7 +179,7 @@ class AddUpdateMenu extends Component {
                                         <li style={{ display: "block", padding: "3px 20px", lineHeight: "1.42857143", color: "#333", fontWeight: "400" }} onClick={this.redirectToProfile}>Profile</li>
                                         <li style={{ display: "block", padding: "3px 20px", lineHeight: "1.42857143", color: "#333", fontWeight: "400" }} onClick={this.redirectHandler}>Order History</li>
                                         <li style={{ display: "block", padding: "3px 20px", lineHeight: "1.42857143", color: "#333", fontWeight: "400" }} onClick={this.redirectToEvents}>Events Posted</li>
-                                        <li><a href="/restaurantLogin">Sign Out</a></li>
+                                        <li><a href="/restaurantLogout">Sign Out</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -310,4 +271,20 @@ class AddUpdateMenu extends Component {
     }
 }
 
-export default AddUpdateMenu;
+const mapStateToProps = (state) => {
+    console.log("state rest add/update menu reducer:", state.resState);
+    return {
+        restaurant: state.resState.restaurant || "",
+        updateFlag: state.resState.updateFlag
+    };
+};
+
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        updateMenu: data => dispatch(updateMenuDetails(data))
+    }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(UpdateMenu);

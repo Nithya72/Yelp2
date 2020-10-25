@@ -13,7 +13,7 @@ import UpdateCustomerProfile from './Customer/UpdateCustomerProfile';
 
 import LandingPage from './LandingPage/LandingPage';
 
-import AddUpdateMenu from './Restaurant/AddUpdateMenu';
+import AddMenu from './Restaurant/AddMenu';
 import PostEvents from './Restaurant/PostEvents';
 import RestaurantEvents from './Restaurant/RestaurantEvents';
 import RestaurantLogin from './Restaurant/RestaurantLogin';
@@ -23,6 +23,7 @@ import RestaurantOrders from './Restaurant/RestaurantOrders';
 import RestaurantProfile from './Restaurant/RestaurantProfile';
 import Restaurants from './Restaurant/Restaurants';
 import RestaurantSignUp from './Restaurant/RestaurantSignUp';
+import UpdateMenu from './Restaurant/UpdateMenu';
 import UpdateRestProfile from './Restaurant/UpdateRestProfile';
 
 import { history } from '../helpers';
@@ -54,7 +55,7 @@ export default class Main extends Component {
                         <Route exact path="/postReviews" component={PostReviews} />
                         <Route exact path="/updateCustomerProfile" component={UpdateCustomerProfile} />
 
-                        <Route exact path="/addUpdateMenu" component={AddUpdateMenu} />
+                        <Route exact path="/addMenu" component={AddMenu} />
                         <Route exact path="/postEvents" component={PostEvents} />
                         <Route exact path="/restaurantEvents" component={RestaurantEvents} />
                         <Route exact path="/restaurantLogin" component={RestaurantLogin} />
@@ -64,6 +65,7 @@ export default class Main extends Component {
                         <Route exact path="/restaurantProfile" component={RestaurantProfile} />
                         <Route exact path="/restaurants" component={Restaurants} />
                         <Route exact path="/restaurantSignUp" component={RestaurantSignUp} />
+                        <Route exact path="/updateMenu" component={UpdateMenu} />
                         <Route exact path="/updateRestProfile" component={UpdateRestProfile} />
 
                         <Route path="/" component={LandingPage} />

@@ -1,33 +1,29 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import StarRatings from 'react-star-ratings';
+import configurePath from '../../config';
 
 class RestaurantMenu extends Component {
 
     constructor(props) {
         super(props);
 
-        console.log("Restaurant Menu: ", this.props.location.state);
+        console.log("Restaurant Menu: ", this.props.restaurant[0]);
         this.state = {
-            restaurant: this.props.location.state.restaurant,
+            restaurant: this.props.restaurant[0],
             entireMenu: [],
-            redirectToProfile: false,
             successFlag: false,
             dishToUpdate: null,
             redirectToMenuUpdate: false,
-            redirectToMenuAdd: false
+            redirectToMenuAdd: false,
+            redirectToMenuUpdate: false
         }
-        this.redirectToProfile = this.redirectToProfile.bind(this);
+ 
         this.menuAddHandler = this.menuAddHandler.bind(this);
         this.menuUpdateHandler = this.menuUpdateHandler.bind(this);
 
-    }
-
-    redirectToProfile(e) {
-        this.setState({
-            redirectToProfile: true
-        })
     }
 
     componentDidMount() {
@@ -35,7 +31,7 @@ class RestaurantMenu extends Component {
         const data = {
             restaurantId: this.state.restaurant.RestaurantId
         }
-        axios.post('http://localhost:3001/getMenu', data)
+        axios.post(configurePath.api_host+'/getMenu', data)
             .then((response) => {
 
                 console.log("Status Code : ", response.status);
@@ -53,12 +49,9 @@ class RestaurantMenu extends Component {
     }
 
     menuAddHandler(e) {
-        console.log("value of e: ", e);
-
         this.setState({
             redirectToMenuAdd: true
         })
-
     }
 
     menuUpdateHandler(dish){
@@ -74,16 +67,13 @@ class RestaurantMenu extends Component {
         console.log("Entire Menu: ", this.state.entireMenu);
 
         var redirectVar = null;
-        if (this.state.redirectToProfile) {
-            redirectVar = <Redirect to={{ pathname: "/restaurantProfile", state: { restaurant: this.state.restaurant, fromOrders: true } }} />
-        }
 
         if(this.state.redirectToMenuUpdate){
-            redirectVar = <Redirect to={{ pathname: "/addUpdateMenu", state: { restaurant: this.state.restaurant, actionType: "edit", dish: this.state.dishToUpdate } }} />
+            redirectVar = <Redirect to={{ pathname: "/updateMenu", state: { dish: this.state.dishToUpdate } }} />
         }
 
         if(this.state.redirectToMenuAdd){
-            redirectVar = <Redirect to={{ pathname: "/addUpdateMenu", state: { restaurant: this.state.restaurant, actionType: "add"} }} />
+            redirectVar = <Redirect to={{ pathname: "/addMenu" }} />
         }
 
         return (
@@ -118,10 +108,10 @@ class RestaurantMenu extends Component {
                                 <div className="dropdown">
                                     <div className="material-icons" data-toggle="dropdown">account_circle</div>
                                     <ul class="dropdown-menu pull-right">
-                                        <li style={{ display: "block", padding: "3px 20px", lineHeight: "1.42857143", color: "#333", fontWeight: "400" }} onClick={this.redirectToProfile}>Profile</li>
+                                        <li><a href="/restaurantProfile">Profile</a></li>
                                         <li style={{ display: "block", padding: "3px 20px", lineHeight: "1.42857143", color: "#333", fontWeight: "400" }} onClick={this.redirectHandler}>Order History</li>
                                         <li style={{ display: "block", padding: "3px 20px", lineHeight: "1.42857143", color: "#333", fontWeight: "400" }} onClick={this.redirectToEvents}>Events Posted</li>
-                                        <li><a href="/restaurantLogin">Sign Out</a></li>
+                                        <li><a href="/restaurantLogout">Sign Out</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -175,4 +165,20 @@ class RestaurantMenu extends Component {
     }
 }
 
-export default RestaurantMenu;
+const mapStateToProps = (state) => {
+    console.log("state rest menu reducer:",state.resState);
+    return {
+        restaurant:  state.resState.restaurant ||  ""
+    };
+};
+
+
+const mapDispatchToProps = (dispatch) => {
+    
+    return{
+        // redirectUpdateMenu: (msg) => dispatch(addMenu(msg))
+    }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(RestaurantMenu);

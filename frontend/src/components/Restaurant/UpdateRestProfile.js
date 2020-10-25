@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import axios from 'axios';
 import { Redirect } from 'react-router';
 import { updateResProfile } from '../../actions/profileActions/updateResProfileActions';
+import configPath from '../../config';
 
 class UpdateRestProfile extends Component {
 
@@ -62,7 +63,7 @@ class UpdateRestProfile extends Component {
 
         const { restaurant } = this.state;
 
-        axios.post("http://localhost:3001/uploadProfilePic", picData)
+        axios.post(configPath.api_host+"/uploadProfilePic", picData)
             .then((response) => {
                 if (response.status === 200) {
                     this.setState({
@@ -156,7 +157,7 @@ class UpdateRestProfile extends Component {
                                         <li style={{ display: "block", padding: "3px 20px", lineHeight: "1.42857143", color: "#333", fontWeight: "400" }} onClick={this.redirectHandler}>Profile</li>
                                         <li><a href="/">Orders</a></li>
                                         <li><a href="/">Events</a></li>
-                                        <li><a href="/restaurantLogin">Sign Out</a></li>
+                                        <li><a href="/restaurantLogout">Sign Out</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -238,10 +239,10 @@ class UpdateRestProfile extends Component {
 }
 
 const mapStateToProps = (state) => {
-    console.log("state update rest profile reducer:",state.auth);
+    console.log("state update rest profile reducer:",state.resState);
     return {
-        restaurant:  state.auth.restaurant ||  "",
-        updateFlag: state.auth.updateFlag || null
+        restaurant:  state.resState.restaurant ||  "",
+        updateFlag: state.resState.updateFlag || null
     };
 };
 

@@ -1,12 +1,10 @@
 import { combineReducers } from 'redux';
 
-import  auth  from './resAuthReducer';
-import updateProfile from './resUpdateProfileReducer';
+import  resState  from './restaurant.reducer';
 import { alert } from './alert.reducer';
 
 const rootReducer = combineReducers({
-  auth,
-  updateProfile,
+  resState,
   alert
 });
 

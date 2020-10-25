@@ -21,7 +21,6 @@ export const restaurantLogin = (restaurant) => {
                 var restaurant = response.data;
 
                 if (response.status === 200) {
-                    localStorage.setItem('restaurant', restaurant);
                     dispatch(loginRestaurantDispatcher({
                         restaurant,
                         loginFlag: true

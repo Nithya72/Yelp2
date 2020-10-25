@@ -4,7 +4,7 @@ const initialState = {
   loading: true
 }
 
-const auth = (state = initialState, action) => {
+const resState = (state = initialState, action) => {
 
   const{ type, payload } = action;
 
@@ -15,7 +15,7 @@ const auth = (state = initialState, action) => {
         ...state,
         ...payload,
         isAuthenticated: true,
-        loading: false
+        // loading: false
       }
 
     case "RESTAURANT_LOGIN":
@@ -31,15 +31,38 @@ const auth = (state = initialState, action) => {
           ...state,
           ...payload,
           isAuthenticated: true,
-          loading: false
+          // loading: false
     }
 
     case "RESTAURANT_LOGOUT":
       return initialState;
+
+    case "ADD_MENU":
+      return{
+        ...state,
+        ...payload,
+        isAuthenticated: true,
+        // loading: false
+      }
+
+    case "ADD_MENU_DETAILS":
+      return{
+        ...state,
+        ...payload,
+        isAuthenticated: true,
+        // loading: false
+      }
+
+    case "UPDATE_MENU_DETAILS":
+      return{
+        ...state,
+        ...payload,
+        isAuthenticated: true
+      }
     
     default:
       return state;
   }
 }
 
-export default auth;
+export default resState;

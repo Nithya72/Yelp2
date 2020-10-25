@@ -6,6 +6,7 @@ import cookie from 'react-cookies';
 import { Redirect } from 'react-router';
 import StarRatings from 'react-star-ratings';
 import Map from '../Maps/Map.js';
+import configurePath from '../../config';
 
 
 class CustResLanding extends Component {
@@ -54,7 +55,7 @@ class CustResLanding extends Component {
     }
     componentDidMount() {
         console.log("On page load")
-        axios.get('http://localhost:3001/custLanding')
+        axios.get(configurePath.api_host+'/custLanding')
             .then((response) => {
 
                 console.log("Status Code : ", response.status);
