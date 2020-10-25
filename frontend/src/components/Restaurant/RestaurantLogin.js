@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-
-import { restaurantActions } from '../../actions';
+import { restaurantLogin } from '../../actions/authActions/resLoginActions';
+// import {restaurantLogout} from '../../actions/authActions/resLogoutActions';
+import { Redirect } from 'react-router';
 
 class RestaurantLogin extends Component {
     constructor(props) {
         super(props);
-        this.props.restaurantSignOut();
+        // this.props.restaurantLogout("logout");
         this.state = {
             restEmailID: '',
             restPassword: '',
@@ -26,30 +27,34 @@ class RestaurantLogin extends Component {
     submitLogin(e) {
         e.preventDefault();
         this.setState({ submitted: true });
-        const { restEmailID, restPassword } = this.state;
-        if (restEmailID && restPassword) {
-            this.props.restaurantSignIn(restEmailID, restPassword); //User.Actions.js
+
+        const data = {
+            restEmailID: this.state.restEmailID,
+            restPassword: this.state.restPassword
         }
+        
+        this.props.restaurantLogin(data); //User.Actions.js
+        
     }
 
     render() {
-        var alert  = null;
+        var redirectVar  = null;
         var final_msg = null;
-
-        if(this.props && this.props.location && this.props.location.state && this.props.location.state){
-            alert = this.props.location.state.alert;
-        }
 
         const {restEmailID, restPassword, submitted } = this.state;
 
-        if(alert){
-            final_msg = <div class="alert alert-danger" role="alert">{alert}</div>
+        if(this.props.loginFlag == false){
+
+            final_msg = <div class="alert alert-danger" role="alert">{this.props.error_msg}</div>
+        }else if(this.props.loginFlag == true){
+            //redirectVar = <Redirect to={{ pathname: "/restaurantProfile", state: { restaurant: this.props.res } }} />
+            redirectVar = <Redirect to={{ pathname: "/restaurantProfile"}} />
         }
 
         return (
             
             <div >
-                
+                {redirectVar}
                 <div className="all-header" style={{ backgroundColor: "#d32323", height: "70px" }}>
 
                 <div className="header-left">
@@ -107,16 +112,22 @@ class RestaurantLogin extends Component {
     }
 }
 
-
-function mapState(state) {
-    const { loggingIn, alert } = state.login;
-    return { loggingIn, alert };
-}
-
-const actionCreators = {
-    restaurantSignIn: restaurantActions.restaurantSignIn,
-    restaurantSignOut: restaurantActions.restaurantSignOut
+const mapStateToProps = (state) => {
+    console.log("state login reducer:",state.auth);
+    return {
+        res:  state.auth.restaurant ||  "",
+        loginFlag: state.auth.loginFlag,
+        error_msg: state.auth.error_msg || ""
+    };
 };
 
-const connectedLoginPage = connect(mapState, actionCreators)(RestaurantLogin);
-export { connectedLoginPage as RestaurantLogin };
+
+const mapDispatchToProps = (dispatch) => {
+    return{
+        restaurantLogin: (restaurant) => dispatch(restaurantLogin(restaurant))
+        // restaurantLogout: (message) => dispatch(restaurantLogout(message))
+    }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(RestaurantLogin);

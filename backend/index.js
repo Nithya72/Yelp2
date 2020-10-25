@@ -503,9 +503,9 @@ async function fetchRestaurantById(restaurantId) {
 
 
 app.post('/updateRestaurantProfile', function (req, res) {
-    console.log("Req Body - RestaurantLogin: ", req.body.restaurant);
+    console.log("Req Body - RestaurantLogin: ", req.body);
 
-    updateRestaurantProfile(req.body.restaurant)
+    updateRestaurantProfile(req.body)
         .then(result => {
             if (result) {
 
@@ -518,7 +518,7 @@ app.post('/updateRestaurantProfile', function (req, res) {
                 } else {
                     console.log("Success!", result);
 
-                    fetchRestaurantById(req.body.restaurant.RestaurantId)
+                    fetchRestaurantById(req.body.RestaurantId)
                         .then(result => {
                             if (result) {
 

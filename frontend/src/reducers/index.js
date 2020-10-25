@@ -1,12 +1,12 @@
 import { combineReducers } from 'redux';
 
-import { login } from './login.reducer';
-import { signup } from './signup.reducer';
+import  auth  from './resAuthReducer';
+import updateProfile from './resUpdateProfileReducer';
 import { alert } from './alert.reducer';
 
 const rootReducer = combineReducers({
-  login,
-  signup,
+  auth,
+  updateProfile,
   alert
 });
 

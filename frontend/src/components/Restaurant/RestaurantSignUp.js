@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-
-// import { restaurantActions } from '../../actions';
-import { restaurantActions } from '../../actions';
+import { restaurantSignUp } from '../../actions/authActions/resSignupActions';
+// import {setAlert} from '../../actions/alert.actions';
 
 class RestaurantSignUp extends Component {
 
@@ -42,30 +41,33 @@ class RestaurantSignUp extends Component {
 
         if (restaurant.restName && restaurant.restEmailID && restaurant.restPassword && restaurant.restLocation) {
             console.log("in res sign up: ", this.props);
-            this.props.register(restaurant);
+            this.props.restaurantSignUp(restaurant)
+
         }
     }
 
     render() {
 
+        console.log("restuarnt fetch from state ")
         const { restaurant, submitted } = this.state;
 
         var successAlert = null;
         var errorAlert = null;
         var final_msg = null;
 
-        if (this.props && this.props.location && this.props.location.state && this.props.location.state && this.props.location.state.successAlert) {
-            successAlert = this.props.location.state.successAlert;
-        }
+        console.log("After sign up:");
 
-        if (this.props && this.props.location && this.props.location.state && this.props.location.state && this.props.location.state.errorAlert) {
-            errorAlert = this.props.location.state.errorAlert;
+        if (this.props.registerFlag == true) {
+            successAlert = true;
+        }else if(this.props.registerFlag == false){
+            errorAlert = true;
         }
 
         if (successAlert) {
-            final_msg = <div class="alert alert-success" role="alert">{successAlert}<a href={'/restaurantLogin'} > Login Here.</a></div>
+            final_msg = <div class="alert alert-success" role="alert">{this.props.res}<a href={'/restaurantLogin'} > Login Here.</a></div>
         } else if (errorAlert) {
-            final_msg = <div class="alert alert-danger" role="alert">{errorAlert}</div>
+            console.log("errorAlert: ", errorAlert, "this.props.res: ", this.props.res)
+            final_msg = <div class="alert alert-danger" role="alert">{this.props.res}</div>
         }
 
         return (
@@ -137,14 +139,21 @@ class RestaurantSignUp extends Component {
         )
     }
 }
-function mapState(state) {
-    const { registering } = state.signup;
-    return { registering };
+
+const mapStateToProps = (state) => {
+    console.log("state sign up reducer:",state.auth);
+    return {
+        res:  state.auth.response_msg ||  "",
+        registerFlag: state.auth.registerFlag || null
+    };
+};
+
+
+const mapDispatchToProps = (dispatch) => {
+    return{
+        restaurantSignUp: (restaurant) => dispatch(restaurantSignUp(restaurant))
+    }
 }
 
-const actionCreators = {
-    register: restaurantActions.restaurantSignUp
-}
 
-const connectedRegisterPage = connect(mapState, actionCreators)(RestaurantSignUp);
-export { connectedRegisterPage as RestaurantSignUp };
+export default connect(mapStateToProps, mapDispatchToProps)(RestaurantSignUp);

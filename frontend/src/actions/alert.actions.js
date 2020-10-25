@@ -1,20 +1,23 @@
-import {alertConstants} from '../constants/';
+import { v4 as uuid } from 'uuid';
 
-export const alertActions = {
-    success,
-    error,
-    clear
-}
+// export const setAlert = (msg, alertType, timeout = 5000) => dispatch => {
+//     const id = uuid();
+//     dispatch({
+//         type: "SET_ALERT",
+//         payload: { msg, alertType, id }
+//     });
 
-function success(message){
-    return { type:alertConstants.SUCCESS,  message};
-}
+//     setTimeout(() => dispatch({ type: "REMOVE_ALERT", payload: id }), timeout);
 
-function error(message){
-    return { type:alertConstants.ERROR,  message};
-}
+// }
 
 
-function clear(){
-    return { type:alertConstants.CLEAR};
+export function setAlert(msg, alertType) {
+
+    return {
+        type: "SET_ALERT",
+        payload: msg, alertType
+
+    }
+
 }

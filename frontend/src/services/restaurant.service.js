@@ -1,7 +1,7 @@
 export const restaurantService = {
     restaurantLogin,
     restaurantLogout,
-    restaurantSignup,
+    // restaurantSignup,
     updateRestProfile
 };
 
@@ -38,26 +38,26 @@ function restaurantLogout() {
     localStorage.removeItem('restaurant');
 }
 
-// register user request
-function restaurantSignup(restaurant) {
-    var reqPromise = require('request-promise');
+// // register user request
+// function restaurantSignup(restaurant) {
+//     var reqPromise = require('request-promise');
 
-    const options = {
-        method: 'POST',
-        uri: 'http://localhost:3001/restaurantSignUp',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(restaurant)
-    };
+//     const options = {
+//         method: 'POST',
+//         uri: 'http://localhost:3001/restaurantSignUp',
+//         headers: { 'Content-Type': 'application/json' },
+//         body: JSON.stringify(restaurant)
+//     };
 
-    return reqPromise(options)
-    .then(function(response){
-        return response;
-    })
-    .catch(function(err) {
-        return err;
-    });
+//     return reqPromise(options)
+//     .then(function(response){
+//         return response;
+//     })
+//     .catch(function(err) {
+//         return err;
+//     });
 
-}
+// }
 
 
 function updateRestProfile(restaurant) {

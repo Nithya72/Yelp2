@@ -3,20 +3,19 @@ import StarRatings from 'react-star-ratings';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 
-import { restaurantActions } from '../../actions';
+// import { restaurantActions } from '../../actions/restaurant.actions';
 class RestaurantProfile extends Component {
 
     constructor(props) {
         super(props);
 
         var rest = null;
-        if (this.props.location.state.fromOrders) {
-            rest = this.props.location.state.restaurant;
-        } else {
-            rest = JSON.parse(this.props.location.state.restaurant);
-            console.log("Props - Restaurant: ", rest[0]);
-            rest = rest[0];
-        }
+        // if (this.props.location.state.fromOrders) {
+        //     rest = this.props.location.state.restaurant;
+        // } else {
+            console.log("Inside Restaurant Profile: ", this.props.restaurant)
+            rest = this.props.restaurant[0];
+        // }
 
         this.state = {
             restaurant: rest,
@@ -62,12 +61,13 @@ class RestaurantProfile extends Component {
     }
 
     render() {
-        console.log("Restaurant: ", this.state.restaurant);
+        console.log("Restaurant: ", this.state);
         var redirectVar = null;
         var noReviewsMsg = null;
 
         if (this.state.redirectRest) {
-            redirectVar = <Redirect to={{ pathname: "/updateRestProfile", state: { restaurant: this.state.restaurant } }} />
+            // redirectVar = <Redirect to={{ pathname: "/updateRestProfile", state: { restaurant: this.state.restaurant } }} />
+            redirectVar = <Redirect to={{ pathname: "/updateRestProfile" }} />
         }
         if (this.state.redirectToOrders) {
             redirectVar = <Redirect to={{ pathname: "/restaurantOrders", state: { restaurant: this.state.restaurant } }} />
@@ -119,7 +119,7 @@ class RestaurantProfile extends Component {
                                         <li><a href="/">Home</a></li>
                                         <li style={{ display: "block", padding: "3px 20px", lineHeight: "1.42857143", color: "#333", fontWeight: "400" }} onClick={this.redirectHandler}>Order History</li>
                                         <li style={{ display: "block", padding: "3px 20px", lineHeight: "1.42857143", color: "#333", fontWeight: "400" }} onClick={this.redirectToEvents}>Events Posted</li>
-                                        <li><a href="/restaurantLogin">Sign Out</a></li>
+                                        <li><a href="/restaurantLogout">Sign Out</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -231,14 +231,12 @@ class RestaurantProfile extends Component {
     }
 }
 
-function mapState(state) {
-    const { loggingIn } = state.login;
-    return { loggingIn };
-}
-
-const actionCreators = {
-    updateRestProfile: restaurantActions.updateRestProfile,
+const mapStateToProps = (state) => {
+    console.log("state rest profile reducer:",state.auth);
+    return {
+        restaurant:  state.auth.restaurant ||  "",
+        updateProfile: false
+    };
 };
 
-const connectedRestProfile = connect(mapState, actionCreators)(RestaurantProfile);
-export { connectedRestProfile as RestaurantProfile };
+export default connect(mapStateToProps)(RestaurantProfile);

@@ -16,42 +16,31 @@ import LandingPage from './LandingPage/LandingPage';
 import AddUpdateMenu from './Restaurant/AddUpdateMenu';
 import PostEvents from './Restaurant/PostEvents';
 import RestaurantEvents from './Restaurant/RestaurantEvents';
-import {RestaurantLogin} from './Restaurant/RestaurantLogin';
+import RestaurantLogin from './Restaurant/RestaurantLogin';
+import RestaurantLogout from './Restaurant/RestaurantLogout';
 import RestaurantMenu from './Restaurant/RestaurantMenu';
 import RestaurantOrders from './Restaurant/RestaurantOrders';
-import {RestaurantProfile} from './Restaurant/RestaurantProfile';
+import RestaurantProfile from './Restaurant/RestaurantProfile';
 import Restaurants from './Restaurant/Restaurants';
-import {RestaurantSignUp} from './Restaurant/RestaurantSignUp';
-import {UpdateRestProfile} from './Restaurant/UpdateRestProfile';
+import RestaurantSignUp from './Restaurant/RestaurantSignUp';
+import UpdateRestProfile from './Restaurant/UpdateRestProfile';
 
 import { history } from '../helpers';
 import { connect } from 'react-redux';
-import {alertActions} from '../actions';
 
 //Create a Main Component
 export default class Main extends Component {
     constructor(props) {
         console.log("WIth constructor: ", props)
         super(props);
-        // this.handleLogout = this.handleLogout.bind(this);
-
-        // history.listen((location, action) => {
-
-        //     props.clearAlerts();
-        // });
 
         console.log("this.props: ", this.props)
     }
-    //handle logout to destroy the cookie
-    // handleLogout = () => {
-    //     cookie.remove('cookie', { path: '/' })
-    // }
+
 
     render() {
-        // const { alert } = this.props;
         return (
             <div>
-                {/* {alert.message && <div >{alert.message}</div>} */}
                 <Router history={history}>
                     <Switch>
                     
@@ -69,6 +58,7 @@ export default class Main extends Component {
                         <Route exact path="/postEvents" component={PostEvents} />
                         <Route exact path="/restaurantEvents" component={RestaurantEvents} />
                         <Route exact path="/restaurantLogin" component={RestaurantLogin} />
+                        <Route exact path="/restaurantLogout" component={RestaurantLogout} />
                         <Route exact path="/restaurantMenu" component={RestaurantMenu} />
                         <Route exact path="/restaurantOrders" component={RestaurantOrders} />
                         <Route exact path="/restaurantProfile" component={RestaurantProfile} />
@@ -92,7 +82,7 @@ function mapState(state) {
 }
 
 const actionCreators = {
-    clearAlerts: alertActions.clear
+    // clearAlerts: alertActions.clear
 };
 
 const connectedApp = connect(mapState, actionCreators)(Main);

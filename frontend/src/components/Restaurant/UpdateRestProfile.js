@@ -2,21 +2,24 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import { Redirect } from 'react-router';
-import { restaurantActions } from '../../actions';
+import { updateResProfile } from '../../actions/profileActions/updateResProfileActions';
 
 class UpdateRestProfile extends Component {
 
     constructor(props) {
         super(props);
+
+        console.log("Inside Update Profile: ", this.props.restaurant[0]);
+
         this.state = {
-            restaurant: this.props.location.state.restaurant,
+            restaurant: this.props.restaurant[0],
             submitted: false,
             restProfilePic: null,
             redirectToRestProfile: false,
             successfulUpload: null
         };
 
-        console.log("Props: ", this.props.location.state);
+        // console.log("Props: ", this.props.location.state);
 
         this.formChangeHandler = this.formChangeHandler.bind(this);
         this.submitUpdateRestProfile = this.submitUpdateRestProfile.bind(this);
@@ -109,6 +112,10 @@ class UpdateRestProfile extends Component {
 
 
         if (this.state.redirectToRestProfile) {
+            redirectVar = <Redirect to={{ pathname: "/restaurantProfile", state: { restaurant: this.state.restaurant } }} />
+        }
+
+        if(submitted && this.props.updateFlag){
             redirectVar = <Redirect to={{ pathname: "/restaurantProfile", state: { restaurant: this.state.restaurant } }} />
         }
 
@@ -230,14 +237,20 @@ class UpdateRestProfile extends Component {
     }
 }
 
-function mapState(state) {
-    const { loggingIn } = state.login;
-    return { loggingIn };
-}
-
-const actionCreators = {
-    updateProfile: restaurantActions.updateRestProfile
+const mapStateToProps = (state) => {
+    console.log("state update rest profile reducer:",state.auth);
+    return {
+        restaurant:  state.auth.restaurant ||  "",
+        updateFlag: state.auth.updateFlag || null
+    };
 };
 
-const connectedRestProfile = connect(mapState, actionCreators)(UpdateRestProfile);
-export { connectedRestProfile as UpdateRestProfile };
+
+const mapDispatchToProps = (dispatch) => {
+    return{
+        updateProfile: (restaurant) => dispatch(updateResProfile(restaurant))
+    }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(UpdateRestProfile);

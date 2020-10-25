@@ -1,12 +1,14 @@
 import { userConstants } from '../constants/';
 import { restaurantService } from '../services/';
-import { alertActions } from './';
+// import { alertActions } from './';
+import { setAlert } from './alert.actions';
 import { history } from '../helpers';
+import axios from 'axios';
 
 export const restaurantActions = {
     restaurantSignIn,
     restaurantSignOut,
-    restaurantSignUp,
+    // restaurantSignUp,
     updateRestProfile
 };
 
@@ -24,7 +26,7 @@ function restaurantSignIn(restEmailId, restPassword) {
 
                     if (restaurant.statusCode === 402 || restaurant.statusCode === 401) {
                         dispatch(loginInvalid(restaurant));
-                        dispatch(alertActions.error(restaurant));
+                        // dispatch(alertActions.error(restaurant));
 
                         console.log("Error msg: ", restaurant.error);
                         history.push({ pathname: '/restaurantLogin', state: { alert: restaurant.error} });
@@ -38,7 +40,7 @@ function restaurantSignIn(restEmailId, restPassword) {
                     console.log("--------------- error --------------", error);
 
                     dispatch(loginInvalid(error));
-                    dispatch(alertActions.error(error));
+                    // dispatch(alertActions.error(error));
                 }
             );
     };
@@ -49,56 +51,46 @@ function restaurantSignIn(restEmailId, restPassword) {
 
 }
 
-function restaurantSignUp(restaurant) {
+ export const restaurantSignUp = (restaurant) => async dispatch => {
 
-    return dispatch => {
-        dispatch(signupRequest(restaurant));
-        restaurantService.restaurantSignup(restaurant)
-            .then(
-                restaurant => {
-                console.log("--------------- success --------------", restaurant);
-
-                    if (restaurant.statusCode === 402 || restaurant.statusCode === 401) {
-                        dispatch(signupInvalid(restaurant));
-                        dispatch(alertActions.error(restaurant));
-
-                        console.log("Error msg: ", restaurant.error);
-                        history.push({ pathname: '/restaurantSignUp', state: {errorAlert: restaurant.error} });
-
-                    } else {
-                        console.log("Sign Up msg: ", restaurant);
-
-                        dispatch(signupSuccess(restaurant));
-                        dispatch(alertActions.success('You have successfully registered!'));
-                        history.push({ pathname: '/restaurantSignUp', state: { successAlert: restaurant } });
-                    }
-                },
-                error => {
-                    console.log(error, 'Sign Up Failed')
-                    dispatch(signupInvalid(error));
-                    dispatch(alertActions.error(error));
+            try{
+                const res = await axios.post('http://localhost:3001/restaurantSignUp', restaurant);
+                console.log("after db call:", res)
+                dispatch({
+                    type: "SIGNUP_SUCCESS",
+                    payload: res.data
+                });  
+                
+            }
+            catch(err){
+                const errors = err.response.data.errors;
+                if (errors) {
+                    errors.forEach(error => dispatch(setAlert(error.msg, 'danger')))
                 }
-            );
-    };
-
-    function signupRequest(restaurant) {
-        return {
-            type: userConstants.SIGNUP_REQUEST, restaurant
-        }
+                dispatch({
+                    type: "SIGNUP_FAIL"
+                })
+            }
     }
 
-    function signupSuccess(restaurant) {
-        return {
-            type: userConstants.SIGNUP_SUCCESS, restaurant
-        }
-    }
+//     function signupRequest(restaurant) {
+//         return {
+//             type: userConstants.SIGNUP_REQUEST, restaurant
+//         }
+//     }
 
-    function signupInvalid(error) {
-        return {
-            type: userConstants.SIGNUP_FAILURE, error
-        }
-    }
-}
+//     function signupSuccess(restaurant) {
+//         return {
+//             type: userConstants.SIGNUP_SUCCESS, restaurant
+//         }
+//     }
+
+//     function signupInvalid(error) {
+//         return {
+//             type: userConstants.SIGNUP_FAILURE, error
+//         }
+//     }
+// }
 
 function restaurantSignOut() {
     restaurantService.restaurantLogout();
@@ -126,7 +118,7 @@ function updateRestProfile(restaurant) {
                     console.log("--------------- error --------------", error);
 
                     dispatch(loginInvalid(error));
-                    dispatch(alertActions.error(error));
+                    // dispatch(alertActions.error(error));
                 }
             );
     };
