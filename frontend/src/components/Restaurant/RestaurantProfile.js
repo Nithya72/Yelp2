@@ -2,28 +2,22 @@ import React, { Component } from 'react';
 import StarRatings from 'react-star-ratings';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
+import { getOrders } from '../../actions/orderActions/getOrderActions';
+import { getEvents } from '../../actions/eventActions/getEventActions';
 
-// import { restaurantActions } from '../../actions/restaurant.actions';
 class RestaurantProfile extends Component {
 
     constructor(props) {
         super(props);
-
         var rest = null;
-        // if (this.props.location.state.fromOrders) {
-        //     rest = this.props.location.state.restaurant;
-        // } else {
-            console.log("Inside Restaurant Profile: ", this.props.restaurant)
-            rest = this.props.restaurant[0];
-        // }
 
         this.state = {
-            restaurant: rest,
+            restaurant: this.props.restaurant[0],
             submitted: false,
             redirectRest: false,
-            redirectToOrders: false,
             redirectToEvents: false,
-            redirectToMenu: false
+            redirectToMenu: false,
+            redirectToOrders: false
         }
 
         console.log("State: ", this.state);
@@ -42,16 +36,32 @@ class RestaurantProfile extends Component {
         console.log("State in submitUpdateProfile : ", this.state);
     }
 
-    redirectHandler(e) {
-        this.setState({
-            redirectToOrders: true
-        })
-    }
-
     redirectToEvents(e) {
         this.setState({
             redirectToEvents: true
         })
+
+        const data = {
+            id: this.state.restaurant._id,
+            user: "restaurant"
+        }
+
+        this.props.getEvents(data);
+    }
+
+    redirectHandler(e) {
+
+        this.setState({
+            redirectToOrders: true
+        })
+
+        const data = {
+            id: this.state.restaurant._id,
+            type: "restaurant"
+        }
+
+        this.props.getOrders(data);
+
     }
 
     editMenuHandler(e) {
@@ -63,25 +73,26 @@ class RestaurantProfile extends Component {
     render() {
         console.log("Restaurant: ", this.state);
         var redirectVar = null;
-        var noReviewsMsg = null;
+        // var noReviewsMsg = null;
 
         if (this.state.redirectRest) {
-            // redirectVar = <Redirect to={{ pathname: "/updateRestProfile", state: { restaurant: this.state.restaurant } }} />
             redirectVar = <Redirect to={{ pathname: "/updateRestProfile" }} />
         }
-        if (this.state.redirectToOrders) {
-            redirectVar = <Redirect to={{ pathname: "/restaurantOrders", state: { restaurant: this.state.restaurant } }} />
-        }
+
         if (this.state.redirectToEvents) {
-            redirectVar = <Redirect to={{ pathname: "/restaurantEvents", state: { restaurant: this.state.restaurant } }} />
+            redirectVar = <Redirect to={{ pathname: "/restaurantEvents" }} />
         }
         if (this.state.redirectToMenu) {
-            redirectVar = <Redirect to={{ pathname: "/restaurantMenu"}} />
+            redirectVar = <Redirect to={{ pathname: "/restaurantMenu" }} />
         }
 
-        if ((!this.state.restaurant.Review1 || this.state.restaurant.Review1.length === 0) && (!this.state.restaurant.Review2 || this.state.restaurant.Review2.length === 0) && (!this.state.restaurant.Review3 || this.state.restaurant.Review3.length === 0)) {
-            noReviewsMsg = <div style={{ fontWeight: "bold", marginTop: "8px", marginLeft: "350px", fontSize: "22px", color: "#f43939" }}>No Reviews Added Yet</div>
+        if (this.state.redirectToOrders && this.props.getOrderFlag) {
+            redirectVar = <Redirect to={{ pathname: "/restaurantOrders" }} />
         }
+
+        // if ((!this.state.restaurant.Review1 || this.state.restaurant.Review1.length === 0) && (!this.state.restaurant.Review2 || this.state.restaurant.Review2.length === 0) && (!this.state.restaurant.Review3 || this.state.restaurant.Review3.length === 0)) {
+        //     noReviewsMsg = <div style={{ fontWeight: "bold", marginTop: "8px", marginLeft: "350px", fontSize: "22px", color: "#f43939" }}>No Reviews Added Yet</div>
+        // }
 
         return (
             <div>
@@ -127,15 +138,12 @@ class RestaurantProfile extends Component {
                     </div>
                 </div>
 
-
-                {/* <hr style={{ border: "1px solid lightgray" }} /> */}
                 <div className="rest-pic1">
 
                     <img src={require("../../images/" + this.state.restaurant.ImageSrc + "1.jpg")} alt="" />
                     <img src={require("../../images/" + this.state.restaurant.ImageSrc + "2.jpg")} alt="" />
                     <img src={require("../../images/" + this.state.restaurant.ImageSrc + "3.jpg")} alt="" />
                     <img src={require("../../images/" + this.state.restaurant.ImageSrc + "4.jpg")} alt="" />
-                    {/* <img src={require("../../images/" + this.props.location.state.restaurant.ImageSrc+"5.jpg")} alt="" /> */}
                 </div>
 
                 <div className="rest-landing-all">
@@ -163,67 +171,31 @@ class RestaurantProfile extends Component {
                         </div>
                     </div>
                     <hr style={{ border: "1px solid lightgray", marginLeft: "150px", maxWidth: "1000px" }} />
-                    {this.state.restaurant.Review1 != null ?
-                        <div className="reviews-all">
-                            <div style={{ fontWeight: "bold", fontSize: "25px", fontFamily: "Open Sans,Helvetica Neue,Helvetica,Arial,sans-serif", marginBottom: "35px" }}> Recommended reviews </div>
-                            <div className="reviews-profile">
-                                <div className="review-img"> <img src={require("../../images/avatar.jpg")} alt="" style={{ width: "60px", height: "60px" }} /> </div>
-                                <div className="review-reviewer">
-                                    <div className="review-name" style={{ fontSize: "16px", color: "#00838f" }}>{(this.state.restaurant.Review1).split(":")[0]}</div>
-                                    <div className="review-nos"> 78 reviews</div>
-                                    <div className="review-photos">51 photos</div>
 
+                    {(this.props.restaurant[0].Reviews != null && this.props.restaurant[0].Reviews.length != 0) ?
+                        
+                        this.props.restaurant[0].Reviews.map(review => (
+
+                            <div className="reviews-all">
+                                <div style={{ fontWeight: "bold", fontSize: "25px", fontFamily: "Open Sans,Helvetica Neue,Helvetica,Arial,sans-serif", marginBottom: "35px" }}> Recommended reviews </div>
+                                <div className="reviews-profile">
+                                    <div className="review-img"> <img src={require("../../images/avatar.jpg")} alt="" style={{ width: "60px", height: "60px" }} /> </div>
+                                    <div className="review-reviewer">
+                                        <div className="review-name" style={{ fontSize: "16px", color: "#00838f" }}>{(review.CustomerName)}</div>
+                                        <div className="review-nos"> 78 reviews</div>
+                                        <div className="review-photos">51 photos</div>
+
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="reviews-profile-text">
-                                <StarRatings rating={4} starDimension="20px" starSpacing="1px" starRatedColor="red" numberOfStars={5} name='rating' /> &nbsp; {(this.state.restaurant.Review1).split(":")[3]}  <br /><br />
-                                {(this.state.restaurant.Review1).split(":")[1]}
-                            </div>
-                            <hr style={{ border: "0.06px solid #eeeeef", marginLeft: "0px", maxWidth: "900px" }} />
-                        </div> : null}
-
-
-
-
-                    {this.state.restaurant.Review2 != null ?
-
-                        <div className="reviews-all">
-                            <div className="reviews-profile">
-                                <div className="review-img"> <img src={require("../../images/avatar.jpg")} alt="" style={{ width: "60px", height: "60px" }} /> </div>
-                                <div className="review-reviewer">
-                                    <div className="review-name" style={{ fontSize: "16px", color: "#00838f" }}>{(this.state.restaurant.Review1).split(":")[0]}</div>
-                                    <div className="review-nos"> 42 reviews</div>
-                                    <div className="review-photos">32 photos</div>
-
-
+                                <div className="reviews-profile-text">
+                                    <StarRatings rating={review.Rating} starDimension="20px" starSpacing="1px" starRatedColor="red" numberOfStars={5} name='rating' /> &nbsp; {(review.ReviewDate).substring(0, 10)}  <br /><br />
+                                    {review.Comment}
                                 </div>
+                                <hr style={{ border: "0.06px solid #eeeeef", marginLeft: "0px", maxWidth: "900px" }} />
                             </div>
-                            <div className="reviews-profile-text">
-                                <StarRatings rating={4} starDimension="20px" starSpacing="1px" starRatedColor="red" numberOfStars={5} name='rating' /> &nbsp; {(this.state.restaurant.Review1).split(":")[3]}  <br /><br />
-                                {(this.state.restaurant.Review2).split(":")[1]}
-                            </div>
-                            <hr style={{ border: "0.06px solid #eeeeef", marginLeft: "0px", maxWidth: "900px" }} />
-                        </div>
-                        : null}
 
+                            )) : <div style={{ fontWeight: "bold", marginTop: "8px", marginLeft: "350px", fontSize: "22px", color: "#f43939" }}>No Reviews Added Yet</div>}
 
-
-                    {this.state.restaurant.Review3 != null ?
-                        <div className="reviews-all">
-                            <div className="reviews-profile">
-                                <div className="review-img"> <img src={require("../../images/avatar.jpg")} alt="" style={{ width: "60px", height: "60px" }} /> </div>
-                                <div className="review-reviewer">
-                                    <div className="review-name" style={{ fontSize: "16px", color: "#00838f" }}> {(this.state.restaurant.Review1).split(":")[0]}</div>
-                                    <div className="review-nos"> 24 reviews</div>
-                                    <div className="review-photos">10 photos</div>
-
-                                </div>
-                            </div>
-                            <div className="reviews-profile-text">
-                                <StarRatings rating={4} starDimension="20px" starSpacing="1px" starRatedColor="red" numberOfStars={5} name='rating' /> &nbsp; {(this.state.restaurant.Review1).split(":")[3]}  <br /><br />
-                                {(this.state.restaurant.Review3).split(":")[1]}
-                            </div>
-                        </div> : null}
                 </div>
             </div>
         )
@@ -232,11 +204,20 @@ class RestaurantProfile extends Component {
 }
 
 const mapStateToProps = (state) => {
-    console.log("state rest profile reducer:",state.resState);
+    console.log("state rest profile reducer:", state.resState);
     return {
-        restaurant:  state.resState.restaurant ||  "",
-        updateProfile: false
+        restaurant: state.resState.restaurant || "",
+        updateProfile: false,
+        getOrderFlag: state.resState.getOrderFlag,
+        getEventFlag: state.resState.getEventFlag
     };
 };
 
-export default connect(mapStateToProps)(RestaurantProfile);
+const mapDispatchToProps = (dispatch) => {
+    return {
+        getOrders: (payload) => dispatch(getOrders(payload)),
+        getEvents: (payload) => dispatch(getEvents(payload))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(RestaurantProfile);

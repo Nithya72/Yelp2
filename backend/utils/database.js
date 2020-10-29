@@ -1,16 +1,18 @@
 const mongoose = require('mongoose');
-const config = require('config');
+const config = require('../utils/config');
 const database = "mongodb+srv://yelp:nursery@cluster0.wvz8o.mongodb.net/yelp?retryWrites=true&w=majority";
-
-//config.get('mongoURI');
 
 const connectDB = async() => {
 
 try{
-   await mongoose.connect(database, 
-    {   useNewUrlParser: true,
+   await mongoose.connect( config.mongoURI, 
+    {   
+        useNewUrlParser: true,
         useUnifiedTopology: true,
-        useCreateIndex: true});
+        useFindAndModify: false,
+        poolSize: 500,
+        bufferMaxEntries: 0
+    });
     console.log("Connected to MongoDB")
 }
 catch(err){

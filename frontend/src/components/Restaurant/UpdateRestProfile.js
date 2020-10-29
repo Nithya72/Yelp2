@@ -20,8 +20,6 @@ class UpdateRestProfile extends Component {
             successfulUpload: null
         };
 
-        // console.log("Props: ", this.props.location.state);
-
         this.formChangeHandler = this.formChangeHandler.bind(this);
         this.submitUpdateRestProfile = this.submitUpdateRestProfile.bind(this);
         this.pictureHandler = this.pictureHandler.bind(this);
@@ -58,12 +56,12 @@ class UpdateRestProfile extends Component {
 
         const picData = new FormData();
         picData.append("profilePic", this.state.restProfilePic, this.state.restProfilePic.name);
-        picData.append("id", this.state.restaurant.RestaurantId);
+        picData.append("id", this.state.restaurant._id);
         picData.append("table", "Restaurants");
 
         const { restaurant } = this.state;
 
-        axios.post(configPath.api_host+"/uploadProfilePic", picData)
+        axios.post(configPath.api_host+"/restaurant/profile/pic", picData)
             .then((response) => {
                 if (response.status === 200) {
                     this.setState({
@@ -99,13 +97,11 @@ class UpdateRestProfile extends Component {
 
     render() {
 
-        // const { registering } = this.props;
         const { restaurant, submitted } = this.state;
         var uploadMsg = null;
         let redirectVar = null;
 
         if (this.state.successfulUpload === "true") {
-            // redirectVar = <Redirect to={{ pathname: "/restaurantProfile", state: { restaurant: this.state.restaurant } }} />
             uploadMsg = <div style={{ color:"darkgreen", fontWeight: "bold" }}> &emsp;Successfully uploaded </div>
         } else if (this.state.successfulUpload === "false") {
             uploadMsg = <div style={{ fontWeight: "bold" }}> &emsp;Couldn't upload </div>
@@ -252,6 +248,5 @@ const mapDispatchToProps = (dispatch) => {
         updateProfile: (restaurant) => dispatch(updateResProfile(restaurant))
     }
 }
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(UpdateRestProfile);

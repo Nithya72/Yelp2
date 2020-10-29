@@ -2,67 +2,46 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import { Redirect } from 'react-router';
 import configurePath from '../../config';
+import { connect } from 'react-redux';
+import {updateOrder} from '../../actions/orderActions/updateOrderActions';
+
 
 class RestaurantOrders extends Component {
 
     constructor(props) {
         super(props);
 
-        var restaurant = this.props.location.state.restaurant;
-        console.log("Orders - Restaurant Details: ", restaurant);
+        var restaurant = this.props.restaurant;
         this.state = {
-            restaurant: restaurant,
-            orderDetails: [],
-            orderFiltered: [],
+            restaurant: restaurant[0],
+            orderDetails: this.props.orderDetails,
+            orderFiltered: this.props.orderDetails,
             customer: null,
+            submitted: false,
             redirectToCustomer: false,
             orderUpdatedStatus: null,
-            redirectToRestaurant : false
+            reRender: false
         }
+
         this.submitCustomerProfile = this.submitCustomerProfile.bind(this);
         this.orderStatusFilterHandler = this.orderStatusFilterHandler.bind(this);
-        this.redirectHandler = this.redirectHandler.bind(this);
     }
 
+    componentDidUpdate(prevProps){
 
-    componentDidMount() {
-        console.log("On page load")
-
-        const data = {
-            id: this.state.restaurant.RestaurantId,
-            type: "restaurant"
-        }
-
-        axios.post(configurePath.api_host+'/getOrders', data)
-            .then((response) => {
-
-                console.log("Status Code : ", response.status);
-                if (response.status === 200) {
-                    console.log("ComponentDidMount Order History Fetched: ", response.data);
-
-                    this.setState({
-                        orderFlag: true,
-                        orderDetails: this.state.orderDetails.concat(response.data),
-                        orderFiltered: this.state.orderFiltered.concat(response.data),
-                    })
-                } else if (response.status === 404) {
-                    console.log("No Orders Found ");
-                    this.setState({
-                        orderFlag: false
-                    })
-                }
-            })
-            .catch((error) => {
-                console.log("Error here: ", error)
+        if(this.state.orderDetails !== this.props.orderDetails){
+            this.setState({          
+                orderFiltered: this.props.orderDetails,
+                orderDetails: this.props.orderDetails
             });
+        }
     }
-
 
     submitCustomerProfile = (id) => {
         console.log("Submit Customer Profile: ", id);
         let customer = null;
 
-        this.state.orderDetails.forEach(order => {
+        this.props.orderDetails.forEach(order => {
 
             if (order.CustomerId === id) {
 
@@ -102,12 +81,12 @@ class RestaurantOrders extends Component {
 
         if (status === "all") {
             this.setState({
-                orderFiltered: this.state.orderDetails
+                orderFiltered: this.props.orderDetails
             })
         }
         else if (status === "Delivered") {
 
-            this.state.orderDetails.forEach(order => {
+            this.props.orderDetails.forEach(order => {
 
                 if (order.OrderStatus === status || order.OrderStatus === "Picked up") {
                     list.push(order);
@@ -119,7 +98,7 @@ class RestaurantOrders extends Component {
         }
         else if (status === "Cancelled") {
 
-            this.state.orderDetails.forEach(order => {
+            this.props.orderDetails.forEach(order => {
 
                 if (order.OrderStatus === status) {
                     list.push(order);
@@ -131,7 +110,7 @@ class RestaurantOrders extends Component {
         }
         else {
 
-            this.state.orderDetails.forEach(order => {
+            this.props.orderDetails.forEach(order => {
 
                 if (order.OrderStatus === "Order Received") {
                     list.push(order);
@@ -147,6 +126,7 @@ class RestaurantOrders extends Component {
     statusUpdateHandler(a, e) {
         console.log("e.target.value: ", a, ":", e.target.value);
 
+        // e.preventDefault();
         const data = {
             orderId : a.OrderId,
             status: e.target.value,
@@ -154,55 +134,22 @@ class RestaurantOrders extends Component {
             type: "restaurant"
         }
 
-        axios.post(configurePath.api_host+'/updateOrders', data)
-        .then((response) => {
-
-            console.log("Status Code : ", response.status);
-            if (response.status === 200) {
-                console.log("Status Update Handler Fetched: ", response.data);
-
-
-                this.setState({
-                    orderDetails: [],
-                    orderFiltered: []
-                })
-
-                this.setState({
-                    orderFlag: true,
-                    orderDetails: this.state.orderDetails.concat(response.data),
-                    orderFiltered: this.state.orderFiltered.concat(response.data),
-                })
-            } else if (response.status === 404) {
-                console.log("No Orders Found ");
-                this.setState({
-                    orderFlag: false
-                })
-            }
-        })
-        .catch((error) => {
-            console.log("Error here: ", error)
-        });
-    }
-
-    redirectHandler(e) {
-  
         this.setState({
-            redirectToRestaurant: true
+            submitted: true
         })
+
+        this.props.updateOrder(data);
     }
 
     render() {
-        console.log("Order details - Restaurant Order: ", this.state.orderDetails)
+
+        console.log("Order Filtered - Restaurant Order: ", this.state.orderFiltered)
 
         var redirectVar = null;
         var orderEmptyMsg = null;
 
         if (this.state.redirectToCustomer) {
             redirectVar = <Redirect to={{ pathname: "/customerProfile", state: { customer: this.state.customer } }} />
-        }
-
-        if(this.state.redirectToRestaurant){
-            redirectVar = <Redirect to={{ pathname: "/restaurantProfile", state: { restaurant: this.state.restaurant, fromOrders: true } }} />
         }
 
         if(!this.state.orderFiltered || this.state.orderFiltered.length === 0){
@@ -243,7 +190,7 @@ class RestaurantOrders extends Component {
                                 <div className="dropdown">
                                     <div className="material-icons" data-toggle="dropdown">account_circle</div>
                                     <ul class="dropdown-menu pull-right">
-                                    <li style={{ display: "block", padding: "3px 20px", lineHeight: "1.42857143", color: "#333", fontWeight: "400" }} onClick={this.redirectHandler}>Rest Profile</li>
+                                        <li><a href="/restaurantProfile">Rest Profile</a></li>
                                         <li><a href="/restaurantOrders">Orders</a></li>
                                         <li><a href="/">Events</a></li>
                                         <li><a href="/restaurantLogout">Sign Out</a></li>
@@ -297,9 +244,6 @@ class RestaurantOrders extends Component {
                                         </td>
                                         <td>
                                             <div >
-                                                {/* <SelectOption {...order} onSelect={this.statusUpdateHandler}/> */}
-
-
                                                 {
                                                     order.DeliveryOption === "Delivery" ?
                                                         <select className="select-list" name="status" onChange={this.statusUpdateHandler.bind(this, order)}>
@@ -323,7 +267,6 @@ class RestaurantOrders extends Component {
                                 </tbody>
                                 <br />
                             </table>
-
                         ))}
                     </div>
                 </div>
@@ -332,4 +275,21 @@ class RestaurantOrders extends Component {
     }
 }
 
-export default RestaurantOrders;
+const mapStateToProps = (state) => {
+    console.log("state update rest order reducer:",state.resState);
+    return {
+        restaurant: state.resState.restaurant ||  "",
+        orderDetails: state.resState.orderDetails ||  "",
+        orderFiltered: state.resState.orderDetails || ""
+    };
+};
+
+
+const mapDispatchToProps = (dispatch) => {
+    return{
+        updateOrder: (payload) => dispatch(updateOrder(payload)),
+    }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(RestaurantOrders);

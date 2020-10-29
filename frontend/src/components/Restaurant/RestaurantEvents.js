@@ -3,54 +3,39 @@ import '../../App.css';
 import { Redirect } from 'react-router';
 import axios from 'axios';
 import configurePath from '../../config';
+import { connect } from 'react-redux';
+import { getEventRegistrations } from '../../actions/eventActions/getEventRegisterations';
 
 class RestaurantEvents extends Component {
 
     constructor(props) {
         super(props);
 
-        console.log("Restaurant Events: ", this.props.location.state);
         this.state = {
-            restaurant: this.props.location.state.restaurant,
-            postedEvents: [],
-            filteredEvents: [],
-            registeredUsers: [],
+            restaurant: this.props.restaurant,
+            postedEvents: this.props.eventDetails,
+            filteredEvents: this.props.eventDetails,
+            registeredUsers: this.props.registeredUsers,
             registeredUsersFlag: null,
             eventId: null,
             redirectToCustomer: false,
             customer: [],
             restaurantId: null,
             redirectToPostEvents: false,
-            errorMsg: ""
+            submitRegistrations: false
         }
         this.registeredUsersHandler = this.registeredUsersHandler.bind(this);
         this.customerProfileHandler = this.customerProfileHandler.bind(this);
-        this.postEventHandler = this.postEventHandler.bind(this);
     }
 
-    componentDidMount() {
-        console.log("On page load")
-        const data = {
-            id: this.state.restaurant.RestaurantId,
-            user: "restaurant"
-        }
-        axios.post(configurePath.api_host+'/getEvents', data)
-            .then((response) => {
+    componentDidUpdate(prevProps){
 
-                console.log("Status Code : ", response.status);
-                if (response.status === 200) {
-                    console.log("CustomerEvents Fetched: ", response.data);
-                    console.log("State Events: ", this.state.upcomingEvents);
-                    this.setState({
-                        successFlag: true,
-                        postedEvents: this.state.postedEvents.concat(response.data),
-                        filteredEvents: response.data
-                    })
-                }
-            })
-            .catch((error) => {
-                console.log("Error here: ", error)
+        if(this.state.postedEvents !== this.props.eventDetails){
+            this.setState({          
+                postedEvents: this.props.eventDetails,
+                filteredEvents: this.props.eventDetails
             });
+        }
     }
 
     registeredUsersHandler(eventId) {
@@ -60,37 +45,13 @@ class RestaurantEvents extends Component {
         const data = {
             id: eventId
         }
-        axios.post(configurePath.api_host+'/getRegisteredUsers', data)
-            .then((response) => {
 
-                console.log("Status Code : ", response.status);
-                if (response.status === 200) {
-                    console.log("CustomerEvents Fetched: ", response.data);
-                    console.log("State Events: ", this.state.upcomingEvents);
-                    this.setState({
-                        errorMsg: null,
-                        registeredUsers: response.data,
-                        registeredUsersFlag: true,
-                        eventId: eventId
-                    })
-                }else{
-                    this.setState({
-                        registeredUsersFlag: false,
-                        errorMsg: "No registration yet!",
-                        eventId: eventId
-                    })
-                }
-            })
-            .catch((error) => {
-                console.log("Error here: ", error)
-                this.setState({
-                    registeredUsersFlag: false,
-                    errorMsg: "No registration yet!",
-                    eventId: eventId
-                })
-            });
+        this.setState({
+            submitRegistrations: true
+        });
+
+        this.props.getEventRegistrations(data);
     }
-
 
     customerProfileHandler(customer) {
         console.log("customer: ", customer);
@@ -101,29 +62,25 @@ class RestaurantEvents extends Component {
         })
     }
 
-    postEventHandler(e) {
-        this.setState({
-            redirectToPostEvents: true,
-            restaurantId: this.state.restaurantId
-        })
-    }
-
     render() {
 
+        console.log("this.state.eventDetails:", this.state.eventDetails);
         var redirectVar = null;
         var errorMessage = null;
+        var errorMsg = null;
 
         if (this.state.redirectToCustomer) {
             redirectVar = <Redirect to={{ pathname: "/customerProfile", state: { customer: this.state.customer } }} />
         }
 
-        if(this.state.redirectToPostEvents){
-            redirectVar = <Redirect to={{ pathname: "/postEvents", state: { restaurant: this.state.restaurant } }} />
+         console.log("checking the event reg details: ", this.state.submitRegistrations," : ",this.props.getRegistrationsFlag);
+        if(this.state.submitRegistrations  && this.props.getRegistrationsFlag === false){
+            console.log("errorMsg: ", this.props.eventErrorMsg);
+            errorMessage = <div style={{ fontSize: "18px", fontWeight: "bold" }}> {this.props.eventErrorMsg}</div>
         }
 
-        if(this.state.registeredUsersFlag === false){
-            console.log("errorMsg: ", this.state.errorMsg);
-            errorMessage = <div style={{ fontSize: "18px", fontWeight: "bold" }}> {this.state.errorMsg}</div>
+        if(this.props.getEventFlag){
+            errorMsg = <div style={{ fontSize: "18px", fontWeight: "bold" }}> {this.props.errorMsg}</div>
         }
 
         return (
@@ -151,7 +108,7 @@ class RestaurantEvents extends Component {
 
                     <div className="header-right">
                         <div className="icons">
-                            <div className="icon1" onClick={this.postEventHandler}>Post An Event</div>
+                            <div className="icon1"><a href="/postEvents">Post An Event</a></div>
                             <div className="icon2">Write a Review</div>
                             <div class="material-icons icon3">notifications_none</div>
                             <div class="far fa-comment-dots icon4"></div>
@@ -159,7 +116,7 @@ class RestaurantEvents extends Component {
                                 <div className="dropdown">
                                     <div className="material-icons" data-toggle="dropdown">account_circle</div>
                                     <ul class="dropdown-menu pull-right">
-                                        <li style={{ display: "block", padding: "3px 20px", lineHeight: "1.42857143", color: "#333", fontWeight: "400" }} onClick={this.redirectHandler}>About me</li>
+                                        <li><a href="/restaurantProfile">Profile</a></li>
                                         <li><a href="/">Orders</a></li>
                                         <li><a href="/">Events</a></li>
                                         <li><a href="/restaurantLogout">Sign Out</a></li>
@@ -173,7 +130,9 @@ class RestaurantEvents extends Component {
                 <hr style={{ border: "1px solid lightgray" }} />
                 <div>
                     <div style={{ fontWeight: "bold", color: "#d32323", fontSize: "25px", marginBottom: "8px", marginLeft: "150px" }}>Events Posted</div>
-                    {this.state.filteredEvents.map(event => (
+                    {(this.state.filteredEvents !== null && this.state.filteredEvents.length !== 0) ?
+                    
+                    this.state.filteredEvents.map(event => (
                         <table className="event-table">
                             <tbody>
                                 <tr>
@@ -191,21 +150,21 @@ class RestaurantEvents extends Component {
                                     </td>
                                     <td>
                                         {/* registeredUsersFlag */}
-                                        {(this.state.registeredUsersFlag === true && this.state.eventId === event.EventId) ?
+                                        {(this.state.submitRegistrations  && this.props.getRegistrationsFlag && event.EventId === this.props.eventId) ?
 
                                             <div>
-                                                {this.state.registeredUsers.map(user => (
+                                                {this.props.registeredUsers.map(user => (
                                                     <div style={{ fontSize: "18px", fontWeight: "bold" }} onClick={() => this.customerProfileHandler(user)}> <span class="event-dot"> </span>&emsp;{user.CustName} <br /></div>
                                                 ))}
                                             </div>
-                                            : this.state.eventId === event.EventId ? <div>{errorMessage}</div> : null
+                                            : null
                                         }
-
+                                         {(event.EventId === this.props.eventId) ? <div>{errorMessage}</div> : null} 
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
-                    ))}
+                    )) :  errorMsg}
                 </div>
             </div >
         )
@@ -213,4 +172,27 @@ class RestaurantEvents extends Component {
 
 }
 
-export default RestaurantEvents;
+
+const mapStateToProps = (state) => {
+    console.log("state update rest event reducer:",state.resState);
+    return {
+        restaurant: state.resState.restaurant ||  "",
+        eventDetails: state.resState.eventDetails || "",
+        filteredEvents: state.resState.eventDetails || "",
+        registeredUsers: state.resState.registeredUsers || "",
+        eventErrorMsg: state.resState.eventErrorMsg || "",
+        getRegistrationsFlag: state.resState.getRegistrationsFlag,
+        eventId: state.resState.eventId || "",
+        getEventFlag: state.resState.getEventFlag,
+        errorMsg: state.resState.errorMsg || ""
+    };
+};
+
+
+const mapDispatchToProps = (dispatch) => {
+    return{
+        getEventRegistrations: (payload) => dispatch(getEventRegistrations(payload))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(RestaurantEvents);

@@ -4,7 +4,7 @@ const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const config = require('./config');
 const Customers = require('../models/Customers');
-
+const Restaurants = require('../models/Restaurants');
 
 // Setup work and export for the JWT passport strategy
 function customerAuth() {
@@ -44,7 +44,7 @@ function restaurantAuth() {
         new JwtStrategy(opts, (jwt_payload, callback) => {
             const customerId = jwt_payload._id;
 
-            Customers.findById(customerId, (err, result) => {
+            Restaurants.findById(customerId, (err, result) => {
                 if (err) {
                     return callback(err, false);
                 }
@@ -60,5 +60,4 @@ function restaurantAuth() {
 
 exports.customerAuth = customerAuth;
 exports.checkAuth = passport.authenticate("jwt", { session: false });
-exports.restaurantAuth = customerAuth;
-// exports.restaurantCheckAuth = passport.authenticate("jwt", { session: false });
+exports.restaurantAuth = restaurantAuth;

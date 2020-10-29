@@ -142,7 +142,7 @@ class CustResLanding extends Component {
 
         console.log("Search List:", this.state.searchList)
 
-        if (selectedDeliveryOptions.length == 3) {
+        if (selectedDeliveryOptions.length === 3) {
             this.setState({
                 filteredRestaurants: this.state.searchList
             })
@@ -253,7 +253,7 @@ class CustResLanding extends Component {
             redirectVar = <Redirect to={{ pathname: "/customerProfile", state: { customer: this.state.customer } }} />
         }
 
-        if (this.state.filteredRestaurants && this.state.filteredRestaurants.length == 0) {
+        if (this.state.filteredRestaurants && this.state.filteredRestaurants.length === 0) {
             console.log("Inside errorr:")
             errorMsg = <div style={{ fontWeight: "bold", fontSize: "20px", marginTop: "20px", color: "#f43938" }}>{this.state.searchErrorMsg}</div>
         }

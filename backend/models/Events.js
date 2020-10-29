@@ -1,9 +1,9 @@
-const { Decimal128 } = require('mongodb');
 const mongoose = require('mongoose');
 const AutoIncrement = require('mongoose-sequence')(mongoose);
 
 const EventSchema = new mongoose.Schema({
-    EventRestId: {type: Number},
+    Restaurant : { type: mongoose.Schema.Types.ObjectId, ref: 'restaurants'},
+    RegisteredUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'customers'}],
     EventName: {type: String},
     EventDay: {type: String, default:'Sunday'},
     EventDate: {type: Date},
@@ -20,6 +20,5 @@ const EventSchema = new mongoose.Schema({
     EventHashtag: {type: String}
 })
 EventSchema.plugin(AutoIncrement, { inc_field: 'EventId'});
-
 const Events = mongoose.model('events', EventSchema);
 module.exports = Events;

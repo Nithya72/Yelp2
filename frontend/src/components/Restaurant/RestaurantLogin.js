@@ -2,13 +2,11 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { restaurantLogin } from '../../actions/authActions/resLoginActions';
-// import {restaurantLogout} from '../../actions/authActions/resLogoutActions';
 import { Redirect } from 'react-router';
 
 class RestaurantLogin extends Component {
     constructor(props) {
         super(props);
-        // this.props.restaurantLogout("logout");
         this.state = {
             restEmailID: '',
             restPassword: '',
@@ -44,10 +42,8 @@ class RestaurantLogin extends Component {
         const {restEmailID, restPassword, submitted } = this.state;
 
         if(this.props.loginFlag == false){
-
             final_msg = <div class="alert alert-danger" role="alert">{this.props.error_msg}</div>
-        }else if(this.props.loginFlag == true){
-            //redirectVar = <Redirect to={{ pathname: "/restaurantProfile", state: { restaurant: this.props.res } }} />
+        }else if(this.props.loginFlag && this.props.isAuthenticated){
             redirectVar = <Redirect to={{ pathname: "/restaurantProfile"}} />
         }
 
@@ -117,7 +113,9 @@ const mapStateToProps = (state) => {
     return {
         res:  state.resState.restaurant ||  "",
         loginFlag: state.resState.loginFlag,
-        error_msg: state.resState.error_msg || ""
+        //loginFlag: false,
+        error_msg: state.resState.errorMsg || "",
+        isAuthenticated : state.resState.isAuthenticated
     };
 };
 

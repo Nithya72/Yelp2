@@ -1,7 +1,8 @@
 
 const initialState = {
-  isAuthenticated: null,
-  loading: true
+  token: localStorage.getItem('token'),
+  isAuthenticated: false,
+  // loading: true
 }
 
 const resState = (state = initialState, action) => {
@@ -35,6 +36,7 @@ const resState = (state = initialState, action) => {
     }
 
     case "RESTAURANT_LOGOUT":
+      localStorage.removeItem('token');
       return initialState;
 
     case "ADD_MENU":
@@ -59,6 +61,41 @@ const resState = (state = initialState, action) => {
         ...payload,
         isAuthenticated: true
       }
+
+      case "GET_ORDER":
+        return{
+          ...state,
+          ...payload,
+          isAuthenticated: true
+        }
+
+      case "UPDATE_ORDER":
+        return{
+          ...state,
+          ...payload,
+          isAuthenticated: true,
+        }
+
+        case "GET_EVENT":
+          return{
+            ...state,
+            ...payload,
+            isAuthenticated: true
+          }
+
+        case "GET_REGISTRATIONS":
+          return{
+            ...state,
+            ...payload,
+            isAuthenticated: true
+          }
+
+        case "POST_EVENT":
+          return{
+            ...state,
+            ...payload,
+            isAuthenticated: true
+          }
     
     default:
       return state;

@@ -13,39 +13,16 @@ class RestaurantMenu extends Component {
         console.log("Restaurant Menu: ", this.props.restaurant[0]);
         this.state = {
             restaurant: this.props.restaurant[0],
-            entireMenu: [],
+            entireMenu: this.props.restaurant[0].Menu,
             successFlag: false,
             dishToUpdate: null,
             redirectToMenuUpdate: false,
-            redirectToMenuAdd: false,
-            redirectToMenuUpdate: false
+            redirectToMenuAdd: false
         }
  
         this.menuAddHandler = this.menuAddHandler.bind(this);
         this.menuUpdateHandler = this.menuUpdateHandler.bind(this);
 
-    }
-
-    componentDidMount() {
-        console.log("On page load")
-        const data = {
-            restaurantId: this.state.restaurant.RestaurantId
-        }
-        axios.post(configurePath.api_host+'/getMenu', data)
-            .then((response) => {
-
-                console.log("Status Code : ", response.status);
-                if (response.status === 200) {
-                    console.log("Menu-Dishes Fetched: ", response.data);
-                    this.setState({
-                        successFlag: true,
-                        entireMenu: response.data
-                    })
-                }
-            })
-            .catch((error) => {
-                console.log("Error here: ", error)
-            });
     }
 
     menuAddHandler(e) {
@@ -174,7 +151,6 @@ const mapStateToProps = (state) => {
 
 
 const mapDispatchToProps = (dispatch) => {
-    
     return{
         // redirectUpdateMenu: (msg) => dispatch(addMenu(msg))
     }

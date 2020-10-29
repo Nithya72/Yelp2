@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { restaurantSignUp } from '../../actions/authActions/resSignupActions';
-// import {setAlert} from '../../actions/alert.actions';
 
 class RestaurantSignUp extends Component {
 
@@ -63,7 +62,7 @@ class RestaurantSignUp extends Component {
             errorAlert = true;
         }
 
-        if (successAlert) {
+        if (successAlert && this.props.isAuthenticated) {
             final_msg = <div class="alert alert-success" role="alert">{this.props.res}<a href={'/restaurantLogin'} > Login Here.</a></div>
         } else if (errorAlert) {
             console.log("errorAlert: ", errorAlert, "this.props.res: ", this.props.res)
@@ -75,7 +74,6 @@ class RestaurantSignUp extends Component {
                 <div className="all-header" style={{ backgroundColor: "#d32323", height: "70px" }}>
 
                     <div className="header-left">
-                        {/* &emsp;&emsp;<Link to="/" className="button">Home</Link> */}
                         &emsp;<Link to="/customerSignUp" className="button">Customer SignUp</Link>
                         &emsp;<Link to="/customerLogin" style={{ color: "white", fontWeight: "bold" }}>Customer Login</Link>
                     </div>
@@ -83,7 +81,6 @@ class RestaurantSignUp extends Component {
                     <img className="logo1" src={require('../../images/logo.jpg')} alt="" />
 
                     <div className="header-right">
-                        {/* &emsp;<Link to="/restaurantSignUp" className="button">Restaurant SignUp</Link> */}
                         &emsp;&emsp;<Link to="/" className="button">Home</Link>
                         &emsp;<Link to="/restaurantLogin" style={{ color: "white", fontWeight: "bold" }}>Restaurant Login</Link>
                     </div>
@@ -144,7 +141,8 @@ const mapStateToProps = (state) => {
     console.log("state sign up reducer:",state.resState);
     return {
         res:  state.resState.response_msg ||  "",
-        registerFlag: state.resState.registerFlag || null
+        registerFlag: state.resState.registerFlag || null,
+        isAuthenticated: state.resState.isAuthenticated
     };
 };
 

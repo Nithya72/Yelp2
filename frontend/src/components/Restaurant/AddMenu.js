@@ -14,7 +14,7 @@ class AddMenu extends Component {
 
             actionType: "add",
             restaurant: this.props.restaurant[0],
-            dish: this.props.dish,
+            dish: "",
             submitted: false,
             redirectToProfile: false,
             successFlag: false,
@@ -83,7 +83,7 @@ class AddMenu extends Component {
 
         const data = {
             dish: this.state.dish,
-            restaurantId: this.state.restaurant.RestaurantId
+            restaurantId: this.state.restaurant._id
         }
 
         this.props.addMenuDetails(data);
@@ -133,7 +133,6 @@ class AddMenu extends Component {
     }
 
     render() {
-        console.log("Add Update Menu:", this.state.actionType, " : ", this.state.dish);
 
         var DishName = null;
         var DishPrice = null;
@@ -317,6 +316,5 @@ const mapDispatchToProps = (dispatch) => {
         addMenuDetails: data => dispatch(addMenuDetails(data))
     }
 }
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddMenu);

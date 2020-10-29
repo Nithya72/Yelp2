@@ -13,13 +13,16 @@ const updateResProfileDispatcher = payload => {
 export const updateResProfile = (restaurant) => {
 
     return dispatch => {
-        console.log("Inside update res profile actions: ", restaurant);
         
-        axios.post(configPath.api_host + '/updateRestaurantProfile', restaurant)
+        axios.post(configPath.api_host + '/restaurant/profile', restaurant)
             .then(response => {
 
                 console.log("Actions: Restaurant Profile Update:", response);
-                var restaurant = response.data;
+                var restaurant = [response.data];
+
+                // const payload = {
+                //     restaurant: [restaurant]
+                // }
 
                 if (response.status === 200) {
                     dispatch(updateResProfileDispatcher({
@@ -32,7 +35,7 @@ export const updateResProfile = (restaurant) => {
                 console.log("error: ", err.data);
 
                 dispatch(updateResProfileDispatcher({
-                    error_msg: "Couldn't update profile!",
+                    errorMsg: "Couldn't update profile!",
                     updateFlag: false
                 })
                 );

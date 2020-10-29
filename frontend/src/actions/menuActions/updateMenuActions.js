@@ -14,16 +14,16 @@ export const updateMenuDetails = (payload) => {
 
     return dispatch => {
         
-        axios.post(configPath.api_host + '/updateMenu', payload)
+        axios.post(configPath.api_host + '/restaurant/menu/update', payload)
             .then(response => {
 
                 console.log("Actions - Update Menu:", response);
-                var addMsg = response.data;
+                var restaurant = [response.data];
 
                 if (response.status === 200) {
 
                     dispatch(updateMenuDetailsDispatcher({
-                        addMsg,
+                        restaurant,
                         updateFlag: true
                     })
                     );
@@ -32,7 +32,7 @@ export const updateMenuDetails = (payload) => {
                 console.log("error: ", err.data);
 
                 dispatch(updateMenuDetailsDispatcher({
-                    addMsg: "Couldn't add the dish! Try after sometime",
+                    errorMsg: "Couldn't add the dish! Try after sometime",
                     updateFlag: false
                 })
                 );

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import StarRatings from 'react-star-ratings';
 import { Redirect } from 'react-router';
+import { connect } from 'react-redux';
 
 class Restaurants extends Component {
 

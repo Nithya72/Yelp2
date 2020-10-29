@@ -53,9 +53,13 @@ class UpdateMenu extends Component {
         this.setState({
             submitted: true
         })
-        const { dish } = this.state;
+        const data =
+        { 
+            dish : this.state.dish,
+            restaurantId: this.props.restaurant[0]._id
+        }
 
-        this.props.updateMenu(dish);
+        this.props.updateMenu(data);
     }
 
     pictureHandler(e) {
@@ -101,7 +105,6 @@ class UpdateMenu extends Component {
 
     render() {
         console.log("Add Update Menu:", this.state.actionType, " : ", this.state.dish);
-        // const{submitted} = this.state;
 
         var DishName = null;
         var DishPrice = null;

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import configPath from '../../config';
+import jwt_decode from "jwt-decode";
 
 
 const registerRestaurantDispatcher = payload => {
@@ -14,11 +15,15 @@ const registerRestaurantDispatcher = payload => {
 export const restaurantSignUp = (restaurant) => {
 
     return dispatch => {
-        axios.post(configPath.api_host + '/restaurantSignUp', restaurant)
+        axios.post(configPath.api_host + '/restaurant/signup', restaurant)
             .then(response => {
 
                 console.log("Actions: Restaurant Signup:", response);
-                var response_msg = response.data;
+                var decodedResponse = jwt_decode(response.data.token);
+
+                console.log("response_msg: ", decodedResponse);
+
+                var response_msg = decodedResponse.msg;
 
                 if (response.status === 200) {
                     dispatch(registerRestaurantDispatcher({
@@ -35,7 +40,7 @@ export const restaurantSignUp = (restaurant) => {
                 }
             }).catch(err => {
                 dispatch(registerRestaurantDispatcher({
-                    res: "Oops! We couldn't register you now. Try after sometime.",
+                    errorMsg: "Oops! We couldn't register you now. Try after sometime.",
                     registerFlag: false
                 })
                 );
