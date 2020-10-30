@@ -24,10 +24,10 @@ router.post('/', async (req, res) => {
         const restaurant = new Restaurants({ RestName: req.body.restName, RestEmailId: req.body.restEmailID, RestPassword: hash, Location: req.body.Location });
         await restaurant.save();
 
-        console.log(" restaurant id: ", restaurant.id);
+        console.log(" restaurant id: ", restaurant._id);
 
         const id = {
-            restaurant: { id: restaurant.id },
+            restaurant: { id: restaurant._id },
             msg: "You have successfully registered!"
         }
 

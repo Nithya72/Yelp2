@@ -5,7 +5,7 @@ const OrderSchema = new mongoose.Schema({
     Customer: { type: mongoose.Schema.Types.ObjectId, ref: 'customers' },
     OrderAmount: {type: Number},
     OrderTime: {type: Date},
-    OrderDishes: {type: String},
+    OrderDishes: {type: Array},
     OrderStatus: {type: String},
     DeliveryOption: {type: String}
 })

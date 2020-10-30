@@ -13,7 +13,7 @@ const getEventDispatcher = payload => {
 export const getEvents = (payload) => {
 
     return dispatch => {
-
+        axios.defaults.headers.common['authorization'] = localStorage.getItem('rToken');
         axios.post(configPath.api_host + '/restaurant/events', payload)
             .then(response => {
 

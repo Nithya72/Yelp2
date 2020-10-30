@@ -1,30 +1,30 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { Redirect } from 'react-router';
+import { connect } from 'react-redux';
+import { updateCusProfile } from '../../actions/profileActions/updateCusProfileActions';
 
 class UpdateCustomerProfile extends Component {
 
     constructor(props) {
         super(props);
 
-        console.log("UpdateCustomerProfile : ", this.props.location.state.customer)
-
         this.state = {
             customer: {
-                CustomerId: this.props.location.state.customer.CustomerId,
-                CustName: this.props.location.state.customer.CustName,
-                NickName: this.props.location.state.customer.NickName,
-                CustomerDOB: this.props.location.state.customer.CustomerDOB,
-                CustEmailId: this.props.location.state.customer.CustEmailId,
-                CustomerPhoneNo: this.props.location.state.customer.CustomerPhoneNo,
-                CustomerCity: this.props.location.state.customer.CustomerCity,
-                CustomerState: this.props.location.state.customer.CustomerState,
-                CustomerCountry: this.props.location.state.customer.CustomerCountry,
-                YelpingSince: this.props.location.state.customer.YelpingSince,
-                ThingsLove: this.props.location.state.customer.ThingsLove,
-                FindMeIn: this.props.location.state.customer.FindMeIn,
-                MyBlog: this.props.location.state.customer.MyBlog,
-                CustPic: this.props.location.state.customer.CustPic
+                _id: this.props.customer[0]._id,
+                CustName: this.props.customer[0].CustName,
+                NickName: this.props.customer[0].NickName,
+                CustomerDOB: this.props.customer[0].CustomerDOB,
+                CustEmailId: this.props.customer[0].CustEmailId,
+                CustomerPhoneNo: this.props.customer[0].CustomerPhoneNo,
+                CustomerCity: this.props.customer[0].CustomerCity,
+                CustomerState: this.props.customer[0].CustomerState,
+                CustomerCountry: this.props.customer[0].CustomerCountry,
+                YelpingSince: this.props.customer[0].YelpingSince,
+                ThingsLove: this.props.customer[0].ThingsLove,
+                FindMeIn: this.props.customer[0].FindMeIn,
+                MyBlog: this.props.customer[0].MyBlog,
+                CustPic: this.props.customer[0].CustPic
             },
             custProfilePic: null,
             submitted: false,
@@ -104,21 +104,23 @@ class UpdateCustomerProfile extends Component {
         this.setState({ submitted: true });
         const { customer } = this.state;
 
-        axios.post('http://localhost:3001/updateCustomerProfile', customer)
-            .then((response) => {
+        this.props.updateCusProfile(customer);
 
-                console.log("Status Code : ", response.status);
-                if (response.status === 200) {
-                    console.log("After Customer Profile Updation: ", response.data);
-                    this.setState({
-                        customer: response.data,
-                        redirectToProfile: true
-                    })
-                }
-            })
-            .catch((error) => {
-                console.log("Error here: ", error)
-            });
+        // axios.post('http://localhost:3001/updateCustomerProfile', customer)
+        //     .then((response) => {
+
+        //         console.log("Status Code : ", response.status);
+        //         if (response.status === 200) {
+        //             console.log("After Customer Profile Updation: ", response.data);
+        //             this.setState({
+        //                 customer: response.data,
+        //                 redirectToProfile: true
+        //             })
+        //         }
+        //     })
+        //     .catch((error) => {
+        //         console.log("Error here: ", error)
+        //     });
     }
 
     render() {
@@ -128,8 +130,8 @@ class UpdateCustomerProfile extends Component {
         let redirectVar = null;
         let uploadMsg = null;
 
-        if (this.state.redirectToProfile) {
-            redirectVar = <Redirect to={{ pathname: "/customerProfile", state: { customer: this.state.customer[0] } }} />
+        if (this.state.submitted && this.props.updateFlag) {
+            redirectVar = <Redirect to={{ pathname: "/customerProfile"}} />
         }
 
         if (this.state.redirectToCustProfile) {
@@ -178,7 +180,7 @@ class UpdateCustomerProfile extends Component {
                                         <li style={{ display: "block", padding: "3px 20px", lineHeight: "1.42857143", color: "#333", fontWeight: "400" }} onClick={this.redirectHandler}>About me</li>
                                         <li><a href="/">Orders</a></li>
                                         <li><a href="/">Events</a></li>
-                                        <li><a href="/customerLogin">Sign Out</a></li>
+                                        <li><a href="/customerLogout">Sign Out</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -300,4 +302,18 @@ class UpdateCustomerProfile extends Component {
     }
 }
 
-export default UpdateCustomerProfile;
+const mapStateToProps = (state) => {
+    console.log("state update customer profile reducer:", state.cusStore);
+    return {
+        customer: state.cusStore.customer || "",
+        updateFlag: state.cusStore.updateFlag
+    };
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        updateCusProfile: (payload) => dispatch(updateCusProfile(payload))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(UpdateCustomerProfile);

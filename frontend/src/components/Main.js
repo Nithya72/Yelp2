@@ -3,6 +3,7 @@ import { Router, Route, Switch } from 'react-router-dom';
 
 import CustomerEvents from './Customer/CustomerEvents';
 import CustomerLogin from './Customer/CustomerLogin';
+import CustomerLogout from './Customer/CustomerLogout';
 import CustomerOrders from './Customer/CustomerOrders';
 import CustomerProfile from './Customer/CustomerProfile';
 import CustomerSignUp from './Customer/CustomerSignUp';
@@ -47,6 +48,7 @@ export default class Main extends Component {
                     
                         <Route exact path="/customerEvents" component={CustomerEvents} />
                         <Route exact path="/customerLogin" component={CustomerLogin} />
+                        <Route exact path="/customerLogout" component={CustomerLogout} /> 
                         <Route exact path="/customerOrders" component={CustomerOrders} />
                         <Route exact path="/customerProfile" component={CustomerProfile} />
                         <Route exact path="/customerSignUp" component={CustomerSignUp} />

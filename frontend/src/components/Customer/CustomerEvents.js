@@ -4,6 +4,7 @@ import { Redirect } from 'react-router';
 import axios from 'axios';
 import configurePath from '../../config';
 import configPath from '../../config';
+import { connect } from 'react-redux';
 
 class CustomerEvents extends Component {
 
@@ -152,7 +153,7 @@ class CustomerEvents extends Component {
                                         <li style={{ display: "block", padding: "3px 20px", lineHeight: "1.42857143", color: "#333", fontWeight: "400" }} onClick={this.redirectHandler}>About me</li>
                                         <li><a href="/">Orders</a></li>
                                         <li><a href="/">Events</a></li>
-                                        <li><a href="/customerLogin">Sign Out</a></li>
+                                        <li><a href="/customerLogout">Sign Out</a></li>
                                     </ul>
                                 </div>
                             </div>

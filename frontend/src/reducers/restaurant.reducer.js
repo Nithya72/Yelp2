@@ -1,6 +1,6 @@
 
 const initialState = {
-  token: localStorage.getItem('token'),
+  token: localStorage.getItem('rToken'),
   isAuthenticated: false,
   // loading: true
 }
@@ -36,7 +36,7 @@ const resState = (state = initialState, action) => {
     }
 
     case "RESTAURANT_LOGOUT":
-      localStorage.removeItem('token');
+      localStorage.removeItem('rToken');
       return initialState;
 
     case "ADD_MENU":

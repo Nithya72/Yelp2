@@ -11,9 +11,8 @@ class Restaurants extends Component {
         console.log("Props - Customer: ", this.props.location.state.customer);
 
         this.state = {
-            // restaurants: this.props.location.state.restaurant,
             restaurant: this.props.location.state.restaurant,
-            customer: this.props.location.state.customer,
+            customer: this.props.customer[0],
             orderType: null,
             redirectToOrder: false,
             redirectToRests: false,
@@ -52,20 +51,20 @@ class Restaurants extends Component {
         var noReviewsMsg = null;
 
         if (this.state.redirectToOrder) {
-            redirectVar = <Redirect to={{ pathname: "/customerOrders", state: { restaurant: this.state.restaurant, customer: this.state.customer, orderType: this.state.orderType } }} />
+            redirectVar = <Redirect to={{ pathname: "/customerOrders", state: { restaurant: this.state.restaurant, orderType: this.state.orderType } }} />
         }
 
         if (this.state.redirectToRests) {
-            redirectVar = <Redirect to={{ pathname: "/custResLanding", state: { customer: this.state.customer } }} />
+            redirectVar = <Redirect to={{ pathname: "/custResLanding" }} />
         }
 
         if (this.state.redirectToPostReview) {
             redirectVar = <Redirect to={{ pathname: "/postReviews", state: { customer: this.state.customer, restaurant: this.state.restaurant } }} />
         }
 
-        if ((!this.state.restaurant.Review1 || this.state.restaurant.Review1.length === 0) && (!this.state.restaurant.Review2 || this.state.restaurant.Review2.length === 0) && (!this.state.restaurant.Review3 || this.state.restaurant.Review3.length === 0)) {
-            noReviewsMsg = <div style={{ fontWeight: "bold", marginTop: "8px", marginLeft: "350px", fontSize: "22px", color: "#f43939" }}>No Reviews Added Yet</div>
-        }
+        // if ((!this.state.restaurant.Review1 || this.state.restaurant.Review1.length === 0) && (!this.state.restaurant.Review2 || this.state.restaurant.Review2.length === 0) && (!this.state.restaurant.Review3 || this.state.restaurant.Review3.length === 0)) {
+        //     noReviewsMsg = <div style={{ fontWeight: "bold", marginTop: "8px", marginLeft: "350px", fontSize: "22px", color: "#f43939" }}>No Reviews Added Yet</div>
+        // }
 
 
         return (
@@ -104,7 +103,7 @@ class Restaurants extends Component {
                                         <li style={{ display: "block", padding: "3px 20px", lineHeight: "1.42857143", color: "#333", fontWeight: "400" }} onClick={this.redirectHandler}>Restaurants</li>
                                         <li><a href="/">Orders</a></li>
                                         <li style={{ display: "block", padding: "3px 20px", lineHeight: "1.42857143", color: "#333", fontWeight: "400" }}>Upcoming Events</li>
-                                        <li><a href="/customerLogin">Sign Out</a></li>
+                                        <li><a href="/customerLogout">Sign Out</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -112,15 +111,12 @@ class Restaurants extends Component {
                     </div>
                 </div>
 
-
-                {/* <hr style={{ border: "1px solid lightgray" }} /> */}
                 <div className="rest-pic1">
 
                     <img src={require("../../images/" + this.props.location.state.restaurant.ImageSrc + "1.jpg")} alt="" />
                     <img src={require("../../images/" + this.props.location.state.restaurant.ImageSrc + "2.jpg")} alt="" />
                     <img src={require("../../images/" + this.props.location.state.restaurant.ImageSrc + "3.jpg")} alt="" />
                     <img src={require("../../images/" + this.props.location.state.restaurant.ImageSrc + "4.jpg")} alt="" />
-                    {/* <img src={require("../../images/" + this.props.location.state.restaurant.ImageSrc+"5.jpg")} alt="" /> */}
                 </div>
 
                 <div className="rest-landing-all">
@@ -156,69 +152,47 @@ class Restaurants extends Component {
                     </div>
                     <hr style={{ border: "1px solid lightgray", marginLeft: "150px", maxWidth: "1200px" }} />
 
+                    {(this.state.restaurant.Reviews != null && this.state.restaurant.Reviews.length != 0) ?
 
-                    {this.state.restaurant.Review1 != null ?
-                        <div className="reviews-all">
-                            <div style={{ fontWeight: "bold", fontSize: "25px", fontFamily: "Open Sans,Helvetica Neue,Helvetica,Arial,sans-serif", marginBottom: "35px" }}> Recommended reviews </div>
-                            <div className="reviews-profile">
-                                <div className="review-img"> <img src={require("../../images/avatar.jpg")} alt="" style={{ width: "60px", height: "60px" }} /> </div>
-                                <div className="review-reviewer">
-                                    <div className="review-name" style={{ fontSize: "16px", color: "#00838f" }}>{(this.state.restaurant.Review1).split(":")[0]}</div>
-                                    <div className="review-nos"> 78 reviews</div>
-                                    <div className="review-photos">51 photos</div>
+                        this.state.restaurant.Reviews.map(review => (
 
+                            <div className="reviews-all">
+                                <div style={{ fontWeight: "bold", fontSize: "25px", fontFamily: "Open Sans,Helvetica Neue,Helvetica,Arial,sans-serif", marginBottom: "35px" }}> Recommended reviews </div>
+                                <div className="reviews-profile">
+                                    <div className="review-img"> <img src={require("../../images/avatar.jpg")} alt="" style={{ width: "60px", height: "60px" }} /> </div>
+                                    <div className="review-reviewer">
+                                        <div className="review-name" style={{ fontSize: "16px", color: "#00838f" }}>{(review.CustomerName)}</div>
+                                        <div className="review-nos"> 78 reviews</div>
+                                        <div className="review-photos">51 photos</div>
+
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="reviews-profile-text">
-                                <StarRatings rating={4} starDimension="20px" starSpacing="1px" starRatedColor="red" numberOfStars={5} name='rating' /> &nbsp; {(this.state.restaurant.Review1).split(":")[3]}  <br /><br />
-                                {(this.state.restaurant.Review1).split(":")[1]}
-                            </div>
-                            <hr style={{ border: "0.06px solid #eeeeef", marginLeft: "0px", maxWidth: "900px" }} />
-                        </div> : null}
-
-                    {noReviewsMsg}
-                    {this.state.restaurant.Review2 != null ?
-
-                        <div className="reviews-all">
-                            <div className="reviews-profile">
-                                <div className="review-img"> <img src={require("../../images/avatar.jpg")} alt="" style={{ width: "60px", height: "60px" }} /> </div>
-                                <div className="review-reviewer">
-                                    <div className="review-name" style={{ fontSize: "16px", color: "#00838f" }}>{(this.state.restaurant.Review1).split(":")[0]}</div>
-                                    <div className="review-nos"> 42 reviews</div>
-                                    <div className="review-photos">32 photos</div>
-
-
+                                <div className="reviews-profile-text">
+                                    <StarRatings rating={review.Rating} starDimension="20px" starSpacing="1px" starRatedColor="red" numberOfStars={5} name='rating' /> &nbsp; {(review.ReviewDate).substring(0, 10)}  <br /><br />
+                                    {review.Comment}
                                 </div>
+                                <hr style={{ border: "0.06px solid #eeeeef", marginLeft: "0px", maxWidth: "900px" }} />
                             </div>
-                            <div className="reviews-profile-text">
-                                <StarRatings rating={4} starDimension="20px" starSpacing="1px" starRatedColor="red" numberOfStars={5} name='rating' /> &nbsp; {(this.state.restaurant.Review1).split(":")[3]}  <br /><br />
-                                {(this.state.restaurant.Review2).split(":")[1]}
-                            </div>
-                            <hr style={{ border: "0.06px solid #eeeeef", marginLeft: "0px", maxWidth: "900px" }} />
-                        </div>
-                        : null}
 
-
-                    {this.state.restaurant.Review3 != null ?
-                        <div className="reviews-all">
-                            <div className="reviews-profile">
-                                <div className="review-img"> <img src={require("../../images/avatar.jpg")} alt="" style={{ width: "60px", height: "60px" }} /> </div>
-                                <div className="review-reviewer">
-                                    <div className="review-name" style={{ fontSize: "16px", color: "#00838f" }}> {(this.state.restaurant.Review1).split(":")[0]}</div>
-                                    <div className="review-nos"> 24 reviews</div>
-                                    <div className="review-photos">10 photos</div>
-
-                                </div>
-                            </div>
-                            <div className="reviews-profile-text">
-                                <StarRatings rating={4} starDimension="20px" starSpacing="1px" starRatedColor="red" numberOfStars={5} name='rating' /> &nbsp; {(this.state.restaurant.Review1).split(":")[3]}  <br /><br />
-                                {(this.state.restaurant.Review3).split(":")[1]}
-                            </div>
-                        </div> : null}
+                        )) : <div style={{ fontWeight: "bold", marginTop: "8px", marginLeft: "350px", fontSize: "22px", color: "#f43939" }}>No Reviews Added Yet</div>}
                 </div>
             </div>
         )
     }
 }
+const mapStateToProps = (state) => {
+    console.log("state customer landing reducer:", state.cusStore);
+    return {
+        customer: state.cusStore.customer || "",
+        restaurants: state.cusStore.restaurants || ""
+    };
+};
 
-export default Restaurants;
+const mapDispatchToProps = (dispatch) => {
+    return {
+        // getOrders: (payload) => dispatch(getOrders(payload)),
+        // getEvents: (payload) => dispatch(getEvents(payload))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Restaurants);

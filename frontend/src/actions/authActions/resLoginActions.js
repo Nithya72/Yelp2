@@ -13,17 +13,18 @@ const loginRestaurantDispatcher = payload => {
 export const restaurantLogin = (restaurant) => {
 
     return dispatch => {
-        
+        axios.defaults.withCredentials = true;
         axios.post(configPath.api_host + '/restaurant/login', restaurant)
             .then(response => {
-                var decodedResponse = jwt_decode(response.data.token);
+                console.log("response_msg1: ", response.data);
+                var decodedResponse = jwt_decode(response.data);
 
                 console.log("response_msg: ", decodedResponse);
 
                 var restaurant = decodedResponse.restaurant;
 
                 if (response.status === 200) {
-                    localStorage.setItem('token', response.data.token);
+                    localStorage.setItem('rToken', response.data);
 
                     dispatch(loginRestaurantDispatcher({
                         restaurant,

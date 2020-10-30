@@ -31,7 +31,7 @@ class RestaurantLogin extends Component {
             restPassword: this.state.restPassword
         }
         
-        this.props.restaurantLogin(data); //User.Actions.js
+        this.props.restaurantLogin(data);
         
     }
 
@@ -54,7 +54,6 @@ class RestaurantLogin extends Component {
                 <div className="all-header" style={{ backgroundColor: "#d32323", height: "70px" }}>
 
                 <div className="header-left">
-                        {/* &emsp;&emsp;<Link to="/" className="button">Home</Link> */}
                         &emsp;<Link to="/customerSignUp" className="button">Customer SignUp</Link>
                         &emsp;<Link to="/customerLogin" style={{ color: "white", fontWeight: "bold" }}>Customer Login</Link>
                     </div>
@@ -123,7 +122,6 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return{
         restaurantLogin: (restaurant) => dispatch(restaurantLogin(restaurant))
-        // restaurantLogout: (message) => dispatch(restaurantLogout(message))
     }
 }
 

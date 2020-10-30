@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import StarRatings from 'react-star-ratings';
 import { Redirect } from 'react-router';
 import axios from 'axios';
+import { connect } from 'react-redux';
+
 class PostReviews extends Component {
 
     constructor(props) {
@@ -131,7 +133,7 @@ class PostReviews extends Component {
                                         <li style={{ display: "block", padding: "3px 20px", lineHeight: "1.42857143", color: "#333", fontWeight: "400" }} onClick={this.redirectHandler}>Restaurants</li>
                                         <li><a href="/">Orders</a></li>
                                         <li style={{ display: "block", padding: "3px 20px", lineHeight: "1.42857143", color: "#333", fontWeight: "400" }}>Upcoming Events</li>
-                                        <li><a href="/customerLogin">Sign Out</a></li>
+                                        <li><a href="/customerLogout">Sign Out</a></li>
                                     </ul>
                                 </div>
                             </div>

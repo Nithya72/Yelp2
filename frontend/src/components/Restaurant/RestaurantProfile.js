@@ -90,10 +90,6 @@ class RestaurantProfile extends Component {
             redirectVar = <Redirect to={{ pathname: "/restaurantOrders" }} />
         }
 
-        // if ((!this.state.restaurant.Review1 || this.state.restaurant.Review1.length === 0) && (!this.state.restaurant.Review2 || this.state.restaurant.Review2.length === 0) && (!this.state.restaurant.Review3 || this.state.restaurant.Review3.length === 0)) {
-        //     noReviewsMsg = <div style={{ fontWeight: "bold", marginTop: "8px", marginLeft: "350px", fontSize: "22px", color: "#f43939" }}>No Reviews Added Yet</div>
-        // }
-
         return (
             <div>
                 {redirectVar}

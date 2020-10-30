@@ -39,7 +39,6 @@ class RestaurantSignUp extends Component {
         const { restaurant } = this.state;
 
         if (restaurant.restName && restaurant.restEmailID && restaurant.restPassword && restaurant.restLocation) {
-            console.log("in res sign up: ", this.props);
             this.props.restaurantSignUp(restaurant)
 
         }
@@ -47,14 +46,11 @@ class RestaurantSignUp extends Component {
 
     render() {
 
-        console.log("restuarnt fetch from state ")
         const { restaurant, submitted } = this.state;
 
         var successAlert = null;
         var errorAlert = null;
         var final_msg = null;
-
-        console.log("After sign up:");
 
         if (this.props.registerFlag == true) {
             successAlert = true;
@@ -65,7 +61,6 @@ class RestaurantSignUp extends Component {
         if (successAlert && this.props.isAuthenticated) {
             final_msg = <div class="alert alert-success" role="alert">{this.props.res}<a href={'/restaurantLogin'} > Login Here.</a></div>
         } else if (errorAlert) {
-            console.log("errorAlert: ", errorAlert, "this.props.res: ", this.props.res)
             final_msg = <div class="alert alert-danger" role="alert">{this.props.res}</div>
         }
 

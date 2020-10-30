@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import '../../App.css';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { customerSignUp } from '../../actions/authActions/cusSignupActions';
 
-
-export class CustomerSignUp extends Component {
+class CustomerSignUp extends Component {
     constructor(props) {
         //Call the constrictor of Super class i.e The Component
         super(props);
@@ -39,44 +40,35 @@ export class CustomerSignUp extends Component {
         });
     }
     submitSignUp = (e) => {
-
         e.preventDefault();
-        const data = {
-            userName: this.state.userName,
-            emailID: this.state.emailID,
-            password: this.state.password
-        }
-        //set the with credentials to true
-        axios.defaults.withCredentials = true;
 
-        axios.post('http://localhost:3001/customerSignUp', data)
-            .then(response => {
-                console.log("Status Code : ", response.status);
-                if (response.status === 200) {
-                    console.log("Successful registration: ", response.data);
-                    this.setState({
-                        successFlag: true,
-                        msg: response.data
-                    })
-                }
-            })
-            .catch(error => {
-                console.log("Here we captured the error")
-                this.setState({
-                    successFlag: false,
-                    msg: "Oops! We couldn't register you now. Try after sometime."
-                })
-            });
+        this.setState({ submitted: true });
+        
+        const data = {
+                userName: this.state.userName,
+                emailID: this.state.emailID,
+                password: this.state.password
+            }
+            
+        this.props.customerSignUp(data);
     }
 
     render() {
 
         var final_msg = null;
+        var successAlert = null;
+        var errorAlert = null;
 
-        if (this.state.successFlag === true) {
-            final_msg = <div class="alert alert-success" role="alert">{this.state.msg}<a href={'/customerLogin'} > Login Here.</a></div>
-        } else if (this.state.successFlag === false) {
-            final_msg = <div class="alert alert-danger" role="alert">{this.state.msg}</div>
+        if (this.props.registerFlag == true) {
+            successAlert = true;
+        }else if(this.props.registerFlag == false){
+            errorAlert = true;
+        }
+
+        if (successAlert && this.props.isAuthenticated) {
+            final_msg = <div class="alert alert-success" role="alert">{this.props.res}<a href={'/customerLogin'} > Login Here.</a></div>
+        } else if (errorAlert) {
+            final_msg = <div class="alert alert-danger" role="alert">{this.props.res}</div>
         }
 
         return (
@@ -101,7 +93,7 @@ export class CustomerSignUp extends Component {
 
                         <div className="title"> Customers - Sign up for Yelp</div>
 
-                        <form name="signup" action="http://127.0.0.1:3000/customerSignUp" method="post">
+                        <form name="signup">
                             <div className="form-group">
                                 <input onChange={this.userNameHandler} type="text" className="form-control" name="userName" required="required" placeholder="Name" />
                             </div>
@@ -131,5 +123,19 @@ export class CustomerSignUp extends Component {
         )
     }
 }
-// export default withRouter(CustomerSignUp);
-export default CustomerSignUp;
+const mapStateToProps = (state) => {
+    console.log("state customer sign up reducer:",state.cusStore);
+    return {
+        res:  state.cusStore.response_msg ||  "",
+        registerFlag: state.cusStore.registerFlag,
+        isAuthenticated: state.cusStore.isAuthenticated
+    };
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return{
+        customerSignUp: (payload) => dispatch(customerSignUp(payload))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CustomerSignUp);

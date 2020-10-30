@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const AutoIncrement = require('mongoose-sequence')(mongoose);
 
 const CustomerSchema = new mongoose.Schema({
     CustName: {type: String},
@@ -21,7 +20,6 @@ const CustomerSchema = new mongoose.Schema({
     ReviewsCount: { type: Number , default:0},
     PhotosCount: { type: Number , default:0},
 });
-CustomerSchema.plugin(AutoIncrement, {inc_field: 'CustomerId'});
 
 const Customers = mongoose.model('customers', CustomerSchema);
 module.exports = Customers;
