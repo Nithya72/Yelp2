@@ -52,9 +52,9 @@ class RestaurantSignUp extends Component {
         var errorAlert = null;
         var final_msg = null;
 
-        if (this.props.registerFlag == true) {
+        if (this.props.registerFlag === true) {
             successAlert = true;
-        }else if(this.props.registerFlag == false){
+        }else if(this.props.registerFlag === false){
             errorAlert = true;
         }
 

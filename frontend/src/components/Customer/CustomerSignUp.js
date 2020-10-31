@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import '../../App.css';
-import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { customerSignUp } from '../../actions/authActions/cusSignupActions';
@@ -59,9 +58,9 @@ class CustomerSignUp extends Component {
         var successAlert = null;
         var errorAlert = null;
 
-        if (this.props.registerFlag == true) {
+        if (this.props.registerFlag === true) {
             successAlert = true;
-        }else if(this.props.registerFlag == false){
+        }else if(this.props.registerFlag === false){
             errorAlert = true;
         }
 

@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 import { Redirect } from 'react-router';
-import configurePath from '../../config';
 import { connect } from 'react-redux';
 import {updateOrder} from '../../actions/orderActions/updateOrderActions';
 

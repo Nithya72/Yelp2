@@ -1,6 +1,6 @@
 
 export function alert(state = [], action) {
-    const { type, payload } = action;
+    const { payload } = action;
     switch (action.type) {
         case "SET_ALERT":
             return [...state, payload];

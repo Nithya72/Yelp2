@@ -41,7 +41,7 @@ class RestaurantLogin extends Component {
 
         const {restEmailID, restPassword, submitted } = this.state;
 
-        if(this.props.loginFlag == false){
+        if(this.props.loginFlag === false){
             final_msg = <div class="alert alert-danger" role="alert">{this.props.error_msg}</div>
         }else if(this.props.loginFlag && this.props.isAuthenticated){
             redirectVar = <Redirect to={{ pathname: "/restaurantProfile"}} />
@@ -70,9 +70,9 @@ class RestaurantLogin extends Component {
 
                         <div className="title"> Restaurants - Sign in to Yelp</div>
 
-                        {alert && alert.message &&
+                        {/* {alert && alert.message &&
                             <div className={'alert ${alert.type}'}>{alert.message}</div>
-                        }
+                        } */}
                         <form name="form">
 
                             <div className="form-group">

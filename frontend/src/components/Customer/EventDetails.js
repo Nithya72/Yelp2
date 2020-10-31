@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import '../../App.css';
-import { Redirect } from 'react-router';
 import StarRatings from 'react-star-ratings';
-import axios from 'axios';
 import { connect } from 'react-redux';
 
 class EventDetails extends Component {
@@ -10,55 +8,49 @@ class EventDetails extends Component {
     constructor(props) {
         super(props);
 
-        console.log(" EventDetails - Event:", this.props.location.state.event)
-        console.log(" EventDetails - Customer:", this.props.location.state.customer)
-
         this.state = {
             event: this.props.location.state.event,
-            customer: this.props.location.state.customer,
+            customer: this.props.customer[0],
             successFlag: false,
             successMsg: null,
             redirectToProfile: false
 
         }
-        this.redirectHandler = this.redirectHandler.bind(this);
         this.submitRegistration = this.submitRegistration.bind(this);
 
-    }
-    redirectHandler = (e) => {
-        this.setState({
-            redirectToProfile: true,
-        })
     }
 
     submitRegistration = (e) => {
 
         e.preventDefault();
         const data = {
-            RegCustomerId: this.state.customer.CustomerId,
-            RegEventId: this.state.event.EventId
+            RegCustomerId: this.state.customer._id,
+            RegEventId: this.state.event._id
         }
-        //set the with credentials to true
-        axios.defaults.withCredentials = true;
 
-        axios.post('http://localhost:3001/registerToEvents', data)
-            .then(response => {
-                console.log("Status Code : ", response.status);
-                if (response.status === 200) {
-                    console.log("Successful Login: ", response.data);
-                    this.setState({
-                        successFlag: true,
-                        successMsg: response.data
-                    })
-                }
-            })
-            .catch(error => {
-                console.log("Here we captured the error")
-                this.setState({
-                    successFlag: false,
-                    successMsg: "Oops! We couldn't register you now. Try after sometime."
-                })
-            });
+        this.props.registerEvent(data);
+
+        // //set the with credentials to true
+        // axios.defaults.withCredentials = true;
+
+        // axios.post('http://localhost:3001/registerToEvents', data)
+        //     .then(response => {
+        //         console.log("Status Code : ", response.status);
+        //         if (response.status === 200) {
+        //             console.log("Successful Login: ", response.data);
+        //             this.setState({
+        //                 successFlag: true,
+        //                 successMsg: response.data
+        //             })
+        //         }
+        //     })
+        //     .catch(error => {
+        //         console.log("Here we captured the error")
+        //         this.setState({
+        //             successFlag: false,
+        //             successMsg: "Oops! We couldn't register you now. Try after sometime."
+        //         })
+        //     });
 
 
     }
@@ -66,10 +58,6 @@ class EventDetails extends Component {
     render() {
         var final_msg = null;
         let redirectVar = null;
-
-        if(this.state.redirectToProfile){
-            redirectVar = <Redirect to={{ pathname: "/customerProfile", state: { customer: this.state.customer } }} />
-        }
 
         if (this.state.successFlag === true) {
             final_msg = <div style={{color:"#3c763d"}}><br />{this.state.successMsg}</div>
@@ -109,9 +97,9 @@ class EventDetails extends Component {
                                 <div className="dropdown">
                                     <div className="material-icons" data-toggle="dropdown">account_circle</div>
                                     <ul class="dropdown-menu pull-right">
-                                        <li style={{ display: "block", padding: "3px 20px", lineHeight: "1.42857143", color: "#333", fontWeight: "400" }} onClick={this.redirectHandler}>About me</li>
+                                        <li><a href="/customerProfile">About me</a></li>
                                         <li><a href="/">Orders</a></li>
-                                        <li><a href="/">Events</a></li>
+                                        <li><a href="/customerEvents">Events</a></li>
                                         <li><a href="/customerLogout">Sign Out</a></li>
                                     </ul>
                                 </div>
@@ -160,4 +148,18 @@ class EventDetails extends Component {
 
 }
 
-export default EventDetails;
+const mapStateToProps = (state) => {
+    console.log("state customer events reducer:", state.cusStore);
+    return {
+        customer: state.cusStore.customer || ""
+    };
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        // getCusOrders: (payload) => dispatch(getCusOrders(payload)),
+        // getCusEvents: (payload) => dispatch(getCusEvents(payload)),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(EventDetails);

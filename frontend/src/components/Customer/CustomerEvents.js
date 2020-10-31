@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import '../../App.css';
 import { Redirect } from 'react-router';
 import axios from 'axios';
-import configurePath from '../../config';
-import configPath from '../../config';
 import { connect } from 'react-redux';
 
 class CustomerEvents extends Component {
@@ -12,43 +10,19 @@ class CustomerEvents extends Component {
         super(props);
 
         this.state = {
-            upcomingEvents: [],
-            filteredEvents: [],
+            upcomingEvents: this.props.upcomingEvents,
+            filteredEvents: this.props.upcomingEvents,
             eventName: null,
             successFlag: false,
             event: null,
             redirectToEventDetails: false,
-            customer: this.props.location.state.customer,
+            customer: this.props.customer[0],
             eventsFlag: null,
             errorMsg: null
         }
         this.eventNameHandler = this.eventNameHandler.bind(this);
         this.searchHandler = this.searchHandler.bind(this);
 
-    }
-
-    componentDidMount() {
-        console.log("On page load")
-        const data = {
-            user: "customer"
-        }
-        axios.post(configPath.api_host+'/getEvents', data)
-            .then((response) => {
-
-                console.log("Status Code : ", response.status);
-                if (response.status === 200) {
-                    console.log("CustomerEvents Fetched: ", response.data);
-                    console.log("State Events: ", this.state.upcomingEvents);
-                    this.setState({
-                        successFlag: true,
-                        upcomingEvents: this.state.upcomingEvents.concat(response.data),
-                        filteredEvents: response.data
-                    })
-                }
-            })
-            .catch((error) => {
-                console.log("Error here: ", error)
-            });
     }
 
     eventNameHandler = (name) => {
@@ -110,10 +84,10 @@ class CustomerEvents extends Component {
         var errorMessage = null;
 
         if (this.state.redirectToEventDetails) {
-            redirectVar = <Redirect to={{ pathname: "/eventDetails", state: { event: this.state.event, customer: this.state.customer } }} />
+            redirectVar = <Redirect to={{ pathname: "/eventDetails", state: { event: this.state.event } }} />
         }
 
-        if((this.state.filteredEvents && this.state.filteredEvents.length == 0)){
+        if((this.state.filteredEvents && this.state.filteredEvents.length === 0)){
             errorMessage = <div style={{ marginTop: "20px", fontSize:"22px" }}> No Events found</div>
         }
 
@@ -197,4 +171,20 @@ class CustomerEvents extends Component {
     }
 }
 
-export default CustomerEvents;
+const mapStateToProps = (state) => {
+    console.log("state customer events reducer:", state.cusStore);
+    return {
+        customer: state.cusStore.customer || "",
+        upcomingEvents: state.cusStore.upcomingEvents || "",
+        filteredEvents: state.cusStore.upcomingEvents
+    };
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        // getCusOrders: (payload) => dispatch(getCusOrders(payload)),
+        // getCusEvents: (payload) => dispatch(getCusEvents(payload)),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CustomerEvents);

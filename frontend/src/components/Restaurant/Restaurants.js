@@ -48,7 +48,6 @@ class Restaurants extends Component {
 
     render() {
         var redirectVar = null;
-        var noReviewsMsg = null;
 
         if (this.state.redirectToOrder) {
             redirectVar = <Redirect to={{ pathname: "/customerOrders", state: { restaurant: this.state.restaurant, orderType: this.state.orderType } }} />
@@ -152,7 +151,7 @@ class Restaurants extends Component {
                     </div>
                     <hr style={{ border: "1px solid lightgray", marginLeft: "150px", maxWidth: "1200px" }} />
 
-                    {(this.state.restaurant.Reviews != null && this.state.restaurant.Reviews.length != 0) ?
+                    {(this.state.restaurant.Reviews !== null && this.state.restaurant.Reviews.length !== 0) ?
 
                         this.state.restaurant.Reviews.map(review => (
 

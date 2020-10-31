@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import '../../App.css';
 import { CheckBox } from '../../CheckBox.js';
-import cookie from 'react-cookies';
 import { Redirect } from 'react-router';
 import StarRatings from 'react-star-ratings';
 import Map from '../Maps/Map.js';

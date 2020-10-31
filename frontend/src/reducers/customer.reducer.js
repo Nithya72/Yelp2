@@ -55,6 +55,13 @@ const initialState = {
           ...payload,
           isAuthenticated: true,
         }
+
+      case "GET_CUSTOMER_EVENT":
+        return{
+          ...state,
+          ...payload,
+          isAuthenticated: true,
+        }
   
       default:
         return state;

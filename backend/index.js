@@ -70,6 +70,7 @@ app.use('/customer/login', require('./routes/customer/auth/login'));
 app.use('/customer/search/restaurants', require('./routes/customer/landing/searchRestaurants'));
 app.use('/customer/profile', require('./routes/customer/profile/updateProfile'));
 app.use('/customer/orders', require('./routes/customer/order/cusOrders'));
+app.use('/customer/events', require('./routes/customer/event/cusEvents'));
 
 
 // //------------------------------------------------------------------------------------------------------------------------------------------------

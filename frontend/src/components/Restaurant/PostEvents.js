@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import '../../App.css';
 import { Redirect } from 'react-router';
-import axios from 'axios';
-import configurePath from '../../config';
 import { connect } from 'react-redux';
 import { postEvent } from '../../actions/eventActions/postEventActions';
 import { getEvents } from '../../actions/eventActions/getEventActions';

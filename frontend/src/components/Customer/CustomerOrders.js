@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import StarRatings from 'react-star-ratings';
 import { CheckBoxMenu } from '../../CheckBoxMenu.js';
-import {Redirect} from 'react-router';
 import { connect } from 'react-redux';
 import { placeOrder } from '../../actions/orderActions/placeOrdersActions';
 

@@ -9,7 +9,6 @@ class RestaurantProfile extends Component {
 
     constructor(props) {
         super(props);
-        var rest = null;
 
         this.state = {
             restaurant: this.props.restaurant[0],
@@ -168,7 +167,7 @@ class RestaurantProfile extends Component {
                     </div>
                     <hr style={{ border: "1px solid lightgray", marginLeft: "150px", maxWidth: "1000px" }} />
 
-                    {(this.props.restaurant[0].Reviews != null && this.props.restaurant[0].Reviews.length != 0) ?
+                    {(this.props.restaurant[0].Reviews !== null && this.props.restaurant[0].Reviews.length !== 0) ?
                         
                         this.props.restaurant[0].Reviews.map(review => (
 

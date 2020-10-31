@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import '../../App.css';
 import { Redirect } from 'react-router';
-import axios from 'axios';
 import { connect } from 'react-redux';
 import { getCusOrders } from '../../actions/orderActions/getCusOrdersActions';
+import { getCusEvents } from '../../actions/eventActions/getCusEventActions';
 
 class CustomerProfile extends Component {
 
@@ -20,7 +20,8 @@ class CustomerProfile extends Component {
             orderFlag: false,
             orderDetails: [],
             orderFiltered: [],
-            submitted: false
+            submitted: false,
+            submitEvents: true
         }
 
         this.submitUpdateProfile = this.submitUpdateProfile.bind(this);
@@ -57,6 +58,8 @@ class CustomerProfile extends Component {
     }
 
     redirectToEvents(e) {
+        this.props.getCusEvents();
+
         this.setState({
             redirectToEvents: true,
         })
@@ -100,8 +103,6 @@ class CustomerProfile extends Component {
     }
 
     submitOrderHistory = (e) => {
-        console.log("order history");
-
         this.setState({
             submitOrders: true
         })
@@ -110,30 +111,33 @@ class CustomerProfile extends Component {
 
 
     getRegisteredEvents(e) {
-        const customerData = {
-            customerId: this.state.customer.CustomerId
-        }
-        console.log("Customer Id:" + customerData)
-        axios.post('http://localhost:3001/getRegisteredEvents', customerData)
-            .then((response) => {
+        this.setState({
+            submitEvents: true
+        })
 
-                console.log("Status Code : ", response.status);
-                if (response.status === 200) {
-                    console.log("Registered Events Fetched: ", response.data);
-                    this.setState({
-                        registeredFlag: true,
-                        registeredEvents: this.state.registeredEvents.concat(response.data)
-                    })
-                } else if (response.status === 404) {
-                    console.log("No Events Registered ");
-                    this.setState({
-                        registeredFlag: false,
-                    })
-                }
-            })
-            .catch((error) => {
-                console.log("Error here: ", error)
-            });
+        this.props.getCusEvents(this.state.customer._id);
+
+
+        // axios.post('http://localhost:3001/getRegisteredEvents', customerData)
+        //     .then((response) => {
+
+        //         console.log("Status Code : ", response.status);
+        //         if (response.status === 200) {
+        //             console.log("Registered Events Fetched: ", response.data);
+        //             this.setState({
+        //                 registeredFlag: true,
+        //                 registeredEvents: this.state.registeredEvents.concat(response.data)
+        //             })
+        //         } else if (response.status === 404) {
+        //             console.log("No Events Registered ");
+        //             this.setState({
+        //                 registeredFlag: false,
+        //             })
+        //         }
+        //     })
+        //     .catch((error) => {
+        //         console.log("Error here: ", error)
+        //     });
 
 
     }
@@ -152,7 +156,7 @@ class CustomerProfile extends Component {
             redirectVar = <Redirect to={{ pathname: "/updateCustomerProfile", state: { customer: this.state.customer } }} />
         }
         if (this.state.redirectToEvents) {
-            redirectVar = <Redirect to={{ pathname: "/customerEvents", state: { customer: this.state.customer } }} />
+            redirectVar = <Redirect to={{ pathname: "/customerEvents"}} />
         }
 
         if (!this.state.registeredFlag) {
@@ -174,7 +178,7 @@ class CustomerProfile extends Component {
             </div>
         }
 
-        if(!this.state.orderFiltered || this.state.orderFiltered.length === 0 && this.state.submitOrders){
+        if((!this.state.orderFiltered || this.state.orderFiltered.length === 0) && this.state.submitOrders){
             emptyOrders = <div style={{fontSize:"18px", fontWeight:"bold"}}> No Orders Found!</div>
         }
 
@@ -350,6 +354,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         getCusOrders: (payload) => dispatch(getCusOrders(payload)),
+        getCusEvents: (payload) => dispatch(getCusEvents(payload)),
     }
 }
 
