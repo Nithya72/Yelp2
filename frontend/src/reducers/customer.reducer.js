@@ -14,14 +14,14 @@ const initialState = {
         return {
           ...state,
           ...payload,
-          isAuthenticated: true,
+          isAuthenticated: true
         }
   
       case "CUSTOMER_LOGIN":
         return {
           ...state,
           ...payload,
-          isAuthenticated: true,
+          isAuthenticated: true
         }
   
       case "CUSTOMER_LOGOUT":
@@ -32,35 +32,56 @@ const initialState = {
         return {
           ...state,
           ...payload,
-          isAuthenticated: true,
+          isAuthenticated: true
         }
 
       case "CUSTOMER_PROFILE_UPDATE":
         return{
           ...state,
           ...payload,
-          isAuthenticated: true,
+          isAuthenticated: true
         }
 
       case "PLACE_ORDER":
         return{
           ...state,
           ...payload,
-          isAuthenticated: true,
+          isAuthenticated: true
         }
 
       case "GET_CUSTOMER_ORDER":
         return{
           ...state,
           ...payload,
-          isAuthenticated: true,
+          isAuthenticated: true
         }
 
       case "GET_CUSTOMER_EVENT":
         return{
           ...state,
           ...payload,
-          isAuthenticated: true,
+          isAuthenticated: true
+        }
+
+      case "REGISTER_EVENT":
+        return{
+          ...state,
+          ...payload,
+          isAuthenticated: true
+        }
+
+      case "POST_REVIEW":
+        return{
+          ...state,
+          ...payload,
+          isAuthenticated: true
+        }
+
+      case "GET_CUSTOMER_BY_ID":
+        return{
+          ...state,
+          ...payload,
+          isAuthenticated: true
         }
   
       default:

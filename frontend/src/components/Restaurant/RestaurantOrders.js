@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router';
 import { connect } from 'react-redux';
-import {updateOrder} from '../../actions/orderActions/updateOrderActions';
+import { updateOrder } from '../../actions/orderActions/updateOrderActions';
+import { getCustomerById } from '../../actions/landingActions/getCustomerActions';
 
 
 class RestaurantOrders extends Component {
@@ -25,10 +26,10 @@ class RestaurantOrders extends Component {
         this.orderStatusFilterHandler = this.orderStatusFilterHandler.bind(this);
     }
 
-    componentDidUpdate(prevProps){
+    componentDidUpdate(prevProps) {
 
-        if(this.state.orderDetails !== this.props.orderDetails){
-            this.setState({          
+        if (this.state.orderDetails !== this.props.orderDetails) {
+            this.setState({
                 orderFiltered: this.props.orderDetails,
                 orderDetails: this.props.orderDetails
             });
@@ -37,38 +38,10 @@ class RestaurantOrders extends Component {
 
     submitCustomerProfile = (id) => {
         console.log("Submit Customer Profile: ", id);
-        let customer = null;
 
-        this.props.orderDetails.forEach(order => {
-
-            if (order.CustomerId === id) {
-
-                customer = {
-                    CustEmailId: order.CustEmailId,
-                    CustName: order.CustName,
-                    CustPassword: order.CustPassword,
-                    CustPic: order.CustPic,
-                    CustomerCity: order.CustomerCity,
-                    CustomerCountry: order.CustomerCountry,
-                    CustomerDOB: order.CustomerDOB,
-                    CustomerId: order.CustomerId,
-                    CustomerPhoneNo: order.CustomerPhoneNo,
-                    CustomerState: order.CustomerState,
-                    FindMeIn: order.FindMeIn,
-                    FriendsCount: order.FriendsCount,
-                    Headline: order.Headline,
-                    MyBlog: order.MyBlog,
-                    NickName: order.NickName,
-                    PhotosCount: order.PhotosCount,
-                    ReviewsCount: order.ReviewsCount,
-                    ThingsLove: order.ThingsLove,
-                    YelpingSince: order.YelpingSince
-                }
-            }
-        })
+        this.props.getCustomerById(id);
 
         this.setState({
-            customer: customer,
             redirectToCustomer: true
         })
     }
@@ -126,10 +99,9 @@ class RestaurantOrders extends Component {
 
         // e.preventDefault();
         const data = {
-            orderId : a.OrderId,
+            orderId: a._id,
             status: e.target.value,
-            id: this.state.restaurant.RestaurantId,
-            type: "restaurant"
+            id: this.state.restaurant._id
         }
 
         this.setState({
@@ -146,12 +118,12 @@ class RestaurantOrders extends Component {
         var redirectVar = null;
         var orderEmptyMsg = null;
 
-        if (this.state.redirectToCustomer) {
-            redirectVar = <Redirect to={{ pathname: "/customerProfile", state: { customer: this.state.customer } }} />
+        if (this.state.redirectToCustomer && this.props.getCustomerFlag) {
+            redirectVar = <Redirect to={{ pathname: "/customerProfile" }} />
         }
 
-        if(!this.state.orderFiltered || this.state.orderFiltered.length === 0){
-            orderEmptyMsg = <div style={{color:"#d32323", fontSize:"20px", fontWeight:"bold"}}> No Orders Yet!</div>
+        if (!this.state.orderFiltered || this.state.orderFiltered.length === 0) {
+            orderEmptyMsg = <div style={{ color: "#d32323", fontSize: "20px", fontWeight: "bold" }}> No Orders Yet!</div>
         }
 
         return (
@@ -220,7 +192,7 @@ class RestaurantOrders extends Component {
                                     <tr><span style={{ color: "black", fontSize: "20px", fontWeight: "bold" }}> Order# {order.OrderId} </span></tr>
                                     <tr>
                                         <td>
-                                            <img style={{ border: "1px solid gray", borderRadius: "5px", height: "125px", width: "125px" }} src={require("../../images/profile_pics/" + order.CustPic)} alt="" />
+                                            <img style={{ border: "1px solid gray", borderRadius: "5px", height: "125px", width: "125px" }} src={require("../../images/profile_pics/" + order.Customer.CustPic)} alt="" />
                                         </td>
 
                                         <td>
@@ -228,7 +200,7 @@ class RestaurantOrders extends Component {
                                             <table style={{ marginLeft: "20px", width: "475px" }}>
                                                 <tbody>
                                                     <div style={{ justifyContent: "space-between", display: "flex" }}><div style={{ fontSize: "20px", fontWeight: "bold", color: "#0073bb" }}>
-                                                        <span className="rest-name-link" onClick={() => this.submitCustomerProfile(order.CustomerId)}> {order.CustName}</span>
+                                                        <span className="rest-name-link" onClick={() => this.submitCustomerProfile(order.Customer._id)}> {order.Customer.CustName}</span>
                                                     </div>
                                                         <div style={{ fontSize: "18px", color: "gray", fontWeight: "bold" }}>{(order.OrderTime).substring(0, 10)} {(order.OrderTime).substring(11, 16)}</div></div>
                                                     <tr style={{ fontSize: "18px", marginTop: "5px" }}>$ . {order.OrderAmount}</tr>
@@ -274,18 +246,20 @@ class RestaurantOrders extends Component {
 }
 
 const mapStateToProps = (state) => {
-    console.log("state update rest order reducer:",state.resState);
+    console.log("state update rest order reducer:", state.resState);
     return {
-        restaurant: state.resState.restaurant ||  "",
-        orderDetails: state.resState.orderDetails ||  "",
-        orderFiltered: state.resState.orderDetails || ""
+        restaurant: state.resState.restaurant || "",
+        orderDetails: state.resState.orderDetails || "",
+        orderFiltered: state.resState.orderDetails || "",
+        getCustomerFlag: state.cusStore.getCustomerFlag
     };
 };
 
 
 const mapDispatchToProps = (dispatch) => {
-    return{
+    return {
         updateOrder: (payload) => dispatch(updateOrder(payload)),
+        getCustomerById: (payload) => dispatch(getCustomerById(payload))
     }
 }
 

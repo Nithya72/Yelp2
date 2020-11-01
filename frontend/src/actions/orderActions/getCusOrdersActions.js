@@ -17,8 +17,8 @@ export const getCusOrders = (payload) => {
         axios.get(configPath.api_host + '/customer/orders/' + payload)
             .then(response => {
 
-                console.log("Actions - Get Order Status: ", response);
                 var orderDetails = response.data;
+                console.log("Actions - Get Order Status: ", orderDetails);
 
                 if (response.status === 200) {
 
@@ -32,7 +32,6 @@ export const getCusOrders = (payload) => {
                 console.log("error: ", err.data);
 
                 dispatch(getCusOrdersDispatcher({
-                    errorMsg: "No Orders yet!",
                     getOrderFlag: false
                 })
                 );

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import '../../App.css';
 import { Redirect } from 'react-router';
-import axios from 'axios';
 import { connect } from 'react-redux';
 
 class CustomerEvents extends Component {
@@ -9,6 +8,7 @@ class CustomerEvents extends Component {
     constructor(props) {
         super(props);
 
+        console.log("this.props.upcomingEvents: ", this.props.upcomingEvents)
         this.state = {
             upcomingEvents: this.props.upcomingEvents,
             filteredEvents: this.props.upcomingEvents,
@@ -22,7 +22,19 @@ class CustomerEvents extends Component {
         }
         this.eventNameHandler = this.eventNameHandler.bind(this);
         this.searchHandler = this.searchHandler.bind(this);
+        this.eventSortHandler = this.eventSortHandler.bind(this);
 
+    }
+
+    componentDidUpdate(prevProps){
+
+        if(this.state.upcomingEvents !== this.props.upcomingEvents){
+            console.log("Inside did update - registrations")
+            this.setState({          
+                upcomingEvents: this.props.upcomingEvents,
+                filteredEvents: this.props.upcomingEvents
+            });
+        }
     }
 
     eventNameHandler = (name) => {
@@ -44,38 +56,61 @@ class CustomerEvents extends Component {
     searchHandler = (e) => {
         e.preventDefault();
 
-        //set the with credentials to true
-        axios.defaults.withCredentials = true;
-
         console.log("eventName: ", this.state.eventName);
-        const data = {
-            eventName : this.state.eventName
+        // const data = {
+        //     eventName : this.state.eventName
+        // }
+
+        var filtered = []; 
+
+        if(!this.state.eventName || this.state.eventName.length === 0){
+            filtered = this.state.upcomingEvents;
         }
-        axios.post('http://localhost:3001/searchEvents', data)
-            .then(response => {
-                console.log("Status Code : ", response.status);
-                if (response.status === 200) {
-                    console.log("Successful Login: ", response.data);
-                    this.setState({
-                        eventsFlag: true,
-                        filteredEvents: response.data
-                    })
+        else{
+            
+        this.state.upcomingEvents.forEach(event => {
+            if ((event.EventName.toLowerCase().search(this.state.eventName.toLowerCase()) !== -1)){
+                console.log(" inside here");
+                filtered.push(event)
+            }
+        })
+    }
+
+        this.setState({ filteredEvents: filtered })
+    }
+
+    eventSortHandler = (e) =>{
+        console.log("before sorting: ", this.state.filteredEvents);
+        var sortedList = this.state.filteredEvents;
+
+        if(e === "ascending"){
+            sortedList.sort((a, b) => {
+
+                if(a.EventDate < b.EventDate){
+                    return -1;
                 }
-                else {
-                    this.setState({
-                        eventsFlag: false,
-                        filteredEvents: [],
-                        errorMsg: response.data
-                    })
+                if(a.EventDate > b.EventDate){
+                    return 1;
                 }
-            })
-            .catch(error => {
-                console.log("Here we captured the error")
-                this.setState({
-                    successFlag: false,
-                    msg: "Oops! We couldn't register you now. Try after sometime."
-                })
+                return 0;
             });
+        }
+        else{
+            sortedList.sort((a, b) => {
+
+                if(a.EventDate > b.EventDate){
+                    return -1;
+                }
+                if(a.EventDate < b.EventDate){
+                    return 1;
+                }
+                return 0;
+            });
+        }
+
+        this.setState({
+            filteredEvents : sortedList
+        });
     }
 
     render() {
@@ -124,7 +159,7 @@ class CustomerEvents extends Component {
                                 <div className="dropdown">
                                     <div className="material-icons" data-toggle="dropdown">account_circle</div>
                                     <ul class="dropdown-menu pull-right">
-                                        <li style={{ display: "block", padding: "3px 20px", lineHeight: "1.42857143", color: "#333", fontWeight: "400" }} onClick={this.redirectHandler}>About me</li>
+                                        <li><a href="/customerProfile">About me</a></li>
                                         <li><a href="/">Orders</a></li>
                                         <li><a href="/">Events</a></li>
                                         <li><a href="/customerLogout">Sign Out</a></li>
@@ -137,10 +172,11 @@ class CustomerEvents extends Component {
                 <hr style={{ border: "1px solid lightgray" }} />
                 <div className="events-details">
                     <div style={{ fontSize: "20px", fontWeight: "bold", color: "#d32323" }} > Upcoming Events </div><br />
-                    <div style={{ fontSize: "14px", fontWeight: "bold" }}> See Events For: <span style={{ color: "#0073bb" }}> &nbsp;Today | Tomorrow | This Weekend | This Week | Next Week | Jump to Date >></span></div>
-                    {errorMessage}
+                    <div style={{ fontSize: "14px", fontWeight: "bold" }}> See Events For: <span style={{ color: "#0073bb" }} onClick={() => this.eventSortHandler("ascending")} > Ascending | </span> <span style={{ color: "#0073bb" }} onClick={() => this.eventSortHandler("descending")} >  Descending | </span>  <span style={{ color: "#0073bb" }}> Today | Tomorrow | This Week | Next Week | Jump to Date >></span></div>
+              
                     <div>
-                        {this.state.filteredEvents.map(event => (
+                        { (this.state.filteredEvents !== null || this.state.filteredEvents.length !== 0) ?
+                        this.state.filteredEvents.map(event => (
                             <table className="event-table" style={{marginLeft:"10px"}}>
                                 <tbody>
                                     <tr>
@@ -163,7 +199,7 @@ class CustomerEvents extends Component {
                                     </tr>
                                 </tbody>
                             </table>
-                        ))}
+                        )) : errorMessage }
                     </div>
                 </div>
             </div>
@@ -176,14 +212,15 @@ const mapStateToProps = (state) => {
     return {
         customer: state.cusStore.customer || "",
         upcomingEvents: state.cusStore.upcomingEvents || "",
-        filteredEvents: state.cusStore.upcomingEvents
+        filteredEvents: state.cusStore.upcomingEvents,
+        getEventFlag: state.cusStore.getEventFlag,
+        errorMsg: state.cusStore.errorMsg
     };
 };
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        // getCusOrders: (payload) => dispatch(getCusOrders(payload)),
-        // getCusEvents: (payload) => dispatch(getCusEvents(payload)),
+        // searchEvents: (payload) => dispatch(searchEvents(payload)),
     }
 }
 

@@ -4,6 +4,7 @@ import { Redirect } from 'react-router';
 import { connect } from 'react-redux';
 import { getCusOrders } from '../../actions/orderActions/getCusOrdersActions';
 import { getCusEvents } from '../../actions/eventActions/getCusEventActions';
+import { cusRegisteredEvents } from '../../actions/eventActions/cusRegisteredEventsActions';
 
 class CustomerProfile extends Component {
 
@@ -15,13 +16,13 @@ class CustomerProfile extends Component {
             submitOrders: false,
             redirectRest: false,
             redirectToEvents: false,
-            registeredEvents: [],
+            registeredEvents: this.props.registeredEvents,
             registeredFlag: false,
             orderFlag: false,
-            orderDetails: [],
-            orderFiltered: [],
+            orderDetails: this.props.orderDetails,
+            orderFiltered: this.props.orderDetails,
             submitted: false,
-            submitEvents: true
+            submitEvents: false
         }
 
         this.submitUpdateProfile = this.submitUpdateProfile.bind(this);
@@ -32,18 +33,28 @@ class CustomerProfile extends Component {
     }
 
     componentDidUpdate(prevProps){
+        console.log("Inside componentDidUpdate")
 
         if(this.state.customer !== this.props.customer[0]){
+            console.log("Inside did update - customer")
             this.setState({          
                 customer: this.props.customer[0],
             });
         }
 
         if(this.state.orderDetails !== this.props.orderDetails){
+            console.log("Inside did update - orderDetails")
             this.setState({
                 orderFlag: true,          
                 orderDetails: this.props.orderDetails,
                 orderFiltered: this.props.orderDetails
+            });
+        }
+
+        if(this.state.registeredEvents !== this.props.registeredEvents){
+            console.log("Inside did update - registrations")
+            this.setState({          
+                registeredEvents: this.props.registeredEvents
             });
         }
     }
@@ -58,11 +69,11 @@ class CustomerProfile extends Component {
     }
 
     redirectToEvents(e) {
-        this.props.getCusEvents();
-
+     
         this.setState({
             redirectToEvents: true,
         })
+        this.props.getCusEvents();
     }
 
     orderStatusFilterHandler(status){
@@ -103,66 +114,45 @@ class CustomerProfile extends Component {
     }
 
     submitOrderHistory = (e) => {
+
+        const customerId = this.state.customer._id; 
+
         this.setState({
             submitOrders: true
         })
-        this.props.getCusOrders(this.state.customer._id);
+
+        this.props.getCusOrders(customerId);
     }
 
 
     getRegisteredEvents(e) {
-        this.setState({
+        const customerId = this.state.customer._id; 
+
+           this.setState({
             submitEvents: true
         })
-
-        this.props.getCusEvents(this.state.customer._id);
-
-
-        // axios.post('http://localhost:3001/getRegisteredEvents', customerData)
-        //     .then((response) => {
-
-        //         console.log("Status Code : ", response.status);
-        //         if (response.status === 200) {
-        //             console.log("Registered Events Fetched: ", response.data);
-        //             this.setState({
-        //                 registeredFlag: true,
-        //                 registeredEvents: this.state.registeredEvents.concat(response.data)
-        //             })
-        //         } else if (response.status === 404) {
-        //             console.log("No Events Registered ");
-        //             this.setState({
-        //                 registeredFlag: false,
-        //             })
-        //         }
-        //     })
-        //     .catch((error) => {
-        //         console.log("Error here: ", error)
-        //     });
-
-
+        this.props.cusRegisteredEvents( customerId );
     }
 
 
     render() {
 
-        console.log(" CustomerProfile:", this.state.customer)
-
         var redirectVar = null;
-        var registeredEvents = null;
+        var registeredEventsError = null;
         var orders = null;
         var emptyOrders = null;
 
         if (this.state.redirectRest) {
             redirectVar = <Redirect to={{ pathname: "/updateCustomerProfile", state: { customer: this.state.customer } }} />
         }
-        if (this.state.redirectToEvents) {
+        if (this.state.redirectToEvents && this.props.getEventFlag) {
             redirectVar = <Redirect to={{ pathname: "/customerEvents"}} />
         }
 
-        if (!this.state.registeredFlag) {
-            registeredEvents = <div>We don't have any recent activity for you right now.</div>
+        if (!this.state.registeredEvents || this.state.registeredEvents.length === 0) {
+            registeredEventsError = <div>We don't have any recent activity for you right now.</div>
         } else {
-            registeredEvents = <div style={{ fontWeight: "bold" }}>You have registered for the below events</div>
+            registeredEventsError = <div style={{ fontWeight: "bold" }}>You have registered for the below events</div>
         }
 
         if (this.state.orderFlag && this.props.getOrderFlag) {
@@ -274,7 +264,8 @@ class CustomerProfile extends Component {
                     </div>
                     <div className="cust-profile-details2">
                         {orders}
-                        {this.state.orderFiltered.map(order => (
+                        { (this.state.orderFiltered) ?
+                        this.state.orderFiltered.map(order => (
 
                             <table className="order-table" >
                                 <tbody>
@@ -297,15 +288,16 @@ class CustomerProfile extends Component {
                                 </tbody>
 
                             </table>
-                        ))}
-                           {emptyOrders}
+                        )) : null}
+                        {emptyOrders}
                         <div style={{ fontWeight: "bold", color: "#d32323", fontSize: "22px", marginBottom: "8px", marginTop:"10px" }}>Notifications</div>
                         No new friend requests or compliments at this time.
                         <div style={{ color: "#e6e6e6", marginBottom: "7px" }}> ________________________________________________________ </div>
                         <div style={{ fontWeight: "bold", color: "#d32323", fontSize: "22px", marginBottom: "8px", marginTop: "10px" }}>Recent Activity</div>
-                        {registeredEvents}
                         <div style={{ color: "#e6e6e6", marginBottom: "7px" }}> ________________________________________________________ </div>
-                        {this.state.registeredEvents.map(event => (
+                        {registeredEventsError}
+                        { (this.state.registeredEvents) ?
+                        this.state.registeredEvents.map(event => (
                             <table className="event-table" style={{marginLeft:"0px"}}>
                                 <tbody>
                                     <tr>
@@ -325,7 +317,8 @@ class CustomerProfile extends Component {
                                 </tbody>
                             </table>
 
-                        ))}
+                        )) : null}
+                     
                     </div>
                     <div className="cust-profile-details3">
                         <div style={{ fontWeight: "bold", color: "#d32323", fontSize: "22px", marginBottom: "8px" }}>About {this.state.customer.NickName}.</div>
@@ -339,7 +332,6 @@ class CustomerProfile extends Component {
                 </div>
             </div>
         )
-
     }
 }
 const mapStateToProps = (state) => {
@@ -347,7 +339,9 @@ const mapStateToProps = (state) => {
     return {
         customer: state.cusStore.customer || "",
         orderDetails: state.cusStore.orderDetails || "",
-        getOrderFlag: state.cusStore.getOrderFlag
+        getOrderFlag: state.cusStore.getOrderFlag,
+        registeredEvents: state.cusStore.registeredEvents || "",
+        getEventFlag: state.cusStore.getEventFlag
     };
 };
 
@@ -355,6 +349,7 @@ const mapDispatchToProps = (dispatch) => {
     return {
         getCusOrders: (payload) => dispatch(getCusOrders(payload)),
         getCusEvents: (payload) => dispatch(getCusEvents(payload)),
+        cusRegisteredEvents: (payload) => dispatch(cusRegisteredEvents(payload))
     }
 }
 

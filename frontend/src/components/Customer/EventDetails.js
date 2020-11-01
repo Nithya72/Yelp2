@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import '../../App.css';
 import StarRatings from 'react-star-ratings';
 import { connect } from 'react-redux';
+import { registerEvent } from '../../actions/eventActions/registerEventActions';
 
 class EventDetails extends Component {
 
@@ -11,9 +12,8 @@ class EventDetails extends Component {
         this.state = {
             event: this.props.location.state.event,
             customer: this.props.customer[0],
-            successFlag: false,
-            successMsg: null,
-            redirectToProfile: false
+            redirectToProfile: false,
+            submitted: false
 
         }
         this.submitRegistration = this.submitRegistration.bind(this);
@@ -27,6 +27,10 @@ class EventDetails extends Component {
             RegCustomerId: this.state.customer._id,
             RegEventId: this.state.event._id
         }
+
+        this.setState({
+            submitted: true
+        })
 
         this.props.registerEvent(data);
 
@@ -59,9 +63,12 @@ class EventDetails extends Component {
         var final_msg = null;
         let redirectVar = null;
 
-        if (this.state.successFlag === true) {
-            final_msg = <div style={{color:"#3c763d"}}><br />{this.state.successMsg}</div>
-        } 
+        if (this.state.submitted && this.props.postEventFlag) {
+            final_msg = <div style={{color:"#3c763d"}}><br />{this.props.postEventMsg}</div>
+        }else if(this.state.submitted && this.props.postEventFlag === false){
+            final_msg = <div style={{color:"#f43938"}}><br />{this.props.postEventMsg}</div>
+        }
+
 
 
         return (
@@ -151,13 +158,15 @@ class EventDetails extends Component {
 const mapStateToProps = (state) => {
     console.log("state customer events reducer:", state.cusStore);
     return {
-        customer: state.cusStore.customer || ""
+        customer: state.cusStore.customer || "",
+        postEventMsg: state.cusStore.postEventMsg,
+        postEventFlag: state.cusStore.postEventFlag
     };
 };
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        // getCusOrders: (payload) => dispatch(getCusOrders(payload)),
+        registerEvent: (payload) => dispatch(registerEvent(payload)),
         // getCusEvents: (payload) => dispatch(getCusEvents(payload)),
     }
 }

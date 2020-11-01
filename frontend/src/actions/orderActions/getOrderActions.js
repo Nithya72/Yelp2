@@ -14,7 +14,7 @@ export const getOrders = (payload) => {
 
     return dispatch => {
         
-        axios.post(configPath.api_host + '/restaurant/orders', payload)
+        axios.get(configPath.api_host + '/restaurant/orders/'+payload)
             .then(response => {
 
                 console.log("Actions - Get Order Status: ", response);

@@ -14,7 +14,7 @@ export const registerEvent = (payload) => {
 
     return dispatch => {
         
-        axios.post(configPath.api_host + '/customer/event', payload)
+        axios.post(configPath.api_host + '/customer/events', payload)
             .then(response => {
 
                 console.log("Actions - Post Event Status: ", response);
@@ -32,7 +32,7 @@ export const registerEvent = (payload) => {
                 console.log("error: ", err.data);
 
                 dispatch(registerEventDispatcher({
-                    postEventMsg: "Couldn't register for the event! Try after sometime.",
+                    postEventMsg: "Couldn't register now! Try after sometime.",
                     postEventFlag: false
                 })
                 );

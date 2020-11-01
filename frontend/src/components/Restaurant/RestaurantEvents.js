@@ -3,6 +3,7 @@ import '../../App.css';
 import { Redirect } from 'react-router';
 import { connect } from 'react-redux';
 import { getEventRegistrations } from '../../actions/eventActions/getEventRegisterations';
+import { getCustomerById } from '../../actions/landingActions/getCustomerActions';
 
 class RestaurantEvents extends Component {
 
@@ -36,46 +37,34 @@ class RestaurantEvents extends Component {
         }
     }
 
-    registeredUsersHandler(eventId) {
+    registeredUsersHandler(eventID) {
 
-        console.log("Event Id:", eventId);
-
-        const data = {
-            id: eventId
-        }
-
+        console.log("Event Id:", eventID);
         this.setState({
-            submitRegistrations: true
+            submitRegistrations: true,
+            eventId: eventID
         });
-
-        this.props.getEventRegistrations(data);
     }
 
-    customerProfileHandler(customer) {
-        console.log("customer: ", customer);
+    customerProfileHandler(customerId) {
+        console.log("customer: ", customerId);
 
         this.setState({
             redirectToCustomer: true,
-            customer: customer
         })
+
+        this.props.getCustomerById(customerId);
     }
 
     render() {
 
-        console.log("this.state.eventDetails:", this.state.eventDetails);
         var redirectVar = null;
-        var errorMessage = null;
         var errorMsg = null;
 
-        if (this.state.redirectToCustomer) {
-            redirectVar = <Redirect to={{ pathname: "/customerProfile", state: { customer: this.state.customer } }} />
+        if (this.state.redirectToCustomer && this.props.getCustomerFlag) {
+            redirectVar = <Redirect to={{ pathname: "/customerProfile" }} />
         }
 
-         console.log("checking the event reg details: ", this.state.submitRegistrations," : ",this.props.getRegistrationsFlag);
-        if(this.state.submitRegistrations  && this.props.getRegistrationsFlag === false){
-            console.log("errorMsg: ", this.props.eventErrorMsg);
-            errorMessage = <div style={{ fontSize: "18px", fontWeight: "bold" }}> {this.props.eventErrorMsg}</div>
-        }
 
         if(this.props.getEventFlag){
             errorMsg = <div style={{ fontSize: "18px", fontWeight: "bold" }}> {this.props.errorMsg}</div>
@@ -141,23 +130,23 @@ class RestaurantEvents extends Component {
                                                 <tr><td style={{ fontSize: "15px", fontWeight: "bold", color: "#0073bb", marginTop: "10px" }}><span className="rest-name-link" onClick={() => this.submitEvent(event)}> {event.EventName}</span></td></tr>
                                                 <div style={{ fontSize: "15px", marginTop: "5px" }}>	<i class='far fa-calendar-alt'></i>&nbsp;&nbsp;{event.EventDay}, {(event.EventDate).substring(0, 10)}, {event.EventTime}</div>
                                                 <tr>
-                                                    <button onClick={() => this.registeredUsersHandler(event.EventId)} class="event-ppl-button" type="submit">See Registered Users</button>
+                                                    <button onClick={() => this.registeredUsersHandler(event._id)} class="event-ppl-button" type="submit">See Registered Users</button>
                                                 </tr>
                                             </tbody>
                                         </table>
                                     </td>
                                     <td>
                                         {/* registeredUsersFlag */}
-                                        {(this.state.submitRegistrations  && this.props.getRegistrationsFlag && event.EventId === this.props.eventId) ?
+                                        {(this.state.submitRegistrations && this.state.eventId === event._id) ?
 
                                             <div>
-                                                {this.props.registeredUsers.map(user => (
-                                                    <div style={{ fontSize: "18px", fontWeight: "bold" }} onClick={() => this.customerProfileHandler(user)}> <span class="event-dot"> </span>&emsp;{user.CustName} <br /></div>
+                                                {event.RegisteredUsers.map(user => (
+                                                    <div style={{ fontSize: "18px", fontWeight: "bold" }} onClick={() => this.customerProfileHandler(user._id)}> <span class="event-dot"> </span>&emsp;{user.CustName} <br /></div>
                                                 ))}
                                             </div>
                                             : null
                                         }
-                                         {(event.EventId === this.props.eventId) ? <div>{errorMessage}</div> : null} 
+                                         {(this.state.eventId === event._id && (event.RegisteredUsers === null || event.RegisteredUsers.length === 0)) ? <div style={{ fontSize: "18px", fontWeight: "bold" }}> No Registrations Yet!</div> : null} 
                                     </td>
                                 </tr>
                             </tbody>
@@ -182,14 +171,16 @@ const mapStateToProps = (state) => {
         getRegistrationsFlag: state.resState.getRegistrationsFlag,
         eventId: state.resState.eventId || "",
         getEventFlag: state.resState.getEventFlag,
-        errorMsg: state.resState.errorMsg || ""
+        errorMsg: state.resState.errorMsg || "",
+        getCustomerFlag: state.cusStore.getCustomerFlag
     };
 };
 
 
 const mapDispatchToProps = (dispatch) => {
     return{
-        getEventRegistrations: (payload) => dispatch(getEventRegistrations(payload))
+        getEventRegistrations: (payload) => dispatch(getEventRegistrations(payload)),
+        getCustomerById: (payload) => dispatch(getCustomerById(payload))
     }
 }
 

@@ -58,12 +58,8 @@ class Restaurants extends Component {
         }
 
         if (this.state.redirectToPostReview) {
-            redirectVar = <Redirect to={{ pathname: "/postReviews", state: { customer: this.state.customer, restaurant: this.state.restaurant } }} />
+            redirectVar = <Redirect to={{ pathname: "/postReviews", state: { restaurant: this.state.restaurant } }} />
         }
-
-        // if ((!this.state.restaurant.Review1 || this.state.restaurant.Review1.length === 0) && (!this.state.restaurant.Review2 || this.state.restaurant.Review2.length === 0) && (!this.state.restaurant.Review3 || this.state.restaurant.Review3.length === 0)) {
-        //     noReviewsMsg = <div style={{ fontWeight: "bold", marginTop: "8px", marginLeft: "350px", fontSize: "22px", color: "#f43939" }}>No Reviews Added Yet</div>
-        // }
 
 
         return (
@@ -150,13 +146,13 @@ class Restaurants extends Component {
                         <div style={{ fontWeight: "bold", marginTop: "8px", marginLeft: "15px", fontSize: "15px", color: "#f43939" }} onClick={() => this.submitOrder("takeout")}>Start Takeout Order</div>
                     </div>
                     <hr style={{ border: "1px solid lightgray", marginLeft: "150px", maxWidth: "1200px" }} />
+                    <div style={{ fontWeight: "bold", fontSize: "25px", marginLeft:"200px", fontFamily: "Open Sans,Helvetica Neue,Helvetica,Arial,sans-serif", marginBottom: "35px" }}> Recommended reviews </div>
 
-                    {(this.state.restaurant.Reviews !== null && this.state.restaurant.Reviews.length !== 0) ?
-
+                    {(this.state.restaurant.Reviews !== null && this.state.restaurant.Reviews.length !== 0) ? 
+                           
                         this.state.restaurant.Reviews.map(review => (
-
                             <div className="reviews-all">
-                                <div style={{ fontWeight: "bold", fontSize: "25px", fontFamily: "Open Sans,Helvetica Neue,Helvetica,Arial,sans-serif", marginBottom: "35px" }}> Recommended reviews </div>
+                                
                                 <div className="reviews-profile">
                                     <div className="review-img"> <img src={require("../../images/avatar.jpg")} alt="" style={{ width: "60px", height: "60px" }} /> </div>
                                     <div className="review-reviewer">

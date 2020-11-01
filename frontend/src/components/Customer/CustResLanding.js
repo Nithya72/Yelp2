@@ -372,6 +372,8 @@ const mapStateToProps = (state) => {
         restaurants: state.cusStore.restaurants || "",
         filteredRestaurants: state.cusStore.restaurants || "",
         errorMsg: state.cusStore.errorMsg || "",
+        orderDetails: state.cusStore.orderDetails || "",
+        registeredEvents: state.cusStore.registeredEvents || ""  
     };
 };
 

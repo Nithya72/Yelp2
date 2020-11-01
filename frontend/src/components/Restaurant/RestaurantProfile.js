@@ -54,12 +54,12 @@ class RestaurantProfile extends Component {
             redirectToOrders: true
         })
 
-        const data = {
-            id: this.state.restaurant._id,
-            type: "restaurant"
-        }
+        // const data = {
+        //     id: this.state.restaurant._id,
+        //     type: "restaurant"
+        // }
 
-        this.props.getOrders(data);
+        this.props.getOrders(this.state.restaurant._id);
 
     }
 
@@ -166,13 +166,13 @@ class RestaurantProfile extends Component {
                         </div>
                     </div>
                     <hr style={{ border: "1px solid lightgray", marginLeft: "150px", maxWidth: "1000px" }} />
-
+                    <div style={{ fontWeight: "bold", fontSize: "25px", fontFamily: "Open Sans,Helvetica Neue,Helvetica,Arial,sans-serif", marginBottom: "35px", marginLeft:"200px" }}> Recommended reviews </div>
                     {(this.props.restaurant[0].Reviews !== null && this.props.restaurant[0].Reviews.length !== 0) ?
                         
                         this.props.restaurant[0].Reviews.map(review => (
 
                             <div className="reviews-all">
-                                <div style={{ fontWeight: "bold", fontSize: "25px", fontFamily: "Open Sans,Helvetica Neue,Helvetica,Arial,sans-serif", marginBottom: "35px" }}> Recommended reviews </div>
+                                
                                 <div className="reviews-profile">
                                     <div className="review-img"> <img src={require("../../images/avatar.jpg")} alt="" style={{ width: "60px", height: "60px" }} /> </div>
                                     <div className="review-reviewer">
@@ -190,7 +190,6 @@ class RestaurantProfile extends Component {
                             </div>
 
                             )) : <div style={{ fontWeight: "bold", marginTop: "8px", marginLeft: "350px", fontSize: "22px", color: "#f43939" }}>No Reviews Added Yet</div>}
-
                 </div>
             </div>
         )

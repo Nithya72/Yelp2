@@ -14,7 +14,7 @@ export const updateOrder = (payload) => {
 
     return dispatch => {
         
-        axios.post(configPath.api_host + '/updateOrders', payload)
+        axios.post(configPath.api_host + '/restaurant/orders', payload)
             .then(response => {
 
                 console.log("Actions - Update Order Status: ", response);

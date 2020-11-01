@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import StarRatings from 'react-star-ratings';
 import { Redirect } from 'react-router';
-import axios from 'axios';
 import { connect } from 'react-redux';
+import { postReview } from '../../actions/reviewActions/postReviewActions';
 
 class PostReviews extends Component {
 
@@ -11,7 +11,7 @@ class PostReviews extends Component {
 
         this.state = {
             restaurant: this.props.location.state.restaurant,
-            customer: this.props.location.state.customer,
+            customer: this.props.customer[0],
             rating: 0,
             review: null,
             successFlag: false
@@ -37,64 +37,32 @@ class PostReviews extends Component {
     submitReviewHandler(e){
 
         var name = (this.state.customer.CustName).split(" ");
-        console.log("Submitting the review: ", this.state.review, " : ", this.state.rating, " : ", name[0]);
-
-
-        var column = null;
-
-        if(this.state.restaurant.Review3 == null){
-            column = "Review3";
-        }
-        if(this.state.restaurant.Review2 == null){
-            column = "Review2";
-        }
-        if(this.state.restaurant.Review1 == null){
-            column = "Review1";
-        }
-
         let today = new Date().toISOString().slice(0, 10)
-        var review = name[0]+":"+this.state.review+":"+this.state.rating+":"+today;
-
-        console.log("Review To Post: ", review)
 
         const data = {
-            review: review,
-            RestaurantId: this.state.restaurant.RestaurantId,
-            column: column
+            review: this.state.review,
+            rating: this.state.rating,
+            restaurantId: this.state.restaurant._id,
+            customerName: name[0]+" "+name[1][0]+".",
+            reviewDate: today
         }
 
-        axios.post('http://localhost:3001/postReviews', data)
-            .then((response) => {
+        this.setState({
+            successFlag: true
+        });
 
-                console.log("Status Code : ", response.status);
-                if (response.status === 200) {
-
-                    console.log("restaurants after writing review : ", response.data);
-                    this.setState({
-                        successFlag: true,
-                        restaurant: response.data[0]
-                    })
-                } else if (response.status === 401) {
-                    this.setState({
-                        successFlag: false
-                    })
-                }
-            })
-            .catch((error) => {
-                console.log("Error here: ", error)
-                this.setState({
-                    successFlag: false,
-                })
-            });
+        this.props.postReview(data);
     }
 
     render() {
         console.log("Rating:", this.state.rating);
         console.log("Restaurant Detail:", this.state.restaurant);
+        console.log("condition: successFlag", this.state.successFlag);
+        console.log("consition - reviewFlag: ", this.props.reviewFlag);
         var redirectVar = null;
 
-        if(this.state.successFlag){
-            redirectVar = <Redirect to={{ pathname: "/restaurants", state: { customer: this.state.customer, restaurant: this.state.restaurant  } }} />
+        if(this.state.successFlag && this.props.reviewFlag){
+            redirectVar = <Redirect to={{ pathname: "/custResLanding" }} />
         }
 
         return (
@@ -130,7 +98,7 @@ class PostReviews extends Component {
                                 <div className="dropdown">
                                     <div className="material-icons" data-toggle="dropdown">account_circle</div>
                                     <ul className="dropdown-menu pull-right">
-                                        <li style={{ display: "block", padding: "3px 20px", lineHeight: "1.42857143", color: "#333", fontWeight: "400" }} onClick={this.redirectHandler}>Restaurants</li>
+                                        <li><a href="/custResLanding">Restaurants</a></li>
                                         <li><a href="/">Orders</a></li>
                                         <li style={{ display: "block", padding: "3px 20px", lineHeight: "1.42857143", color: "#333", fontWeight: "400" }}>Upcoming Events</li>
                                         <li><a href="/customerLogout">Sign Out</a></li>
@@ -159,5 +127,19 @@ class PostReviews extends Component {
     }
 
 }
+const mapStateToProps = (state) => {
+    console.log("state customer landing reducer:", state.cusStore);
+    return {
+        customer: state.cusStore.customer || "",
+        restaurants: state.cusStore.restaurants || "",
+        reviewFlag: state.cusStore.reviewFlag
+    };
+};
 
-export default PostReviews;
+const mapDispatchToProps = (dispatch) => {
+    return {
+        postReview: (payload) => dispatch(postReview(payload)),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(PostReviews);

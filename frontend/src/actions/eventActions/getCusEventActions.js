@@ -13,17 +13,16 @@ const getCusEventDispatcher = payload => {
 export const getCusEvents = (payload) => {
 
     return dispatch => {
-        axios.get(configPath.api_host + '/customer/events')
+        axios.get(configPath.api_host + '/customer/allevents')
             .then(response => {
 
-                console.log("Actions - Get Event Status: ", response);
                 var upcomingEvents = response.data;
+                console.log("Actions - Get Event Status: ", upcomingEvents);
 
                 if (response.status === 200) {
 
                     dispatch(getCusEventDispatcher({
                         upcomingEvents,
-                        errorMsg: null,
                         getEventFlag: true
                     })
                     );
@@ -32,7 +31,6 @@ export const getCusEvents = (payload) => {
                 console.log("error: ", err.data);
 
                 dispatch(getCusEventDispatcher({
-                    errorMsg: "No Events Posted yet!",
                     getEventFlag: false
                 })
                 );

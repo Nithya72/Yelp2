@@ -14,7 +14,7 @@ export const getEventRegistrations = (payload) => {
 
     return dispatch => {
         
-        axios.post(configPath.api_host + '/getRegisteredUsers', payload)
+        axios.post(configPath.api_host + '/restaurant/events', payload)
             .then(response => {
 
                 console.log("Actions - Get Event Status: ", response);
