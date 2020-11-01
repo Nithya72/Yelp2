@@ -1,6 +1,7 @@
 "use strict";
 const express = require("express");
 const Events = require('../../../models/Events');
+const Customers = require('../../../models/Customers');
 const router = express.Router();
 const { checkAuth } = ('../../../utils/passport');
 
@@ -8,7 +9,7 @@ router.post('/', async (req, res) => {
     console.log("Req Body - Get Events: ", req.body);
     try {
 
-        const events = await Events.find({ Restaurant: req.body.id });
+        const events = await Events.find({ Restaurant: req.body.id }).populate({ path: 'RegisteredUsers', select: ['_id', 'CustName'], model: Customers });
         console.log(" events details: ", events);
 
         if (!events || events.length == 0) {
@@ -22,4 +23,3 @@ router.post('/', async (req, res) => {
 
 });
 module.exports = router;
-

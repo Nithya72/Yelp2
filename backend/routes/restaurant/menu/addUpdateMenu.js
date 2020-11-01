@@ -1,6 +1,6 @@
 "use strict";
 const express = require("express");
-const Restaurants = require('../../../models/Restaurants');
+const Events = require('../../../models/Events');
 const router = express.Router();
 const { checkAuth } = ('../../../utils/passport');
 
@@ -9,7 +9,7 @@ router.post('/', async (req, res) => {
     try {
         var data = { DishName: req.body.dish.DishName, DishPrice: req.body.dish.DishPrice, Cuisine: req.body.dish.Cuisine, DishMainIngd: req.body.dish.DishMainIngd, DishImg: req.body.dish.DishImg, DishCategory: req.body.dish.DishCategory, DishDescription: req.body.dish.DishDescription }
 
-        const restaurant = await Restaurants.findByIdAndUpdate({ _id: req.body.restaurantId }, {$push: { Menu: data }}, {new: true});
+        const restaurant = await Events.findByIdAndUpdate({ _id: req.body.restaurantId }, {$push: { Menu: data }}, {new: true});
         console.log(" added menu details: ", restaurant);
 
         res.status(200).json(restaurant);
