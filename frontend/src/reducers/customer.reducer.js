@@ -83,6 +83,20 @@ const initialState = {
           ...payload,
           isAuthenticated: true
         }
+
+      case "CUSTOMER_MESSAGE":
+        return{
+          ...state,
+          ...payload,
+          isAuthenticated: true
+        }
+
+      case "CUSTOMER_SEND_MESSAGE":
+        return{
+          ...state,
+          ...payload,
+          isAuthenticated: true
+        }
   
       default:
         return state;

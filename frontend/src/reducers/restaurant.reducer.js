@@ -96,6 +96,13 @@ const resState = (state = initialState, action) => {
             ...payload,
             isAuthenticated: true
           }
+
+        case "RESTAURANT_MESSAGE":
+          return{
+            ...state,
+            ...payload,
+            isAuthenticated: true
+          }
     
     default:
       return state;

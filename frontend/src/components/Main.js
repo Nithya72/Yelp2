@@ -4,6 +4,7 @@ import { Router, Route, Switch } from 'react-router-dom';
 import CustomerEvents from './Customer/CustomerEvents';
 import CustomerLogin from './Customer/CustomerLogin';
 import CustomerLogout from './Customer/CustomerLogout';
+import CustomerMessages from './Customer/CustomerMessages';
 import CustomerOrders from './Customer/CustomerOrders';
 import CustomerProfile from './Customer/CustomerProfile';
 import CustomerSignUp from './Customer/CustomerSignUp';
@@ -20,6 +21,7 @@ import RestaurantEvents from './Restaurant/RestaurantEvents';
 import RestaurantLogin from './Restaurant/RestaurantLogin';
 import RestaurantLogout from './Restaurant/RestaurantLogout';
 import RestaurantMenu from './Restaurant/RestaurantMenu';
+import RestaurantMessages from './Restaurant/RestaurantMessages';
 import RestaurantOrders from './Restaurant/RestaurantOrders';
 import RestaurantProfile from './Restaurant/RestaurantProfile';
 import Restaurants from './Restaurant/Restaurants';
@@ -49,6 +51,7 @@ export default class Main extends Component {
                         <Route exact path="/customerEvents" component={CustomerEvents} />
                         <Route exact path="/customerLogin" component={CustomerLogin} />
                         <Route exact path="/customerLogout" component={CustomerLogout} /> 
+                        <Route exact path="/customerMessages" component={CustomerMessages} /> 
                         <Route exact path="/customerOrders" component={CustomerOrders} />
                         <Route exact path="/customerProfile" component={CustomerProfile} />
                         <Route exact path="/customerSignUp" component={CustomerSignUp} />
@@ -63,6 +66,7 @@ export default class Main extends Component {
                         <Route exact path="/restaurantLogin" component={RestaurantLogin} />
                         <Route exact path="/restaurantLogout" component={RestaurantLogout} />
                         <Route exact path="/restaurantMenu" component={RestaurantMenu} />
+                        <Route exact path="/restaurantMessages" component={RestaurantMessages} />
                         <Route exact path="/restaurantOrders" component={RestaurantOrders} />
                         <Route exact path="/restaurantProfile" component={RestaurantProfile} />
                         <Route exact path="/restaurants" component={Restaurants} />

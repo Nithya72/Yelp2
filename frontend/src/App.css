@@ -424,12 +424,13 @@ color: red;
 
   font-family: Open Sans,Helvetica Neue,Helvetica,Arial,sans-serif;
   display: inline-block;
+  margin-top: 15px;
 
 }
 
 .avatar-details .avatar-rest-name, .avatar-details .avatar-rest-location, .avatar-details .avatar-rest-review{
   margin-left: 410px;
-  font-family: Open Sans,Helvetica Neue,Helvetica,Arial,sans-serif;;
+  font-family: Open Sans,Helvetica Neue,Helvetica,Arial,sans-serif;
   margin-bottom: 10px;
 }
 
@@ -493,7 +494,7 @@ color: red;
 .cust-profile-details{
   font-size: 15px;
   margin-left: 200px;
-  font-family: Open Sans,Helvetica Neue,Helvetica,Arial,sans-serif;;
+  font-family: Open Sans,Helvetica Neue,Helvetica,Arial,sans-serif;
 }
 
 .cust-profile-details .cust-profile-details1, .cust-profile-details .cust-profile-details2, .cust-profile-details .cust-profile-details3{
@@ -699,4 +700,28 @@ text-align: justify;
   cursor: pointer;
   min-width: 130px;
   background: white;
+}
+
+.messages{
+  font-family: Open Sans,Helvetica Neue,Helvetica,Arial,sans-serif;
+  font-size: 18px;
+  margin-left: 200px;
+}
+
+.messages .msg1, .messages .msg2{
+  display: inline-block;
+  vertical-align: top;
+
+}
+
+
+.sendMsg .sendMsg1, .sendMsg .sendMsg2{
+  display: inline-block;
+  vertical-align: top;
+}
+
+
+.sendMsg{
+  margin-left: 270px;
+  margin-top: 20px;
 }

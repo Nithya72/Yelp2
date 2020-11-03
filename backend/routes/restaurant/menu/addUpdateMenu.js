@@ -26,8 +26,7 @@ router.post('/update', async (req, res) => {
     console.log("Req Body - Add Menu: ", req.body);
     try {
        var data = { "Menu.$.DishName": req.body.dish.DishName, "Menu.$.DishPrice": req.body.dish.DishPrice, "Menu.$.Cuisine": req.body.dish.Cuisine,  "Menu.$.DishMainIngd": req.body.dish.DishMainIngd, "Menu.$.DishImg": req.body.dish.DishImg, "Menu.$.DishCategory": req.body.dish.DishCategory, "Menu.$.DishDescription": req.body.dish.DishDescription }
-       // var data = { "Menu.DishName": req.body.dish.DishName, "Menu.DishPrice": req.body.dish.DishPrice, "Menu.Cuisine": req.body.dish.Cuisine,  "Menu.DishMainIngd": req.body.dish.DishMainIngd, "Menu.DishImg": req.body.dish.DishImg, "Menu.DishCategory": req.body.dish.DishCategory, "Menu.DishDescription": req.body.dish.DishDescription }
-
+    
         const restaurant = await Restaurants.findOneAndUpdate({ _id: req.body.restaurantId, "Menu._id" : req.body.dish._id}, { $set: data }, {new: true});
         console.log(" updated menu details: ", restaurant);
 

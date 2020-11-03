@@ -4,14 +4,13 @@ var app = express();
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var cors = require('cors');
-var mysql = require('mysql');
-var crypto = require('crypto');
 const path = require("path");
 const multer = require("multer");
-
+var connectDB = require('./utils/database');
+// var http = require('http').Server(app);
+// var io = require('socket.io')(http);
 
 app.set('view engine', 'ejs');
-
 app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 
 app.use(session({
@@ -23,6 +22,8 @@ app.use(session({
 }));
 
 app.use(bodyParser.json());
+
+// io.on('connection', () =>{ console.log('a user is connected') });
 
 app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
@@ -48,6 +49,8 @@ app.use('/restaurant/orders', require('./routes/restaurant/order/handleOrder'));
 app.use('/restaurant/events', require('./routes/restaurant/events/getEvents'));
 app.use('/restaurant/event/add', require('./routes/restaurant/events/addEvents'));
 app.use('/restaurant/customer', require('./routes/restaurant/profile/customerProfile'));
+app.use('/restaurant/message', require('./routes/restaurant/message/initMessage'));
+
 
 app.use('/customer/signup', require('./routes/customer/auth/signup'));
 app.use('/customer/login', require('./routes/customer/auth/login'));
@@ -57,9 +60,20 @@ app.use('/customer/orders', require('./routes/customer/order/cusOrders'));
 app.use('/customer/events', require('./routes/customer/event/cusEvents'));
 app.use('/customer/allevents', require('./routes/customer/event/allEvents'));
 app.use('/customer/review', require('./routes/customer/review/postReview'));
+app.use('/customer/message', require('./routes/customer/message/loadMessage'));
 
 
 // //------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+// io.on('connection', (socket) => {
+//     console.log(socket.id);
+
+//     socket.on('SEND_MESSAGE', function(data){
+//         io.emit('RECEIVE_MESSAGE', data);
+//     })
+// });
+
 // //------------------------------------------------------------------------------------------------------------------------------------------------
 
 // Reference from https://www.geeksforgeeks.org/file-uploading-in-node-js/?ref=lbp
@@ -100,3 +114,6 @@ app.use('/customer/review', require('./routes/customer/review/postReview'));
     //start your server on port 3001
     app.listen(3001);
     console.log("Server Listening on port 3001");
+
+
+    //Order#2 Status

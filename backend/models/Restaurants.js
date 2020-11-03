@@ -37,7 +37,8 @@ const RestaurantSchema = new mongoose.Schema({
             DishCategory: { type: String },
             DishDescription: { type: String }
         }
-    ]
+    ],
+    Following: {type: Array}
 })
 
 const Restaurants = mongoose.model('restaurants', RestaurantSchema);

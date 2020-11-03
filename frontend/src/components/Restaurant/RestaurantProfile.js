@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import StarRatings from 'react-star-ratings';
+import ReactPaginate from 'react-paginate';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { getOrders } from '../../actions/orderActions/getOrderActions';
 import { getEvents } from '../../actions/eventActions/getEventActions';
+
+//Pagination - Ref: https://www.youtube.com/watch?v=OFFuBrUa6_0&ab_channel=GKTechy
 
 class RestaurantProfile extends Component {
 
@@ -16,7 +19,12 @@ class RestaurantProfile extends Component {
             redirectRest: false,
             redirectToEvents: false,
             redirectToMenu: false,
-            redirectToOrders: false
+            redirectToOrders: false,
+            offset: 0,
+            perPage: 3,
+            currentPage: 0,
+            reviewsToDisplay: [],
+            orgReviewsToDisplay: []
         }
 
         console.log("State: ", this.state);
@@ -24,6 +32,44 @@ class RestaurantProfile extends Component {
         this.redirectHandler = this.redirectHandler.bind(this);
         this.redirectToEvents = this.redirectToEvents.bind(this);
         this.editMenuHandler = this.editMenuHandler.bind(this);
+        this.handlePageclick = this.handlePageclick.bind(this);
+    }
+
+    componentDidMount(){
+        this.applyPagination();
+    }
+
+    applyPagination(){
+        var reviews = this.props.restaurant[0].Reviews;
+        var slice = reviews.slice(this.state.offset, this.state.offset+this.state.perPage);
+
+        this.setState({
+            pageCount: Math.ceil(reviews.length / this.state.perPage),
+            orgReviewsToDisplay : reviews,
+            reviewsToDisplay : slice
+        })
+    }
+
+    handlePageclick = (e) => {
+        const selectedPage = e.selected;
+        const offset = selectedPage * this.state.perPage;
+
+        this.setState({
+            currentPage: selectedPage,
+            offset: offset
+        }, () => {
+            this.loadMoreReviews()
+        });
+    }
+
+    loadMoreReviews(){
+        const data = this.state.orgReviewsToDisplay;
+        const slice = data.slice(this.state.offset, this.state.offset+this.state.perPage)
+
+        this.setState({
+            pageCount: Math.ceil(data.length / this.state.perPage),
+            reviewsToDisplay: slice
+        })
     }
 
     submitUpdateProfile(e) {
@@ -53,11 +99,6 @@ class RestaurantProfile extends Component {
         this.setState({
             redirectToOrders: true
         })
-
-        // const data = {
-        //     id: this.state.restaurant._id,
-        //     type: "restaurant"
-        // }
 
         this.props.getOrders(this.state.restaurant._id);
 
@@ -167,9 +208,9 @@ class RestaurantProfile extends Component {
                     </div>
                     <hr style={{ border: "1px solid lightgray", marginLeft: "150px", maxWidth: "1000px" }} />
                     <div style={{ fontWeight: "bold", fontSize: "25px", fontFamily: "Open Sans,Helvetica Neue,Helvetica,Arial,sans-serif", marginBottom: "35px", marginLeft:"200px" }}> Recommended reviews </div>
-                    {(this.props.restaurant[0].Reviews !== null && this.props.restaurant[0].Reviews.length !== 0) ?
+                    {(this.state.reviewsToDisplay !== null && this.state.reviewsToDisplay.length !== 0) ?
                         
-                        this.props.restaurant[0].Reviews.map(review => (
+                        this.state.reviewsToDisplay.map(review => (
 
                             <div className="reviews-all">
                                 
@@ -188,8 +229,12 @@ class RestaurantProfile extends Component {
                                 </div>
                                 <hr style={{ border: "0.06px solid #eeeeef", marginLeft: "0px", maxWidth: "900px" }} />
                             </div>
+                           
 
                             )) : <div style={{ fontWeight: "bold", marginTop: "8px", marginLeft: "350px", fontSize: "22px", color: "#f43939" }}>No Reviews Added Yet</div>}
+
+                            <div style={{marginLeft: "450px"}}><ReactPaginate previousLabel = {"prev"} nextLabel = {"next"} breakLabel = {"..."} breakClassName = {"break-me"} pageCount ={this.state.pageCount}  marginPagesDisplayed = {2} pageRangeDisplayed = {5} onPageChange={this.handlePageclick} containerClassName = {"pagination"} subContainerClassName = {"pages pagination"} activeClassName = {"active"} /> </div>
+                            
                 </div>
             </div>
         )
