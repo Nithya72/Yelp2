@@ -518,6 +518,12 @@ color: red;
   border-radius: 5px;
 }
 
+.yelp-user-images{
+  height: 125px;
+  width: 125px;
+  border-radius: 75px;
+}
+
 .event-table{
 margin-top: 40px;
 font-family: Open Sans,Helvetica Neue,Helvetica,Arial,sans-serif;
@@ -628,6 +634,24 @@ text-align: justify;
   background-color: white;
 }
 
+.yelp-users-button{
+  width: 125px;
+  border:none;
+  border:solid 2px #0073bb;
+  border-radius: 7px;
+  border-spacing: 100px;
+  padding: 10px;
+  font-size: 17px;
+  font-weight: bold;
+  color: #0073bb;
+  background-color: white;
+}
+
+.yelp-users-button:hover{
+    background:#0073bb;
+    color:white; 
+}
+
 .pic-upload-button{
   padding: 0px;
   height: 40px;
@@ -714,14 +738,22 @@ text-align: justify;
 
 }
 
-
 .sendMsg .sendMsg1, .sendMsg .sendMsg2{
   display: inline-block;
   vertical-align: top;
 }
 
-
 .sendMsg{
   margin-left: 270px;
   margin-top: 20px;
+}
+
+.resSendMsg{
+  margin-left: 210px;
+  margin-top: 20px;
+}
+
+.resSendMsg .sendMsg1, .resSendMsg .sendMsg2{
+  display: inline-block;
+  vertical-align: top;
 }

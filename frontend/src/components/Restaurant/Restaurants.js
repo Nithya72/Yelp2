@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import StarRatings from 'react-star-ratings';
+import ReactPaginate from 'react-paginate';
 import { Redirect } from 'react-router';
 import { connect } from 'react-redux';
 
@@ -17,10 +18,54 @@ class Restaurants extends Component {
             redirectToOrder: false,
             redirectToRests: false,
             redirectToPostReview: false,
+
+            offset: 0,
+            perPage: 3,
+            currentPage: 0,
+            reviewsToDisplay: [],
+            orgReviewsToDisplay: []
         }
         this.submitOrder = this.submitOrder.bind(this);
         this.redirectHandler = this.redirectHandler.bind(this);
         this.postReviewHandler = this.postReviewHandler.bind(this);
+        this.handlePageclick = this.handlePageclick.bind(this);
+    }
+
+    componentDidMount(){
+        this.applyPagination();
+    }
+
+    applyPagination(){
+        var reviews = this.state.restaurant.Reviews;
+        var slice = reviews.slice(this.state.offset, this.state.offset+this.state.perPage);
+
+        this.setState({
+            pageCount: Math.ceil(reviews.length / this.state.perPage),
+            orgReviewsToDisplay : reviews,
+            reviewsToDisplay : slice
+        })
+    }
+
+    handlePageclick = (e) => {
+        const selectedPage = e.selected;
+        const offset = selectedPage * this.state.perPage;
+
+        this.setState({
+            currentPage: selectedPage,
+            offset: offset
+        }, () => {
+            this.loadMoreReviews()
+        });
+    }
+
+    loadMoreReviews(){
+        const data = this.state.orgReviewsToDisplay;
+        const slice = data.slice(this.state.offset, this.state.offset+this.state.perPage)
+
+        this.setState({
+            pageCount: Math.ceil(data.length / this.state.perPage),
+            reviewsToDisplay: slice
+        })
     }
 
     submitOrder(e) {
@@ -148,9 +193,9 @@ class Restaurants extends Component {
                     <hr style={{ border: "1px solid lightgray", marginLeft: "150px", maxWidth: "1200px" }} />
                     <div style={{ fontWeight: "bold", fontSize: "25px", marginLeft:"200px", fontFamily: "Open Sans,Helvetica Neue,Helvetica,Arial,sans-serif", marginBottom: "35px" }}> Recommended reviews </div>
 
-                    {(this.state.restaurant.Reviews !== null && this.state.restaurant.Reviews.length !== 0) ? 
-                           
-                        this.state.restaurant.Reviews.map(review => (
+                    {(this.state.reviewsToDisplay !== null && this.state.reviewsToDisplay.length !== 0) ?
+                        
+                        this.state.reviewsToDisplay.map(review => (
                             <div className="reviews-all">
                                 
                                 <div className="reviews-profile">
@@ -170,6 +215,7 @@ class Restaurants extends Component {
                             </div>
 
                         )) : <div style={{ fontWeight: "bold", marginTop: "8px", marginLeft: "350px", fontSize: "22px", color: "#f43939" }}>No Reviews Added Yet</div>}
+                         <div style={{marginLeft: "450px"}}><ReactPaginate previousLabel = {"prev"} nextLabel = {"next"} breakLabel = {"..."} breakClassName = {"break-me"} pageCount ={this.state.pageCount}  marginPagesDisplayed = {2} pageRangeDisplayed = {5} onPageChange={this.handlePageclick} containerClassName = {"pagination"} subContainerClassName = {"pages pagination"} activeClassName = {"active"} /> </div>
                 </div>
             </div>
         )

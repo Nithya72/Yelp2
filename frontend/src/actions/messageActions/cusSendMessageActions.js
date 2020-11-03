@@ -17,7 +17,7 @@ export const cusSendMessage = (payload) => {
         axios.post(configPath.api_host + '/customer/message', payload)
             .then(response => {
 
-                console.log("Actions: Restaurant Profile Update:", response);
+                console.log("Actions: Customer Message:", response);
 
                 var custMsg = response.data;
 

@@ -50,6 +50,7 @@ app.use('/restaurant/events', require('./routes/restaurant/events/getEvents'));
 app.use('/restaurant/event/add', require('./routes/restaurant/events/addEvents'));
 app.use('/restaurant/customer', require('./routes/restaurant/profile/customerProfile'));
 app.use('/restaurant/message', require('./routes/restaurant/message/initMessage'));
+app.use('/restaurant/messages', require('./routes/restaurant/message/handleMessage'));
 
 
 app.use('/customer/signup', require('./routes/customer/auth/signup'));
@@ -61,6 +62,7 @@ app.use('/customer/events', require('./routes/customer/event/cusEvents'));
 app.use('/customer/allevents', require('./routes/customer/event/allEvents'));
 app.use('/customer/review', require('./routes/customer/review/postReview'));
 app.use('/customer/message', require('./routes/customer/message/loadMessage'));
+app.use('/customer/yelp/users', require('./routes/customer/yelpUsers/manageYelpUsers'));
 
 
 // //------------------------------------------------------------------------------------------------------------------------------------------------

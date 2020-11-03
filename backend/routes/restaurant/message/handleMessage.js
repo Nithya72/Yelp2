@@ -9,9 +9,9 @@ router.get('/:id', async (req, res) => {
 
     console.log("Req Body - Load Messages: ", req.params.id);
     try {
-        const messages = await Messages.find({ "customers.id": req.params.id }).sort({ "customers.messages.msgTime" : 1 });
+        const messages = await Messages.find({ restId: req.params.id }).sort({ "customers.messages.msgTime" : 1 });
   
-        console.log("Get messages - Customer: ", messages);
+        console.log("Get messages - Restaurant: ", messages);
 
         res.status(200).json(messages);
 
@@ -25,12 +25,12 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
 
-    console.log("Req Body - Send Messages: ", req.body);
+    console.log("Req Body - Restaurant Send Messages: ", req.body);
     try {
         var data = {sender : req.body.sender, message : req.body.message, msgTime: new Date()}
         const finalMsg = await Messages.findOneAndUpdate({ _id: req.body._id, "customers.id" : req.body.custId}, { "$push": {"customers.$.messages": data }}, {new: true});
        
-        const messages = await Messages.find({ "customers.id": req.body.custId }).sort({ "customers.messages.msgTime" : 1 });
+        const messages = await Messages.find({  restId: req.body.restId  }).sort({ "customers.messages.msgTime" : 1 });
 
         console.log(" added new chat from customer: ", messages);
 

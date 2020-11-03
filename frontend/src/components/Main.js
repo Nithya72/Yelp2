@@ -12,6 +12,7 @@ import CustResLanding from './Customer/CustResLanding';
 import EventDetails from './Customer/EventDetails';
 import PostReviews from './Customer/PostReviews';
 import UpdateCustomerProfile from './Customer/UpdateCustomerProfile';
+import YelpUsers from './Customer/YelpUsers';
 
 import LandingPage from './LandingPage/LandingPage';
 
@@ -59,6 +60,7 @@ export default class Main extends Component {
                         <Route exact path="/eventDetails" component={EventDetails} /> 
                         <Route exact path="/postReviews" component={PostReviews} />
                         <Route exact path="/updateCustomerProfile" component={UpdateCustomerProfile} />
+                        <Route exact path="/yelpUsers" component={YelpUsers} />
 
                         <Route exact path="/addMenu" component={AddMenu} />
                         <Route exact path="/postEvents" component={PostEvents} />

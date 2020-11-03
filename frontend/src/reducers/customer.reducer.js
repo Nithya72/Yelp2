@@ -97,6 +97,20 @@ const initialState = {
           ...payload,
           isAuthenticated: true
         }
+
+      case "GET_YELP_USERS":
+        return{
+          ...state,
+          ...payload,
+          isAuthenticated: true
+        }
+
+      case "FOLLOW_YELP_USERS":
+        return{
+          ...state,
+          ...payload,
+          isAuthenticated: true
+        }
   
       default:
         return state;

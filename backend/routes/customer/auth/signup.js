@@ -21,7 +21,7 @@ router.post('/', async (req, res) => {
         var hash = encrypt.update(req.body.password, 'utf8', 'hex');
         hash += encrypt.final('hex');
 
-        const customer = new Customers({ CustName: req.body.restName, userName: req.body.emailID, CustPassword: hash });
+        const customer = new Customers({ CustName: req.body.userName, CustEmailId: req.body.emailID, CustPassword: hash });
         await customer.save();
 
         console.log(" customer id: ", customer._id);

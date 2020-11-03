@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { getOrders } from '../../actions/orderActions/getOrderActions';
 import { getEvents } from '../../actions/eventActions/getEventActions';
+import { resLoadMessages } from '../../actions/messageActions/resLoadMessagesActions';
 
 //Pagination - Ref: https://www.youtube.com/watch?v=OFFuBrUa6_0&ab_channel=GKTechy
 
@@ -24,7 +25,8 @@ class RestaurantProfile extends Component {
             perPage: 3,
             currentPage: 0,
             reviewsToDisplay: [],
-            orgReviewsToDisplay: []
+            orgReviewsToDisplay: [],
+            redirectToMsgs: false
         }
 
         console.log("State: ", this.state);
@@ -33,6 +35,7 @@ class RestaurantProfile extends Component {
         this.redirectToEvents = this.redirectToEvents.bind(this);
         this.editMenuHandler = this.editMenuHandler.bind(this);
         this.handlePageclick = this.handlePageclick.bind(this);
+        this.redirectToMessages = this.redirectToMessages.bind(this);
     }
 
     componentDidMount(){
@@ -104,6 +107,13 @@ class RestaurantProfile extends Component {
 
     }
 
+    redirectToMessages(e){
+        this.setState({
+            redirectToMsgs: true
+        })
+        this.props.loadMessages(this.state.restaurant._id);
+    }
+
     editMenuHandler(e) {
         this.setState({
             redirectToMenu: true
@@ -130,6 +140,9 @@ class RestaurantProfile extends Component {
             redirectVar = <Redirect to={{ pathname: "/restaurantOrders" }} />
         }
 
+        if(this.state.redirectToMsgs && this.props.restMsgFlag){
+            redirectVar = <Redirect to={{ pathname: "/restaurantMessages" }} />
+        }
         return (
             <div>
                 {redirectVar}
@@ -164,6 +177,7 @@ class RestaurantProfile extends Component {
                                     <div className="material-icons" data-toggle="dropdown">account_circle</div>
                                     <ul class="dropdown-menu pull-right">
                                         <li><a href="/">Home</a></li>
+                                        <li style={{ display: "block", padding: "3px 20px", lineHeight: "1.42857143", color: "#333", fontWeight: "400" }} onClick={this.redirectToMessages}>Messages</li>
                                         <li style={{ display: "block", padding: "3px 20px", lineHeight: "1.42857143", color: "#333", fontWeight: "400" }} onClick={this.redirectHandler}>Order History</li>
                                         <li style={{ display: "block", padding: "3px 20px", lineHeight: "1.42857143", color: "#333", fontWeight: "400" }} onClick={this.redirectToEvents}>Events Posted</li>
                                         <li><a href="/restaurantLogout">Sign Out</a></li>
@@ -248,14 +262,16 @@ const mapStateToProps = (state) => {
         restaurant: state.resState.restaurant || "",
         updateProfile: false,
         getOrderFlag: state.resState.getOrderFlag,
-        getEventFlag: state.resState.getEventFlag
+        getEventFlag: state.resState.getEventFlag,
+        restMsgFlag: state.resState.restMsgFlag
     };
 };
 
 const mapDispatchToProps = (dispatch) => {
     return {
         getOrders: (payload) => dispatch(getOrders(payload)),
-        getEvents: (payload) => dispatch(getEvents(payload))
+        getEvents: (payload) => dispatch(getEvents(payload)),
+        loadMessages: (payload) => dispatch(resLoadMessages(payload))
     }
 }
 

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router';
 import { connect } from 'react-redux';
+import ReactPaginate from 'react-paginate';
 import { updateOrder } from '../../actions/orderActions/updateOrderActions';
 import { getCustomerById } from '../../actions/landingActions/getCustomerActions';
 
@@ -19,11 +20,56 @@ class RestaurantOrders extends Component {
             submitted: false,
             redirectToCustomer: false,
             orderUpdatedStatus: null,
-            reRender: false
+            reRender: false,
+
+            offset: 0,
+            perPage: 3,
+            currentPage: 0,
+            ordersToDisplay: [],
+            orgOrdersToDisplay: [],
+            // redirectToMsgs: false
         }
 
         this.submitCustomerProfile = this.submitCustomerProfile.bind(this);
         this.orderStatusFilterHandler = this.orderStatusFilterHandler.bind(this);
+        this.handlePageclick = this.handlePageclick.bind(this);
+    }
+
+    componentDidMount(){
+        this.applyPagination();
+    }
+
+    applyPagination(){
+        var orders = this.props.orderDetails;
+        var slice = orders.slice(this.state.offset, this.state.offset+this.state.perPage);
+
+        this.setState({
+            pageCount: Math.ceil(orders.length / this.state.perPage),
+            orgOrdersToDisplay : orders,
+            ordersToDisplay : slice
+        })
+    }
+
+    handlePageclick = (e) => {
+        const selectedPage = e.selected;
+        const offset = selectedPage * this.state.perPage;
+
+        this.setState({
+            currentPage: selectedPage,
+            offset: offset
+        }, () => {
+            this.loadMoreOrders()
+        });
+    }
+
+    loadMoreOrders(){
+        const data = this.state.orgOrdersToDisplay;
+        const slice = data.slice(this.state.offset, this.state.offset+this.state.perPage)
+
+        this.setState({
+            pageCount: Math.ceil(data.length / this.state.perPage),
+            ordersToDisplay: slice
+        })
     }
 
     componentDidUpdate(prevProps) {
@@ -186,7 +232,7 @@ class RestaurantOrders extends Component {
                             <br />
                         </div>
                         {orderEmptyMsg}
-                        {this.state.orderFiltered.map(order => (
+                        {this.state.ordersToDisplay.map(order => (
                             <table className="order-table" >
                                 <tbody>
                                     <tr><span style={{ color: "black", fontSize: "20px", fontWeight: "bold" }}> Order# {order.OrderId} </span></tr>
@@ -238,6 +284,7 @@ class RestaurantOrders extends Component {
                                 <br />
                             </table>
                         ))}
+                        <div style={{marginLeft: "400px"}}><ReactPaginate previousLabel = {"prev"} nextLabel = {"next"} breakLabel = {"..."} breakClassName = {"break-me"} pageCount ={this.state.pageCount}  marginPagesDisplayed = {2} pageRangeDisplayed = {5} onPageChange={this.handlePageclick} containerClassName = {"pagination"} subContainerClassName = {"pages pagination"} activeClassName = {"active"} /> </div>
                     </div>
                 </div>
             </div>

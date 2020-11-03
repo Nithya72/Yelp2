@@ -3,6 +3,7 @@ import '../../App.css';
 import { Redirect } from 'react-router';
 import { connect } from 'react-redux';
 import ReactModal from 'react-modal';
+import ReactPaginate from 'react-paginate';
 import { getCusOrders } from '../../actions/orderActions/getCusOrdersActions';
 import { getCusEvents } from '../../actions/eventActions/getCusEventActions';
 import { cusRegisteredEvents } from '../../actions/eventActions/cusRegisteredEventsActions';
@@ -31,6 +32,12 @@ class CustomerProfile extends Component {
             msgtitle: "",
             message: "",
             redirectToMsgs: false,
+
+            offset: 0,
+            perPage: 3,
+            currentPage: 0,
+            ordersToDisplay: [],
+            orgOrdersToDisplay: []
         }
 
         this.submitUpdateProfile = this.submitUpdateProfile.bind(this);
@@ -44,6 +51,43 @@ class CustomerProfile extends Component {
         this.formChangeHandler = this.formChangeHandler.bind(this);
         this.redirectToMessages = this.redirectToMessages.bind(this);
 
+    }
+
+    componentDidMount(){
+        this.applyPagination();
+    }
+
+    applyPagination(){
+        var orders = this.state.orderDetails;
+        var slice = orders.slice(this.state.offset, this.state.offset+this.state.perPage);
+
+        this.setState({
+            pageCount: Math.ceil(orders.length / this.state.perPage),
+            orgOrdersToDisplay : orders,
+            ordersToDisplay : slice
+        })
+    }
+
+    handlePageclick = (e) => {
+        const selectedPage = e.selected;
+        const offset = selectedPage * this.state.perPage;
+
+        this.setState({
+            currentPage: selectedPage,
+            offset: offset
+        }, () => {
+            this.loadMoreReviews()
+        });
+    }
+
+    loadMoreReviews(){
+        const data = this.state.orgOrdersToDisplay;
+        const slice = data.slice(this.state.offset, this.state.offset+this.state.perPage)
+
+        this.setState({
+            pageCount: Math.ceil(data.length / this.state.perPage),
+            ordersToDisplay: slice
+        })
     }
 
     componentDidUpdate(prevProps) {
@@ -335,8 +379,8 @@ class CustomerProfile extends Component {
                     </div>
                     <div className="cust-profile-details2">
                         {orders}
-                        {(this.state.orderFiltered) ?
-                            this.state.orderFiltered.map(order => (
+                        {(this.state.ordersToDisplay) ?
+                            this.state.ordersToDisplay.map(order => (
 
                                 <table className="order-table" >
                                     <tbody>
@@ -361,6 +405,9 @@ class CustomerProfile extends Component {
                                 </table>
                             )) : null}
                         {emptyOrders}
+
+                        <div style={{marginLeft: "160px"}}><ReactPaginate previousLabel = {"prev"} nextLabel = {"next"} breakLabel = {"..."} breakClassName = {"break-me"} pageCount ={this.state.pageCount}  marginPagesDisplayed = {2} pageRangeDisplayed = {5} onPageChange={this.handlePageclick} containerClassName = {"pagination"} subContainerClassName = {"pages pagination"} activeClassName = {"active"} /> </div>
+                            
                         <div style={{ fontWeight: "bold", color: "#d32323", fontSize: "22px", marginBottom: "8px", marginTop: "10px" }}>Notifications</div>
                         No new friend requests or compliments at this time.
                         <div style={{ color: "#e6e6e6", marginBottom: "7px" }}> ________________________________________________________ </div>

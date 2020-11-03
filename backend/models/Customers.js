@@ -11,7 +11,7 @@ const CustomerSchema = new mongoose.Schema({
     FindMeIn: {type: String},
     MyBlog: {type: String},
     CustomerDOB: {type: String},
-    CustomerCity: {type: String},
+    CustomerCity: {type: String, default:'New York'},
     CustomerState: {type: String},
     CustomerCountry: {type: String},
     NickName: {type: String},
@@ -19,6 +19,7 @@ const CustomerSchema = new mongoose.Schema({
     FriendsCount: { type: Number , default:0},
     ReviewsCount: { type: Number , default:0},
     PhotosCount: { type: Number , default:0},
+    Following: {type: Array}
 });
 
 const Customers = mongoose.model('customers', CustomerSchema);

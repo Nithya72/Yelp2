@@ -34,29 +34,6 @@ class EventDetails extends Component {
 
         this.props.registerEvent(data);
 
-        // //set the with credentials to true
-        // axios.defaults.withCredentials = true;
-
-        // axios.post('http://localhost:3001/registerToEvents', data)
-        //     .then(response => {
-        //         console.log("Status Code : ", response.status);
-        //         if (response.status === 200) {
-        //             console.log("Successful Login: ", response.data);
-        //             this.setState({
-        //                 successFlag: true,
-        //                 successMsg: response.data
-        //             })
-        //         }
-        //     })
-        //     .catch(error => {
-        //         console.log("Here we captured the error")
-        //         this.setState({
-        //             successFlag: false,
-        //             successMsg: "Oops! We couldn't register you now. Try after sometime."
-        //         })
-        //     });
-
-
     }
 
     render() {

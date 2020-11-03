@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import '../../App.css';
+import ReactPaginate from 'react-paginate';
 import { Redirect } from 'react-router';
 import { connect } from 'react-redux';
 import { getEventRegistrations } from '../../actions/eventActions/getEventRegisterations';
@@ -21,10 +22,53 @@ class RestaurantEvents extends Component {
             customer: [],
             restaurantId: null,
             redirectToPostEvents: false,
-            submitRegistrations: false
+            submitRegistrations: false,
+
+            offset: 0,
+            perPage: 2,
+            currentPage: 0,
+            eventsToDisplay: [],
+            orgEventsToDisplay: []
         }
         this.registeredUsersHandler = this.registeredUsersHandler.bind(this);
         this.customerProfileHandler = this.customerProfileHandler.bind(this);
+    }
+
+    componentDidMount(){
+        this.applyPagination();
+    }
+
+    applyPagination(){
+        var events = this.props.eventDetails;
+        var slice = events.slice(this.state.offset, this.state.offset+this.state.perPage);
+
+        this.setState({
+            pageCount: Math.ceil(events.length / this.state.perPage),
+            orgEventsToDisplay : events,
+            eventsToDisplay : slice
+        })
+    }
+
+    handlePageclick = (e) => {
+        const selectedPage = e.selected;
+        const offset = selectedPage * this.state.perPage;
+
+        this.setState({
+            currentPage: selectedPage,
+            offset: offset
+        }, () => {
+            this.loadMoreEvents()
+        });
+    }
+
+    loadMoreEvents(){
+        const data = this.state.orgEventsToDisplay;
+        const slice = data.slice(this.state.offset, this.state.offset+this.state.perPage)
+
+        this.setState({
+            pageCount: Math.ceil(data.length / this.state.perPage),
+            eventsToDisplay: slice
+        })
     }
 
     componentDidUpdate(prevProps){
@@ -117,9 +161,9 @@ class RestaurantEvents extends Component {
                 <hr style={{ border: "1px solid lightgray" }} />
                 <div>
                     <div style={{ fontWeight: "bold", color: "#d32323", fontSize: "25px", marginBottom: "8px", marginLeft: "150px" }}>Events Posted</div>
-                    {(this.state.filteredEvents !== null && this.state.filteredEvents.length !== 0) ?
+                    {(this.state.eventsToDisplay !== null && this.state.eventsToDisplay.length !== 0) ?
                     
-                    this.state.filteredEvents.map(event => (
+                    this.state.eventsToDisplay.map(event => (
                         <table className="event-table">
                             <tbody>
                                 <tr>
@@ -152,6 +196,7 @@ class RestaurantEvents extends Component {
                             </tbody>
                         </table>
                     )) :  errorMsg}
+                    <div style={{marginLeft: "300px", marginTop: "30px"}}><ReactPaginate previousLabel = {"prev"} nextLabel = {"next"} breakLabel = {"..."} breakClassName = {"break-me"} pageCount ={this.state.pageCount}  marginPagesDisplayed = {2} pageRangeDisplayed = {5} onPageChange={this.handlePageclick} containerClassName = {"pagination"} subContainerClassName = {"pages pagination"} activeClassName = {"active"} /> </div>
                 </div>
             </div >
         )

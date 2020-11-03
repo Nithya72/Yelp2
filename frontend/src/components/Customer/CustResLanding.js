@@ -6,6 +6,7 @@ import StarRatings from 'react-star-ratings';
 import Map from '../Maps/Map.js';
 import { searchRestaurants } from '../../actions/landingActions/searchRestaurantActions';
 import { connect } from 'react-redux';
+import { getYelpUsers } from '../../actions/yelpUsersActions/getYelpUsersActions';
 
 
 class CustResLanding extends Component {
@@ -39,7 +40,8 @@ class CustResLanding extends Component {
             searchName: "",
             searchLocation: "",
             searchFlag: false,
-            searchErrorMsg: "No Search Result Found"
+            searchErrorMsg: "No Search Result Found",
+            submitYelpUsers: false
 
         }
         this.submitRestaurant = this.submitRestaurant.bind(this);
@@ -48,6 +50,7 @@ class CustResLanding extends Component {
         this.searchHandler = this.searchHandler.bind(this);
         this.searchNameHandler = this.searchNameHandler.bind(this);
         this.searchLocationHandler = this.searchLocationHandler.bind(this);
+        this.redirectToYelpUsers = this.redirectToYelpUsers.bind(this);
     }
 
     componentDidUpdate(prevProps) {
@@ -102,8 +105,6 @@ class CustResLanding extends Component {
 
 
     handleDelivery = (event) => {
-
-
         let deliveryOptions = this.state.deliveryOptions
 
         deliveryOptions.forEach(deliveryOption => {
@@ -191,6 +192,14 @@ class CustResLanding extends Component {
         })
     }
 
+    redirectToYelpUsers = (e) => {
+        this.setState({
+            submitYelpUsers: true
+        })
+
+        this.props.yelpUsers(this.state.customer._id);
+    }
+
     render() {
 
         console.log("Inside component did mount:", (!this.state.filteredRestaurants || this.state.filteredRestaurants.length === 0) );
@@ -203,6 +212,10 @@ class CustResLanding extends Component {
 
         if (!this.state.filteredRestaurants || this.state.filteredRestaurants.length === 0) {
             error_msg = <div style={{ fontWeight: "bold", fontSize: "20px", marginTop: "20px", color: "#f43938" }}>{this.props.errorMsg}</div>
+        }
+
+        if(this.state.submitYelpUsers && this.props.getYelpUserFlag){
+            redirectVar = <Redirect to={{ pathname: "/yelpUsers" }} />
         }
 
         return (
@@ -239,6 +252,7 @@ class CustResLanding extends Component {
                                     <div className="material-icons" data-toggle="dropdown">account_circle</div>
                                     <ul class="dropdown-menu pull-right">
                                         <li><a href="/customerProfile">About me</a></li>
+                                        <li style={{ display: "block", padding: "3px 20px", lineHeight: "1.42857143", color: "#333", fontWeight: "400" }} onClick={this.redirectToYelpUsers}>Yelp Users</li>
                                         <li><a href="/">Orders</a></li>
                                         <li><a href="/">Events</a></li>
                                         <li><a href="/customerLogout">Sign Out</a></li>
@@ -373,14 +387,16 @@ const mapStateToProps = (state) => {
         filteredRestaurants: state.cusStore.restaurants || "",
         errorMsg: state.cusStore.errorMsg || "",
         orderDetails: state.cusStore.orderDetails || "",
-        registeredEvents: state.cusStore.registeredEvents || ""  
+        registeredEvents: state.cusStore.registeredEvents || "" ,
+        getYelpUserFlag: state.cusStore.getYelpUserFlag
+
     };
 };
 
 const mapDispatchToProps = (dispatch) => {
     return {
         searchRestaurants: (payload) => dispatch(searchRestaurants(payload)),
-        // getEvents: (payload) => dispatch(getEvents(payload))
+        yelpUsers: (payload) => dispatch(getYelpUsers(payload))
     }
 }
 
