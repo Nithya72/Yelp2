@@ -1,11 +1,12 @@
 "use strict";
 const express = require("express");
 const Events = require('../../../models/Events');
-const { ObjectId } = require("mongodb");
 const router = express.Router();
-const { checkAuth } = ('../../../utils/passport');
+const { checkAuth, auth } = require('../../../utils/passport');
 
-router.post('/', async (req, res) => {
+auth();
+
+router.post('/', checkAuth, async (req, res) => {
     console.log("Req Body - Get Orders: ", req.body);
     try {
         const events = await Events.findByIdAndUpdate({ _id: req.body.RegEventId }, {$push: { RegisteredUsers: req.body.RegCustomerId }}, {new: true});
@@ -18,7 +19,7 @@ router.post('/', async (req, res) => {
 
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', checkAuth, async (req, res) => {
 
     try {
         console.log("customer id:", req.params.id);

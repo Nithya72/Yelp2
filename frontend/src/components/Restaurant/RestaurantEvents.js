@@ -35,12 +35,17 @@ class RestaurantEvents extends Component {
     }
 
     componentDidMount(){
+        console.log("here:1 ");
         this.applyPagination();
     }
 
     applyPagination(){
+        
         var events = this.props.eventDetails;
+        console.log("here:2 ", events);
         var slice = events.slice(this.state.offset, this.state.offset+this.state.perPage);
+
+        console.log("here:3", slice);
 
         this.setState({
             pageCount: Math.ceil(events.length / this.state.perPage),

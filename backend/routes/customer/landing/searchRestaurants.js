@@ -2,9 +2,11 @@
 const express = require("express");
 const Restaurants = require('../../../models/Restaurants');
 const router = express.Router();
-const { checkAuth } = ('../../../utils/passport');
+const { checkAuth, auth } = require('../../../utils/passport');
 
-router.post('/', async (req, res) => {
+auth();
+
+router.post('/', checkAuth, async (req, res) => {
     console.log("Req Body - Search Restaurants: ", req.body);
     try {
 

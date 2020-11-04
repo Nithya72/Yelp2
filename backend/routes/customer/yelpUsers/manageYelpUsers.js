@@ -1,10 +1,12 @@
 "use strict";
 const express = require("express");
 const Customers = require('../../../models/Customers');
-const jwt = require('jsonwebtoken');
 const router = express.Router();
+const { checkAuth, auth } = require('../../../utils/passport');
 
-router.get('/:id', async (req, res) => {
+auth();
+
+router.get('/:id', checkAuth, async (req, res) => {
     console.log("Req Body - get yelp users : ", req.params.id);
 
     try {
@@ -20,7 +22,7 @@ router.get('/:id', async (req, res) => {
 });
 
 
-router.post('/', async (req, res) => {
+router.post('/', checkAuth, async (req, res) => {
     console.log("Req Body - follow yelp users : ", req.body);
 
     try {

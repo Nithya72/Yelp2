@@ -4,9 +4,11 @@ const path = require("path");
 const multer = require("multer");
 const Restaurants = require('../../../models/Restaurants');
 const router = express.Router();
-const { checkAuth } = ('../../../utils/passport');
+const { checkAuth, resAuth } = require('../../../utils/passport');
 
-router.post('/', async (req, res) => {
+resAuth();
+
+router.post('/', checkAuth, async (req, res) => {
     console.log("Req Body - update Restaurant : ", req.body);
     try {
         var data = { RestName: req.body.RestName, Location: req.body.Location, Description: req.body.Description, RestPhoneNo: req.body.RestPhoneNo, RestTimings: req.body.RestTimings }

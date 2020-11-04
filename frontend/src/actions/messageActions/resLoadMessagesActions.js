@@ -13,7 +13,7 @@ const resLoadMessagesDispatcher = payload => {
 export const resLoadMessages = (payload) => {
 
     return dispatch => {
-
+        axios.defaults.headers.common['authorization'] = localStorage.getItem('rToken');
         axios.get(configPath.api_host + '/restaurant/messages/' + payload)
             .then(response => {
 

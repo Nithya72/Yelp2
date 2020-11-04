@@ -2,9 +2,11 @@
 const express = require("express");
 const Events = require('../../../models/Events');
 const router = express.Router();
-const { checkAuth } = ('../../../utils/passport');
+const { checkAuth, resAuth } = require('../../../utils/passport');
 
-router.post('/', async (req, res) => {
+resAuth();
+
+router.post('/', checkAuth, async (req, res) => {
     console.log("Req Body - Add Menu: ", req.body);
     try {
         var data = { DishName: req.body.dish.DishName, DishPrice: req.body.dish.DishPrice, Cuisine: req.body.dish.Cuisine, DishMainIngd: req.body.dish.DishMainIngd, DishImg: req.body.dish.DishImg, DishCategory: req.body.dish.DishCategory, DishDescription: req.body.dish.DishDescription }
@@ -22,7 +24,7 @@ router.post('/', async (req, res) => {
 });
 
 
-router.post('/update', async (req, res) => {
+router.post('/update', checkAuth, async (req, res) => {
     console.log("Req Body - Add Menu: ", req.body);
     try {
        var data = { "Menu.$.DishName": req.body.dish.DishName, "Menu.$.DishPrice": req.body.dish.DishPrice, "Menu.$.Cuisine": req.body.dish.Cuisine,  "Menu.$.DishMainIngd": req.body.dish.DishMainIngd, "Menu.$.DishImg": req.body.dish.DishImg, "Menu.$.DishCategory": req.body.dish.DishCategory, "Menu.$.DishDescription": req.body.dish.DishDescription }

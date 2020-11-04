@@ -3,9 +3,11 @@ const express = require("express");
 const Orders = require('../../../models/Orders');
 const Customers = require('../../../models/Customers');
 const router = express.Router();
-const { checkAuth } = ('../../../utils/passport');
+const { checkAuth, resAuth } = require('../../../utils/passport');
 
-router.get('/:id', async (req, res) => {
+resAuth();
+
+router.get('/:id', checkAuth, async (req, res) => {
     console.log("Req Body - Get Orders: ", req.params.id);
     try {
 
@@ -25,7 +27,7 @@ router.get('/:id', async (req, res) => {
 
 });
 
-router.post('/', async (req, res) => {
+router.post('/', checkAuth, async (req, res) => {
     console.log("Req Body - Update Orders Status: ", req.body);
     try {
         const updatedOrder = await Orders.findOneAndUpdate({ _id: req.body.orderId }, { OrderStatus: req.body.status}, { new: true });

@@ -2,10 +2,12 @@
 const express = require("express");
 const Messages = require("../../../models/Messages");
 const router = express.Router();
-const { checkAuth } = ('../../../utils/passport');
+const { checkAuth, auth } = require('../../../utils/passport');
+
+auth();
 
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', checkAuth, async (req, res) => {
 
     console.log("Req Body - Load Messages: ", req.params.id);
     try {
@@ -23,7 +25,7 @@ router.get('/:id', async (req, res) => {
 });
 
 
-router.post('/', async (req, res) => {
+router.post('/', checkAuth, async (req, res) => {
 
     console.log("Req Body - Send Messages: ", req.body);
     try {

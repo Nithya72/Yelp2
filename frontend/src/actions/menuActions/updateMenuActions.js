@@ -13,7 +13,7 @@ const updateMenuDetailsDispatcher = payload => {
 export const updateMenuDetails = (payload) => {
 
     return dispatch => {
-        
+        axios.defaults.headers.common['authorization'] = localStorage.getItem('rToken');
         axios.post(configPath.api_host + '/restaurant/menu/update', payload)
             .then(response => {
 

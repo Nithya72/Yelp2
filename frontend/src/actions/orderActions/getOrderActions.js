@@ -13,7 +13,7 @@ const getOrderDispatcher = payload => {
 export const getOrders = (payload) => {
 
     return dispatch => {
-        
+        axios.defaults.headers.common['authorization'] = localStorage.getItem('rToken');
         axios.get(configPath.api_host + '/restaurant/orders/'+payload)
             .then(response => {
 

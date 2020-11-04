@@ -13,7 +13,7 @@ const loadMessagesDispatcher = payload => {
 export const loadMessages = (payload) => {
 
     return dispatch => {
-
+        axios.defaults.headers.common['authorization'] = localStorage.getItem('cToken');
         axios.get(configPath.api_host + '/customer/message/' + payload)
             .then(response => {
 

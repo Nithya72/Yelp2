@@ -13,7 +13,7 @@ const postReviewDispatcher = payload => {
 export const postReview = (payload) => {
 
     return dispatch => {
-
+        axios.defaults.headers.common['authorization'] = localStorage.getItem('cToken');
         axios.post(configPath.api_host + '/customer/review', payload)
             .then(response => {
                 var restaurants = response.data;

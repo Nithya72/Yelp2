@@ -13,7 +13,7 @@ const searchRestaurantDispatcher = payload => {
 export const searchRestaurants = (payload) => {
 
     return dispatch => {
-        
+        axios.defaults.headers.common['authorization'] = localStorage.getItem('cToken');
         axios.post(configPath.api_host + '/customer/search/restaurants', payload)
             .then(response => {
 

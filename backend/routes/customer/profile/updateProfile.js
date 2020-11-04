@@ -2,10 +2,11 @@
 const express = require("express");
 const Customers = require('../../../models/Customers');
 const router = express.Router();
-const { checkAuth } = require('../../../utils/passport');
+const { checkAuth, auth } = require('../../../utils/passport');
 
+auth();
 
-router.post('/', async (req, res) => {
+router.post('/', checkAuth, async (req, res) => {
     console.log("Req Body - update Customer : ", req.body);
     try {
         var data = { CustName: req.body.CustName, NickName: req.body.NickName, CustomerDOB: req.body.CustomerDOB, CustEmailId: req.body.CustEmailId, CustomerPhoneNo: req.body.CustomerPhoneNo, CustomerCity:req.body.CustomerCity, CustomerState: req.body.CustomerState, CustomerCountry: req.body.CustomerCountry, YelpingSince: req.body.YelpingSince, ThingsLove: req.body.ThingsLove,  FindMeIn: req.body.FindMeIn, MyBlog: req.body.MyBlog}

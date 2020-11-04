@@ -13,7 +13,7 @@ const followYelpUserDispatcher = payload => {
 export const followYelpUser = (payload) => {
 
     return dispatch => {
-
+        axios.defaults.headers.common['authorization'] = localStorage.getItem('cToken');
         axios.post(configPath.api_host + '/customer/yelp/users',payload)
             .then(response => {
 

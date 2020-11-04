@@ -2,12 +2,13 @@
 const express = require("express");
 const Messages = require('../../../models/Messages');
 const router = express.Router();
-const { checkAuth } = ('../../../utils/passport');
 var app = express();
 var http = require('http').Server(app);
-var io = require('socket.io')(http);
+const { checkAuth, resAuth } = require('../../../utils/passport');
 
-router.post('/', async (req, res) => {
+resAuth();
+
+router.post('/', checkAuth, async (req, res) => {
     console.log("Req Body - Initiaze Conversation : ", req.body);
     try {
         let restaurant = {"name": req.body.restName, "id":req.body.restId}

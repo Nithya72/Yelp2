@@ -36,8 +36,9 @@ class CustomerProfile extends Component {
             offset: 0,
             perPage: 3,
             currentPage: 0,
-            ordersToDisplay: [],
-            orgOrdersToDisplay: []
+            ordersToDisplay: this.props.orderDetails,
+            orgOrdersToDisplay: [],
+
         }
 
         this.submitUpdateProfile = this.submitUpdateProfile.bind(this);
@@ -185,6 +186,7 @@ class CustomerProfile extends Component {
             submitOrders: true
         })
         this.props.getCusOrders(customerId);
+   
     }
 
 
@@ -250,6 +252,8 @@ class CustomerProfile extends Component {
         var emptyOrders = null;
 
         const {msgtitle, message } = this.state;
+
+        console.log("this.state.ordersToDisplay: ", this.state.ordersToDisplay);
 
         if (this.state.redirectRest) {
             redirectVar = <Redirect to={{ pathname: "/updateCustomerProfile", state: { customer: this.state.customer } }} />

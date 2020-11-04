@@ -13,7 +13,7 @@ const getCusOrdersDispatcher = payload => {
 export const getCusOrders = (payload) => {
 
     return dispatch => {
-
+        axios.defaults.headers.common['authorization'] = localStorage.getItem('cToken');
         axios.get(configPath.api_host + '/customer/orders/' + payload)
             .then(response => {
 

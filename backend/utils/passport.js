@@ -1,23 +1,21 @@
 "use strict";
 var JwtStrategy = require('passport-jwt').Strategy;
-var { ExtractJwt } = require('passport-jwt');
+var ExtractJwt = require('passport-jwt').ExtractJwt;
 const passport = require('passport');
-const jwt = require('jsonwebtoken');
 const { secret } = require('../utils/config');
 const Customers = require('../models/Customers');
 const Restaurants = require('../models/Restaurants');
+const jwt = require('jsonwebtoken');
 
-// Setup work and export for the JWT passport strategy
-function customerAuth() {
-    console.log("1a");
+
+function auth() {
 
     var opts = {
         jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('jwt'),
         secretOrKey: secret
     };
-    passport.use(
+    passport.use( 
         new JwtStrategy(opts, (jwt_payload, callback) => {
-            console.log("1b:",jwt_payload._id );
             const customerId = jwt_payload._id;
 
             Customers.findById(customerId, (err, results) => {
@@ -35,28 +33,22 @@ function customerAuth() {
     );
 }
 
-// Setup work and export for the JWT passport strategy
-function restaurantAuth() {
-    console.log("1a");
+
+function resAuth() {
     var opts = {
         jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme("jwt"),
         secretOrKey: secret
     };
-    console.log("1b:");
     passport.use( new JwtStrategy(opts, (jwt_payload, callback) => {
-            console.log("1c:");
-            const customerId = jwt_payload._id;
+            const restaurantId = jwt_payload._id;
 
-            Restaurants.findById(customerId, (err, results) => {
+            Restaurants.findById(restaurantId, (err, results) => {
                 if (err) {
-                    console.log("1d");
                     return callback(err, false);
                 }
                 if (results) {
-                    console.log("1e");
                     callback(null, results);
                 } else {
-                    console.log("1f");
                     callback(null, false);
                 }
             });
@@ -64,26 +56,25 @@ function restaurantAuth() {
     );
 }
 
-function checkAuth(req, res, next) {
-
-    const token = req.header('x-auth-token');
+function checkAuth(req, res, next){
+    const token = req.header('authorization');
 
     if (!token) {
-        return res.status(404).json({ msg: 'No Token, authorization denied' });
+        return res.status(401).json('Authorization denied');
     }
 
     try {
         passport.authenticate('jwt', { session: false });
         const decoded = jwt.verify(token, secret);
-        req.user = decoded.user;
-        console.log('checkAuth', req.user);
+        console.log("decode: ",decoded);
+        var user = decoded._id;
+
         next();
     } catch (err) {
-        res.status(404).json({ msg: ' Token is not valid' });
+        res.status(401).json(' Invalid token');
     }
 }
 
-exports.customerAuth = customerAuth;
-//passport.authenticate("jwt", { session: false });
-exports.checkAuth = passport.authenticate('jwt', { session: false });
-exports.restaurantAuth = restaurantAuth;
+exports.auth = auth;
+exports.checkAuth = checkAuth;
+exports.resAuth = resAuth;

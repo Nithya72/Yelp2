@@ -4,7 +4,9 @@ const path = require("path");
 const multer = require("multer");
 const Restaurants = require('../../../models/Restaurants');
 const router = express.Router();
-const { checkAuth } = ('../../../utils/passport');
+const { checkAuth, resAuth } = require('../../../utils/passport');
+
+resAuth();
 
 //Reference from https://www.geeksforgeeks.org/file-uploading-in-node-js/?ref=lbp
 
@@ -36,7 +38,7 @@ var upload = multer({
     }
 }).single("profilePic");
 
-router.post('/', async (req, res, next) => {
+router.post('/', checkAuth, async (req, res, next) => {
     upload(req, res, async (err) => {
 
         console.log("Inside Uploading Details:", req.body.profilePic, " : ", req.body.id);

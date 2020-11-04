@@ -13,7 +13,7 @@ const placeOrderDispatcher = payload => {
 export const placeOrder = (payload) => {
 
     return dispatch => {
-        
+        axios.defaults.headers.common['authorization'] = localStorage.getItem('cToken');
         axios.post(configPath.api_host + '/customer/orders', payload)
             .then(response => {
 

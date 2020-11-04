@@ -3,9 +3,11 @@ const express = require("express");
 const Events = require('../../../models/Events');
 const Customers = require('../../../models/Customers');
 const router = express.Router();
-const { checkAuth } = ('../../../utils/passport');
+const { checkAuth, resAuth } = require('../../../utils/passport');
 
-router.post('/', async (req, res) => {
+resAuth();
+
+router.post('/', checkAuth, async (req, res) => {
     console.log("Req Body - Get Events: ", req.body);
     try {
 

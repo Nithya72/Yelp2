@@ -14,6 +14,7 @@ const getCustomerDispatcher = payload => {
 export const getCustomerById = (payload) => {
 
     return dispatch => {
+        axios.defaults.headers.common['authorization'] = localStorage.getItem('rToken');
         axios.get(configPath.api_host + '/restaurant/customer/'+payload)
             .then(response => {
 

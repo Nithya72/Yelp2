@@ -13,6 +13,7 @@ const cusRegisteredEventsDispatcher = payload => {
 export const cusRegisteredEvents = (payload) => {
 
     return dispatch => {
+        axios.defaults.headers.common['authorization'] = localStorage.getItem('cToken');
         axios.get(configPath.api_host + '/customer/events/'+payload)
             .then(response => {
 

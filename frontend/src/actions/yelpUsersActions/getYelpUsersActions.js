@@ -14,7 +14,7 @@ const getYelpUsersDispatcher = payload => {
 export const getYelpUsers = (payload) => {
 
     return dispatch => {
-
+        axios.defaults.headers.common['authorization'] = localStorage.getItem('cToken');
         axios.get(configPath.api_host + '/customer/yelp/users/'+payload)
             .then(response => {
 

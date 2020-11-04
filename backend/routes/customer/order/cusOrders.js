@@ -1,13 +1,13 @@
 "use strict";
 const express = require("express");
 const Orders = require('../../../models/Orders');
-const Customers = require('../../../models/Customers');
-const { ObjectId } = require("mongodb");
 const Restaurants = require("../../../models/Restaurants");
 const router = express.Router();
-const { checkAuth } = ('../../../utils/passport');
+const { checkAuth, auth } = require('../../../utils/passport');
 
-router.post('/', async (req, res) => {
+auth();
+
+router.post('/', checkAuth, async (req, res) => {
     console.log("Req Body - Get Orders: ", req.body);
     try {
 
@@ -24,7 +24,7 @@ router.post('/', async (req, res) => {
 });
 
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', checkAuth, async (req, res) => {
 
     console.log("Req Body - Get Orders: ", req.params.id);
     try {

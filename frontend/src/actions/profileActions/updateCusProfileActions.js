@@ -13,8 +13,9 @@ const updateCusProfileDispatcher = payload => {
 export const updateCusProfile = (payload) => {
 
     return dispatch => {
-        // axios.defaults.headers.common.authorization = localStorage.getItem('cToken');
-        // axios.defaults.withCredentials = true;
+
+        console.log("payload: ", payload);
+        axios.defaults.headers.common['authorization'] = localStorage.getItem('cToken');
         axios.post(configPath.api_host + '/customer/profile', payload)
             .then(response => {
 

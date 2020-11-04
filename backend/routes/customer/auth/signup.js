@@ -31,7 +31,7 @@ router.post('/', async (req, res) => {
             msg: "You have successfully registered!"
         }
 
-        jwt.sign(id, config.jwtSecret, {
+        jwt.sign(id, config.secret, {
             expiresIn: 1008000,
         }, (err, token) => {
             if (err) throw err;

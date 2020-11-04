@@ -13,7 +13,7 @@ const resSendMessageDispatcher = payload => {
 export const resSendMessage = (payload) => {
 
     return dispatch => {
-
+        axios.defaults.headers.common['authorization'] = localStorage.getItem('rToken');
         axios.post(configPath.api_host + '/restaurant/messages', payload)
             .then(response => {
 

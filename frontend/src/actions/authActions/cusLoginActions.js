@@ -17,14 +17,13 @@ export const customerLogin = (restaurant) => {
         axios.post(configPath.api_host + '/customer/login', restaurant)
             .then(response => {
 
-                var decodedResponse = jwt_decode(response.data);
-                console.log("response_msg: ", decodedResponse);
-
-                var restaurants = decodedResponse.restaurants;
-                var customer = decodedResponse.customer;
+                console.log("response.data: ", response.data);
+                var decodedResponse = jwt_decode(response.data.token);
+                var restaurants = response.data.payload.restaurants;
+                var customer = response.data.payload.customer;
 
                 if (response.status === 200) {
-                    localStorage.setItem('cToken', response.data);
+                    localStorage.setItem('cToken', response.data.token);
 
                     dispatch(loginCustomerDispatcher({
                         customer,
@@ -39,7 +38,7 @@ export const customerLogin = (restaurant) => {
 
                 dispatch(loginCustomerDispatcher({
                     //type: "CUSTOMER_LOGOUT",
-                    errorMsg: "Invalid Username or Password",
+                    errorMsg: "Invalid Username || Password",
                     restaurants: null,
                     customer: null,
                     loginFlag: false

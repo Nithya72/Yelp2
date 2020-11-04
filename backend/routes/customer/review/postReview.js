@@ -1,12 +1,12 @@
 "use strict";
 const express = require("express");
 const Restaurants = require('../../../models/Restaurants');
-const jwt = require('jsonwebtoken');
 const router = express.Router();
-const config = require('../../../utils/config');
+const { checkAuth, auth } = require('../../../utils/passport');
 
+auth();
 
-router.post('/', async (req, res) => {
+router.post('/', checkAuth, async (req, res) => {
     console.log("Req Body - customer Sign up : ", req.body);
 
     console.log("Req Body - Add Menu: ", req.body);

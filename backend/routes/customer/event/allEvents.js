@@ -3,9 +3,11 @@ const express = require("express");
 const Events = require('../../../models/Events');
 const { ObjectId } = require("mongodb");
 const router = express.Router();
-const { checkAuth } = ('../../../utils/passport');
+const { checkAuth, auth } = require('../../../utils/passport');
 
-router.get('/', async (req, res) => {
+auth();
+
+router.get('/', checkAuth, async (req, res) => {
 
     try {
         const events = await Events.find();

@@ -13,8 +13,6 @@ const pwd = 'privateKey';
 const key = crypto.scryptSync(pwd, 'salt', 24);
 const iv = Buffer.alloc(16, 0);
 
-restaurantAuth();
-
 router.post('/', async (req, res) => {
     console.log("Req Body - restaurantLogin : ", req.body);
 
@@ -32,11 +30,12 @@ router.post('/', async (req, res) => {
             return res.status(404).send("Invalid Username or Password");
         }
 
-        // const payload = {
-        //     restaurant: restaurant
-        // }
+        const payload = {
+            _id: restaurant[0]._id,
+            restaurant: restaurant
+        }
 
-        jwt.sign({restaurant}, config.jwtSecret, {
+        jwt.sign(payload, config.secret, {
             expiresIn: 1008000,
         }, (err, token) => {
             if (err) throw err;

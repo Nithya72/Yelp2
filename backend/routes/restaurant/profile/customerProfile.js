@@ -2,9 +2,11 @@
 const express = require("express");
 const Customers = require('../../../models/Customers');
 const router = express.Router();
-const { restaurantAuth } = require('../../../utils/passport');
+const { checkAuth, resAuth } = require('../../../utils/passport');
 
-router.get('/:id', async (req, res) => {
+resAuth();
+
+router.get('/:id', checkAuth, async (req, res) => {
     console.log("Req Body - Customer Profile : ", req.params.id);
 
     try {

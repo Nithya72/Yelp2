@@ -13,7 +13,7 @@ const updateResProfilePicDispatcher = payload => {
 export const updateResProfilePic = (payload) => {
 
     return dispatch => {
-
+        axios.defaults.headers.common['authorization'] = localStorage.getItem('rToken');
         axios.post(configPath.api_host + '/restaurant/profile/pic', payload)
             .then(response => {
 
