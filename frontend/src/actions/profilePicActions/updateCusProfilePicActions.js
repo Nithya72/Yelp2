@@ -2,27 +2,26 @@ import axios from 'axios';
 import configPath from '../../config';
 
 
-const updateCusProfileDispatcher = payload => {
-    console.log("Inside updateCusProfileDispatcher action: ", payload);
+const updateCusProfilePicDispatcher = payload => {
+    console.log("Inside updateCusProfilePicDispatcher action: ", payload);
     return {
-        type: "CUSTOMER_PROFILE_UPDATE",
+        type: "CUSTOMER_PROFILE_PIC_UPDATE",
         payload
     };
 };
 
-export const updateCusProfile = (payload) => {
+export const updateCusProfilePic = (payload) => {
 
     return dispatch => {
-        // axios.defaults.headers.common.authorization = localStorage.getItem('cToken');
-        // axios.defaults.withCredentials = true;
-        axios.post(configPath.api_host + '/customer/profile', payload)
+        
+        axios.post(configPath.api_host + '/customer/profile/pic', payload)
             .then(response => {
 
                 console.log("Actions: Customer Profile Update:", response);
                 var customer = [response.data];
 
                 if (response.status === 200) {
-                    dispatch(updateCusProfileDispatcher({
+                    dispatch(updateCusProfilePicDispatcher({
                         customer,
                         updateFlag: true
                     })
@@ -31,8 +30,8 @@ export const updateCusProfile = (payload) => {
             }).catch(err => {
                 console.log("error: ", err.data);
 
-                dispatch(updateCusProfileDispatcher({
-                    errorMsg: "Couldn't update profile!",
+                dispatch(updateCusProfilePicDispatcher({
+                    errorMsg: "Couldn't upload profile pic!",
                     updateFlag: false
                 })
                 );

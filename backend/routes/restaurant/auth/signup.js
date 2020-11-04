@@ -5,7 +5,6 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 var crypto = require('crypto');
 const config = require('../../../utils/config');
-
 //Algorithm for encrypting passwords
 const algorithm = 'aes-192-cbc';
 const pwd = 'privateKey';

@@ -111,6 +111,13 @@ const initialState = {
           ...payload,
           isAuthenticated: true
         }
+
+      case "CUSTOMER_PROFILE_PIC_UPDATE":
+        return{
+          ...state,
+          ...payload,
+          isAuthenticated: true
+        }
   
       default:
         return state;

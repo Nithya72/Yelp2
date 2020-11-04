@@ -110,6 +110,14 @@ const resState = (state = initialState, action) => {
             ...payload,
             isAuthenticated: true
           }
+
+        case "RESTAURANT_PROFILE_PIC_UPDATE":
+          return{
+            ...state,
+            ...payload,
+            isAuthenticated: true
+          }
+          
     
     default:
       return state;

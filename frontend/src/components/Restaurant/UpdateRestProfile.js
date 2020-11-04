@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import axios from 'axios';
 import { Redirect } from 'react-router';
 import { updateResProfile } from '../../actions/profileActions/updateResProfileActions';
-import configPath from '../../config';
+import { updateResProfilePic } from '../../actions/profilePicActions/updateResProfilePicActions';
 
 class UpdateRestProfile extends Component {
 
@@ -59,30 +58,35 @@ class UpdateRestProfile extends Component {
         picData.append("id", this.state.restaurant._id);
         picData.append("table", "Restaurants");
 
-        const { restaurant } = this.state;
+        this.setState({
+            successfulUpload: "true"
+        })
 
-        axios.post(configPath.api_host+"/restaurant/profile/pic", picData)
-            .then((response) => {
-                if (response.status === 200) {
-                    this.setState({
-                        successfulUpload: "true",
-                        restaurant: {
-                            ...restaurant,
-                            restProfilePic: response.data
-                        }
-                    })
-                } else {
-                    this.setState({
-                        successfulUpload: "false"
-                    })
-                }
-            })
-            .catch((error) => {
-                console.log("Error here: ", error)
-                this.setState({
-                    successfulUpload: "false"
-                })
-            });
+        this.props.updateResProfilePic(picData);
+
+
+        // axios.post(configPath.api_host+"/restaurant/profile/pic", picData)
+        //     .then((response) => {
+        //         if (response.status === 200) {
+        //             this.setState({
+        //                 successfulUpload: "true",
+        //                 restaurant: {
+        //                     ...restaurant,
+        //                     restProfilePic: response.data
+        //                 }
+        //             })
+        //         } else {
+        //             this.setState({
+        //                 successfulUpload: "false"
+        //             })
+        //         }
+        //     })
+        //     .catch((error) => {
+        //         console.log("Error here: ", error)
+        //         this.setState({
+        //             successfulUpload: "false"
+        //         })
+        //     });
     }
 
     submitUpdateRestProfile = (e) => {
@@ -245,7 +249,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return{
-        updateProfile: (restaurant) => dispatch(updateResProfile(restaurant))
+        updateProfile: (restaurant) => dispatch(updateResProfile(restaurant)),
+        updateResProfilePic: (payload) => dispatch(updateResProfilePic(payload))
     }
 }
 

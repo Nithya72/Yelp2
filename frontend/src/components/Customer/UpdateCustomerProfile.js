@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 import { Redirect } from 'react-router';
 import { connect } from 'react-redux';
+import { updateCusProfilePic } from '../../actions/profilePicActions/updateCusProfilePicActions';
 import { updateCusProfile } from '../../actions/profileActions/updateCusProfileActions';
 
 class UpdateCustomerProfile extends Component {
@@ -69,33 +69,13 @@ class UpdateCustomerProfile extends Component {
 
         const picData = new FormData();
         picData.append("profilePic", this.state.custProfilePic, this.state.custProfilePic.name);
-        picData.append("id", this.state.customer.CustomerId);
-        picData.append("table", "Customers");
+        picData.append("id", this.state.customer._id);
 
-        const { customer } = this.state;
+        this.setState({
+            successfulUpload: "true"
+        })
 
-        axios.post("http://localhost:3001/uploadProfilePic", picData)
-            .then((response) => {
-                if (response.status === 200) {
-                    this.setState({
-                        successfulUpload: "true",
-                        customer: {
-                            ...customer,
-                            CustPic: response.data
-                        }
-                    })
-                } else {
-                    this.setState({
-                        successfulUpload: "false"
-                    })
-                }
-            })
-            .catch((error) => {
-                console.log("Error here: ", error)
-                this.setState({
-                    successfulUpload: "false"
-                })
-            });
+        this.props.updateCusProfilePic(picData);
     }
 
     submitUpdateCustProfile = (e) => {
@@ -105,22 +85,6 @@ class UpdateCustomerProfile extends Component {
         const { customer } = this.state;
 
         this.props.updateCusProfile(customer);
-
-        // axios.post('http://localhost:3001/updateCustomerProfile', customer)
-        //     .then((response) => {
-
-        //         console.log("Status Code : ", response.status);
-        //         if (response.status === 200) {
-        //             console.log("After Customer Profile Updation: ", response.data);
-        //             this.setState({
-        //                 customer: response.data,
-        //                 redirectToProfile: true
-        //             })
-        //         }
-        //     })
-        //     .catch((error) => {
-        //         console.log("Error here: ", error)
-        //     });
     }
 
     render() {
@@ -312,7 +276,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        updateCusProfile: (payload) => dispatch(updateCusProfile(payload))
+        updateCusProfile: (payload) => dispatch(updateCusProfile(payload)),
+        updateCusProfilePic: (payload) => dispatch(updateCusProfilePic(payload))
     }
 }
 

@@ -26,7 +26,7 @@ class CustomerMessages extends Component {
     componentDidUpdate(prevProps) {
         console.log("Inside componentDidUpdate - CustomerMessage After:", this.state.custMsg);
 
-        if (this.state.custMsg != this.props.custMsg) {
+        if (this.state.custMsg !== this.props.custMsg) {
 
             this.setState({
                 custMsg: this.props.custMsg,

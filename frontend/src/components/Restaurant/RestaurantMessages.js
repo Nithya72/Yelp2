@@ -26,7 +26,7 @@ class RestaurantMessages extends Component {
     componentDidUpdate(prevProps) {
         console.log("Inside componentDidUpdate - RestaurantMessages After:", this.state.restMsg);
 
-        if (this.state.restMsg != this.props.restMsg) {
+        if (this.state.restMsg !== this.props.restMsg) {
 
             this.setState({
                 restMsg: this.props.restMsg,

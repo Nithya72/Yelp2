@@ -1,10 +1,9 @@
 "use strict";
 const express = require("express");
-const path = require("path");
-const multer = require("multer");
 const Customers = require('../../../models/Customers');
 const router = express.Router();
-const { checkAuth } = ('../../../utils/passport');
+const { checkAuth } = require('../../../utils/passport');
+
 
 router.post('/', async (req, res) => {
     console.log("Req Body - update Customer : ", req.body);

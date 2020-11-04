@@ -64,7 +64,26 @@ function restaurantAuth() {
     );
 }
 
+function checkAuth(req, res, next) {
+
+    const token = req.header('x-auth-token');
+
+    if (!token) {
+        return res.status(404).json({ msg: 'No Token, authorization denied' });
+    }
+
+    try {
+        passport.authenticate('jwt', { session: false });
+        const decoded = jwt.verify(token, secret);
+        req.user = decoded.user;
+        console.log('checkAuth', req.user);
+        next();
+    } catch (err) {
+        res.status(404).json({ msg: ' Token is not valid' });
+    }
+}
 
 exports.customerAuth = customerAuth;
-exports.checkAuth = passport.authenticate("jwt", { session: false });
+//passport.authenticate("jwt", { session: false });
+exports.checkAuth = passport.authenticate('jwt', { session: false });
 exports.restaurantAuth = restaurantAuth;

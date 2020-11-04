@@ -174,15 +174,6 @@ class YelpUsers extends Component {
     render() {
 
         var redirectVar = null;
-        var errorMessage = null;
-
-        if (this.state.redirectToEventDetails) {
-            redirectVar = <Redirect to={{ pathname: "/eventDetails", state: { event: this.state.event } }} />
-        }
-
-        if ((this.state.filteredEvents && this.state.filteredEvents.length === 0)) {
-            errorMessage = <div style={{ marginTop: "20px", fontSize: "22px" }}> No Events found</div>
-        }
 
         if (this.state.redirectToUsers && this.props.getCustomerFlag) {
             redirectVar = <Redirect to={{ pathname: "/customerProfile" }} />
