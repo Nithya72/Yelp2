@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 import StarRatings from 'react-star-ratings';
 import { CheckBoxMenu } from '../../CheckBoxMenu.js';
-import {Redirect} from 'react-router';
+import { connect } from 'react-redux';
+import { placeOrder } from '../../actions/orderActions/placeOrdersActions';
 
 class CustomerOrders extends Component {
 
@@ -22,44 +22,20 @@ class CustomerOrders extends Component {
 
         this.state = {
             restaurant: restaurant,
-            customer: this.props.location.state.customer,
+            customer: this.props.customer[0],
             orderType: orderType,
             successFlag: false,
-            menu: [],
+            menu: this.props.location.state.restaurant.Menu,
             orders: [],
             orderAmount: 0,
             orderSuccessMsg: null,
-            orderSuccessFlag: false,
-            redirectToRestaurants: false
+            orderSuccessFlag: null,
+            redirectToRestaurants: false,
+            submitted: false
         }
 
         this.handleCheckBox = this.handleCheckBox.bind(this);
         this.submitOrders = this.submitOrders.bind(this);
-        this.redirectHandler = this.redirectHandler.bind(this);
-    }
-
-
-    componentDidMount() {
-        console.log("On page load")
-        const data = {
-            restaurantId: this.state.restaurant.RestaurantId
-        }
-        axios.post('http://localhost:3001/getMenu', data)
-            .then((response) => {
-
-                console.log("Status Code : ", response.status);
-                if (response.status === 200) {
-                    console.log("Menu Fetched: ", response.data);
-
-                    this.setState({
-                        successFlag: true,
-                        menu: this.state.menu.concat(response.data)
-                    })
-                }
-            })
-            .catch((error) => {
-                console.log("Error here: ", error)
-            });
     }
 
     handleCheckBox(e) {
@@ -68,7 +44,6 @@ class CustomerOrders extends Component {
 
         let amount = 0;
         let stateOrder = +(this.state.orderAmount);
-        // let orders = [];
 
         this.state.menu.forEach(menu => {
             if (menu.DishName === e.target.value) {
@@ -79,7 +54,6 @@ class CustomerOrders extends Component {
 
         if (e.target.checked) {
             amount = stateOrder + amount;
-            // orders = this.state.orders.concat();
 
             this.setState({
                 orders: this.state.orders.concat(e.target.value)
@@ -103,12 +77,6 @@ class CustomerOrders extends Component {
 
     }
 
-    redirectHandler(e) {
-        this.setState({
-            redirectToRestaurants: true,
-        })
-    }
-
     submitOrders = (e) => {
 
         e.preventDefault();
@@ -118,29 +86,19 @@ class CustomerOrders extends Component {
         const data = {
             orderAmount : +(this.state.orderAmount)+2,
             orders : this.state.orders,
-            restaurantId: this.state.restaurant.RestaurantId,
-            customer: this.state.customer.CustomerId,
+            restaurant: this.state.restaurant._id,
+            customer: this.state.customer._id,
             restaurantName: this.state.restaurant.RestName,
             deliveryOption: this.state.orderType,
             orderStatus: "Order Received"
         }
 
-        axios.post('http://localhost:3001/placeOrders', data)
-            .then((response) => {
+        this.setState({
+            submitted: true
+        });
 
-                console.log("Status Code : ", response.status);
-                if (response.status === 200) {
-                    console.log("Orders Placed: ", response.data);
+        this.props.placeOrder(data);
 
-                    this.setState({
-                        orderSuccessFlag: true,
-                        orderSuccessMsg: response.data
-                    })
-                }
-            })
-            .catch((error) => {
-                console.log("Error here: ", error)
-            });
     }
 
 
@@ -160,14 +118,10 @@ class CustomerOrders extends Component {
         var successMsg = null;
 
 
-        if (this.state.orderSuccessFlag) {
-            successMsg = <div class="alert alert-success" role="alert">{this.state.orderSuccessMsg}</div>
-        } else if (this.state.successFlag === false) {
-            successMsg = <div class="alert alert-danger" role="alert">Order Failed</div>
-        }
-
-        if (this.state.redirectToRestaurants) {
-            redirectVar = <Redirect to={{ pathname: "/restaurants", state: { customer: this.state.customer, restaurant: this.state.restaurant  } }} />
+        if (this.state.submitted && this.props.placeOrderFlag) {
+            successMsg = <div class="alert alert-success" role="alert">{this.props.successMsg}</div>
+        } else if (this.state.submitted && this.props.placeOrderFlag === false) {
+        successMsg = <div class="alert alert-danger" role="alert">{this.props.errorMsg}</div>
         }
 
         return (
@@ -204,10 +158,10 @@ class CustomerOrders extends Component {
                                 <div className="dropdown">
                                     <div className="material-icons" data-toggle="dropdown">account_circle</div>
                                     <ul class="dropdown-menu pull-right">
-                                    <li style={{ display: "block", padding: "3px 20px", lineHeight: "1.42857143", color: "#333", fontWeight: "400" }} onClick={this.redirectHandler}>Restaurants</li>
+                                        <li><a href="/custResLanding">Restaurants</a></li>
                                         <li><a href="/restaurantOrders">Orders</a></li>
                                         <li><a href="/">Events</a></li>
-                                        <li><a href="/restaurantLogin">Sign Out</a></li>
+                                        <li><a href="/customerLogout">Sign Out</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -229,8 +183,6 @@ class CustomerOrders extends Component {
                                             <td> <CheckBoxMenu handleCheckBox={this.handleCheckBox} {...menu} /> </td>
 
                                             <td style={{ width: "100px" }}><img style={{ width: "150px", height: "150px", marginRight: "20px" }} src={require("../../images/profile_pics/" + menu.DishImg)} alt="" /></td>
-                                            {/* src={require('../../images/logo.jpg')} */}
-
                                             <table>
                                                 <tbody>
                                                     <tr></tr>
@@ -267,4 +219,21 @@ class CustomerOrders extends Component {
 
 }
 
-export default CustomerOrders;
+const mapStateToProps = (state) => {
+    console.log("state customer order reducer:", state.cusStore);
+    return {
+        customer: state.cusStore.customer || "",
+        successMsg: state.cusStore.successMsg,
+        errorMsg: state.cusStore.errorMsg,
+        placeOrderFlag: state.cusStore.placeOrderFlag
+    };
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        placeOrder: (payload) => dispatch(placeOrder(payload)),
+        // getEvents: (payload) => dispatch(getEvents(payload))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CustomerOrders);

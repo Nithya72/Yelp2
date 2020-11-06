@@ -1,0 +1,3 @@
+{
+    "mongoURI" : "mongodb+srv://yelp:nursery@cluster0.wvz8o.mongodb.net/yelp?retryWrites=true&w=majority"
+}

@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import '../../App.css';
 import { Redirect } from 'react-router';
-import axios from 'axios';
+import { connect } from 'react-redux';
+import { postEvent } from '../../actions/eventActions/postEventActions';
+import { getEvents } from '../../actions/eventActions/getEventActions';
 
 class PostEvents extends Component {
 
@@ -9,9 +11,8 @@ class PostEvents extends Component {
         super(props);
 
         this.state = {
-            restaurant: this.props.location.state.restaurant,
             eventDetails: {
-                eventRestId: this.props.location.state.restaurant.RestaurantId,
+                eventRestId: this.props.restaurant[0]._id,
                 eventName: null,
                 eventDescription: null,
                 eventTime: null,
@@ -21,7 +22,8 @@ class PostEvents extends Component {
                 eventContactNo: null,
                 eventType: null,
                 successFlag: false
-            }
+            },
+            submitted: false
         }
 
         this.postEventHandler = this.postEventHandler.bind(this);
@@ -31,6 +33,7 @@ class PostEvents extends Component {
     formChangeHandler = (e) => {
         const { name, value } = e.target;
         const { eventDetails } = this.state;
+
         this.setState({
             eventDetails: {
                 ...eventDetails,
@@ -41,35 +44,22 @@ class PostEvents extends Component {
 
     postEventHandler(e) {
         e.preventDefault();
-        console.log("eventDetails: ", this.state.eventDetails);
 
         const data = {
             eventDetails: this.state.eventDetails
         }
 
-        axios.post('http://localhost:3001/postEvents', data)
-            .then((response) => {
+        this.setState({ submitted: true });
 
-                console.log("Status Code : ", response.status);
-                if (response.status === 200) {
-                    console.log("CustomerEvents Fetched: ", response.data);
-                    console.log("State Events: ", this.state.upcomingEvents);
-                    this.setState({
-                        successFlag: true
-                    })
-                }
-            })
-            .catch((error) => {
-                console.log("Error here: ", error)
-            });
+        this.props.postEvent(data);
+
     }
 
     render() {
-        console.log("Restaurant Id: ", this.state.restaurantId);
         var redirectVar = null;
 
-        if (this.state.successFlag) {
-            redirectVar = <Redirect to={{ pathname: "/restaurantEvents", state: { restaurant: this.state.restaurant } }} />
+        if (this.state.submitted && this.props.postEventFlag) {
+            redirectVar = <Redirect to={{ pathname: "/restaurantProfile"}} />
         }
 
         return (
@@ -105,10 +95,10 @@ class PostEvents extends Component {
                                 <div className="dropdown">
                                     <div className="material-icons" data-toggle="dropdown">account_circle</div>
                                     <ul class="dropdown-menu pull-right">
-                                        <li style={{ display: "block", padding: "3px 20px", lineHeight: "1.42857143", color: "#333", fontWeight: "400" }} onClick={this.redirectHandler}>About me</li>
+                                        <li><a href="/restaurantProfile">Profile</a></li>
                                         <li><a href="/">Orders</a></li>
                                         <li><a href="/">Events</a></li>
-                                        <li><a href="/customerLogin">Sign Out</a></li>
+                                        <li><a href="/restaurantLogout">Sign Out</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -190,4 +180,19 @@ class PostEvents extends Component {
         )
     }
 }
-export default PostEvents;
+
+const mapStateToProps = (state) => {
+    console.log("state post event reducer:",state.resState);
+    return {
+        restaurant: state.resState.restaurant ||  "",
+        postEventMsg: state.resState.postEventMsg || "",
+        postEventFlag: state.resState.postEventFlag
+    };
+};
+const mapDispatchToProps = (dispatch) => {
+    return{
+        postEvent: (payload) => dispatch(postEvent(payload)),
+        getEvents: (payload) => dispatch(getEvents(payload))
+    }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(PostEvents);

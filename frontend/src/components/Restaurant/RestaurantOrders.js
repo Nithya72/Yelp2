@@ -1,96 +1,93 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 import { Redirect } from 'react-router';
+import { connect } from 'react-redux';
+import ReactPaginate from 'react-paginate';
+import { updateOrder } from '../../actions/orderActions/updateOrderActions';
+import { getCustomerById } from '../../actions/landingActions/getCustomerActions';
+
 
 class RestaurantOrders extends Component {
 
     constructor(props) {
         super(props);
 
-        var restaurant = this.props.location.state.restaurant;
-        console.log("Orders - Restaurant Details: ", restaurant);
+        var restaurant = this.props.restaurant;
         this.state = {
-            restaurant: restaurant,
-            orderDetails: [],
-            orderFiltered: [],
+            restaurant: restaurant[0],
+            orderDetails: this.props.orderDetails,
+            orderFiltered: this.props.orderDetails,
             customer: null,
+            submitted: false,
             redirectToCustomer: false,
             orderUpdatedStatus: null,
-            redirectToRestaurant : false
+            reRender: false,
+
+            offset: 0,
+            perPage: 3,
+            currentPage: 0,
+            ordersToDisplay: [],
+            orgOrdersToDisplay: [],
+            // redirectToMsgs: false
         }
+
         this.submitCustomerProfile = this.submitCustomerProfile.bind(this);
         this.orderStatusFilterHandler = this.orderStatusFilterHandler.bind(this);
-        this.redirectHandler = this.redirectHandler.bind(this);
+        this.handlePageclick = this.handlePageclick.bind(this);
     }
 
+    componentDidMount(){
+        this.applyPagination();
+    }
 
-    componentDidMount() {
-        console.log("On page load")
+    applyPagination(){
+        var orders = this.props.orderDetails;
+        var slice = orders.slice(this.state.offset, this.state.offset+this.state.perPage);
 
-        const data = {
-            id: this.state.restaurant.RestaurantId,
-            type: "restaurant"
-        }
+        this.setState({
+            pageCount: Math.ceil(orders.length / this.state.perPage),
+            orgOrdersToDisplay : orders,
+            ordersToDisplay : slice
+        })
+    }
 
-        axios.post('http://localhost:3001/getOrders', data)
-            .then((response) => {
+    handlePageclick = (e) => {
+        const selectedPage = e.selected;
+        const offset = selectedPage * this.state.perPage;
 
-                console.log("Status Code : ", response.status);
-                if (response.status === 200) {
-                    console.log("ComponentDidMount Order History Fetched: ", response.data);
+        this.setState({
+            currentPage: selectedPage,
+            offset: offset
+        }, () => {
+            this.loadMoreOrders()
+        });
+    }
 
-                    this.setState({
-                        orderFlag: true,
-                        orderDetails: this.state.orderDetails.concat(response.data),
-                        orderFiltered: this.state.orderFiltered.concat(response.data),
-                    })
-                } else if (response.status === 404) {
-                    console.log("No Orders Found ");
-                    this.setState({
-                        orderFlag: false
-                    })
-                }
-            })
-            .catch((error) => {
-                console.log("Error here: ", error)
+    loadMoreOrders(){
+        const data = this.state.orgOrdersToDisplay;
+        const slice = data.slice(this.state.offset, this.state.offset+this.state.perPage)
+
+        this.setState({
+            pageCount: Math.ceil(data.length / this.state.perPage),
+            ordersToDisplay: slice
+        })
+    }
+
+    componentDidUpdate(prevProps) {
+
+        if (this.state.orderDetails !== this.props.orderDetails) {
+            this.setState({
+                orderFiltered: this.props.orderDetails,
+                orderDetails: this.props.orderDetails
             });
+        }
     }
-
 
     submitCustomerProfile = (id) => {
         console.log("Submit Customer Profile: ", id);
-        let customer = null;
 
-        this.state.orderDetails.forEach(order => {
-
-            if (order.CustomerId === id) {
-
-                customer = {
-                    CustEmailId: order.CustEmailId,
-                    CustName: order.CustName,
-                    CustPassword: order.CustPassword,
-                    CustPic: order.CustPic,
-                    CustomerCity: order.CustomerCity,
-                    CustomerCountry: order.CustomerCountry,
-                    CustomerDOB: order.CustomerDOB,
-                    CustomerId: order.CustomerId,
-                    CustomerPhoneNo: order.CustomerPhoneNo,
-                    CustomerState: order.CustomerState,
-                    FindMeIn: order.FindMeIn,
-                    FriendsCount: order.FriendsCount,
-                    Headline: order.Headline,
-                    MyBlog: order.MyBlog,
-                    NickName: order.NickName,
-                    PhotosCount: order.PhotosCount,
-                    ReviewsCount: order.ReviewsCount,
-                    ThingsLove: order.ThingsLove,
-                    YelpingSince: order.YelpingSince
-                }
-            }
-        })
+        this.props.getCustomerById(id);
 
         this.setState({
-            customer: customer,
             redirectToCustomer: true
         })
     }
@@ -101,12 +98,12 @@ class RestaurantOrders extends Component {
 
         if (status === "all") {
             this.setState({
-                orderFiltered: this.state.orderDetails
+                orderFiltered: this.props.orderDetails
             })
         }
         else if (status === "Delivered") {
 
-            this.state.orderDetails.forEach(order => {
+            this.props.orderDetails.forEach(order => {
 
                 if (order.OrderStatus === status || order.OrderStatus === "Picked up") {
                     list.push(order);
@@ -118,7 +115,7 @@ class RestaurantOrders extends Component {
         }
         else if (status === "Cancelled") {
 
-            this.state.orderDetails.forEach(order => {
+            this.props.orderDetails.forEach(order => {
 
                 if (order.OrderStatus === status) {
                     list.push(order);
@@ -130,7 +127,7 @@ class RestaurantOrders extends Component {
         }
         else {
 
-            this.state.orderDetails.forEach(order => {
+            this.props.orderDetails.forEach(order => {
 
                 if (order.OrderStatus === "Order Received") {
                     list.push(order);
@@ -146,66 +143,33 @@ class RestaurantOrders extends Component {
     statusUpdateHandler(a, e) {
         console.log("e.target.value: ", a, ":", e.target.value);
 
+        // e.preventDefault();
         const data = {
-            orderId : a.OrderId,
+            orderId: a._id,
             status: e.target.value,
-            id: this.state.restaurant.RestaurantId,
-            type: "restaurant"
+            id: this.state.restaurant._id
         }
 
-        axios.post('http://localhost:3001/updateOrders', data)
-        .then((response) => {
-
-            console.log("Status Code : ", response.status);
-            if (response.status === 200) {
-                console.log("Status Update Handler Fetched: ", response.data);
-
-
-                this.setState({
-                    orderDetails: [],
-                    orderFiltered: []
-                })
-
-                this.setState({
-                    orderFlag: true,
-                    orderDetails: this.state.orderDetails.concat(response.data),
-                    orderFiltered: this.state.orderFiltered.concat(response.data),
-                })
-            } else if (response.status === 404) {
-                console.log("No Orders Found ");
-                this.setState({
-                    orderFlag: false
-                })
-            }
-        })
-        .catch((error) => {
-            console.log("Error here: ", error)
-        });
-    }
-
-    redirectHandler(e) {
-  
         this.setState({
-            redirectToRestaurant: true
+            submitted: true
         })
+
+        this.props.updateOrder(data);
     }
 
     render() {
-        console.log("Order details - Restaurant Order: ", this.state.orderDetails)
+
+        console.log("Order Filtered - Restaurant Order: ", this.state.orderFiltered)
 
         var redirectVar = null;
         var orderEmptyMsg = null;
 
-        if (this.state.redirectToCustomer) {
-            redirectVar = <Redirect to={{ pathname: "/customerProfile", state: { customer: this.state.customer } }} />
+        if (this.state.redirectToCustomer && this.props.getCustomerFlag) {
+            redirectVar = <Redirect to={{ pathname: "/customerProfile" }} />
         }
 
-        if(this.state.redirectToRestaurant){
-            redirectVar = <Redirect to={{ pathname: "/restaurantProfile", state: { restaurant: this.state.restaurant, fromOrders: true } }} />
-        }
-
-        if(!this.state.orderFiltered || this.state.orderFiltered.length === 0){
-            orderEmptyMsg = <div style={{color:"#d32323", fontSize:"20px", fontWeight:"bold"}}> No Orders Yet!</div>
+        if (!this.state.orderFiltered || this.state.orderFiltered.length === 0) {
+            orderEmptyMsg = <div style={{ color: "#d32323", fontSize: "20px", fontWeight: "bold" }}> No Orders Yet!</div>
         }
 
         return (
@@ -242,10 +206,10 @@ class RestaurantOrders extends Component {
                                 <div className="dropdown">
                                     <div className="material-icons" data-toggle="dropdown">account_circle</div>
                                     <ul class="dropdown-menu pull-right">
-                                    <li style={{ display: "block", padding: "3px 20px", lineHeight: "1.42857143", color: "#333", fontWeight: "400" }} onClick={this.redirectHandler}>Rest Profile</li>
+                                        <li><a href="/restaurantProfile">Rest Profile</a></li>
                                         <li><a href="/restaurantOrders">Orders</a></li>
                                         <li><a href="/">Events</a></li>
-                                        <li><a href="/restaurantLogin">Sign Out</a></li>
+                                        <li><a href="/restaurantLogout">Sign Out</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -268,13 +232,13 @@ class RestaurantOrders extends Component {
                             <br />
                         </div>
                         {orderEmptyMsg}
-                        {this.state.orderFiltered.map(order => (
+                        {this.state.ordersToDisplay.map(order => (
                             <table className="order-table" >
                                 <tbody>
                                     <tr><span style={{ color: "black", fontSize: "20px", fontWeight: "bold" }}> Order# {order.OrderId} </span></tr>
                                     <tr>
                                         <td>
-                                            <img style={{ border: "1px solid gray", borderRadius: "5px", height: "125px", width: "125px" }} src={require("../../images/profile_pics/" + order.CustPic)} alt="" />
+                                            <img style={{ border: "1px solid gray", borderRadius: "5px", height: "125px", width: "125px" }} src={require("../../images/profile_pics/" + order.Customer.CustPic)} alt="" />
                                         </td>
 
                                         <td>
@@ -282,7 +246,7 @@ class RestaurantOrders extends Component {
                                             <table style={{ marginLeft: "20px", width: "475px" }}>
                                                 <tbody>
                                                     <div style={{ justifyContent: "space-between", display: "flex" }}><div style={{ fontSize: "20px", fontWeight: "bold", color: "#0073bb" }}>
-                                                        <span className="rest-name-link" onClick={() => this.submitCustomerProfile(order.CustomerId)}> {order.CustName}</span>
+                                                        <span className="rest-name-link" onClick={() => this.submitCustomerProfile(order.Customer._id)}> {order.Customer.CustName}</span>
                                                     </div>
                                                         <div style={{ fontSize: "18px", color: "gray", fontWeight: "bold" }}>{(order.OrderTime).substring(0, 10)} {(order.OrderTime).substring(11, 16)}</div></div>
                                                     <tr style={{ fontSize: "18px", marginTop: "5px" }}>$ . {order.OrderAmount}</tr>
@@ -296,9 +260,6 @@ class RestaurantOrders extends Component {
                                         </td>
                                         <td>
                                             <div >
-                                                {/* <SelectOption {...order} onSelect={this.statusUpdateHandler}/> */}
-
-
                                                 {
                                                     order.DeliveryOption === "Delivery" ?
                                                         <select className="select-list" name="status" onChange={this.statusUpdateHandler.bind(this, order)}>
@@ -322,8 +283,8 @@ class RestaurantOrders extends Component {
                                 </tbody>
                                 <br />
                             </table>
-
                         ))}
+                        <div style={{marginLeft: "400px"}}><ReactPaginate previousLabel = {"prev"} nextLabel = {"next"} breakLabel = {"..."} breakClassName = {"break-me"} pageCount ={this.state.pageCount}  marginPagesDisplayed = {2} pageRangeDisplayed = {5} onPageChange={this.handlePageclick} containerClassName = {"pagination"} subContainerClassName = {"pages pagination"} activeClassName = {"active"} /> </div>
                     </div>
                 </div>
             </div>
@@ -331,4 +292,23 @@ class RestaurantOrders extends Component {
     }
 }
 
-export default RestaurantOrders;
+const mapStateToProps = (state) => {
+    console.log("state update rest order reducer:", state.resState);
+    return {
+        restaurant: state.resState.restaurant || "",
+        orderDetails: state.resState.orderDetails || "",
+        orderFiltered: state.resState.orderDetails || "",
+        getCustomerFlag: state.cusStore.getCustomerFlag
+    };
+};
+
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        updateOrder: (payload) => dispatch(updateOrder(payload)),
+        getCustomerById: (payload) => dispatch(getCustomerById(payload))
+    }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(RestaurantOrders);

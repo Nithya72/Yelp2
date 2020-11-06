@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-
-// import { restaurantActions } from '../../actions';
-import { restaurantActions } from '../../actions';
+import { restaurantSignUp } from '../../actions/authActions/resSignupActions';
 
 class RestaurantSignUp extends Component {
 
@@ -41,8 +39,8 @@ class RestaurantSignUp extends Component {
         const { restaurant } = this.state;
 
         if (restaurant.restName && restaurant.restEmailID && restaurant.restPassword && restaurant.restLocation) {
-            console.log("in res sign up: ", this.props);
-            this.props.register(restaurant);
+            this.props.restaurantSignUp(restaurant)
+
         }
     }
 
@@ -54,18 +52,16 @@ class RestaurantSignUp extends Component {
         var errorAlert = null;
         var final_msg = null;
 
-        if (this.props && this.props.location && this.props.location.state && this.props.location.state && this.props.location.state.successAlert) {
-            successAlert = this.props.location.state.successAlert;
+        if (this.props.registerFlag === true) {
+            successAlert = true;
+        }else if(this.props.registerFlag === false){
+            errorAlert = true;
         }
 
-        if (this.props && this.props.location && this.props.location.state && this.props.location.state && this.props.location.state.errorAlert) {
-            errorAlert = this.props.location.state.errorAlert;
-        }
-
-        if (successAlert) {
-            final_msg = <div class="alert alert-success" role="alert">{successAlert}<a href={'/restaurantLogin'} > Login Here.</a></div>
+        if (successAlert && this.props.isAuthenticated) {
+            final_msg = <div class="alert alert-success" role="alert">{this.props.res}<a href={'/restaurantLogin'} > Login Here.</a></div>
         } else if (errorAlert) {
-            final_msg = <div class="alert alert-danger" role="alert">{errorAlert}</div>
+            final_msg = <div class="alert alert-danger" role="alert">{this.props.res}</div>
         }
 
         return (
@@ -73,7 +69,6 @@ class RestaurantSignUp extends Component {
                 <div className="all-header" style={{ backgroundColor: "#d32323", height: "70px" }}>
 
                     <div className="header-left">
-                        {/* &emsp;&emsp;<Link to="/" className="button">Home</Link> */}
                         &emsp;<Link to="/customerSignUp" className="button">Customer SignUp</Link>
                         &emsp;<Link to="/customerLogin" style={{ color: "white", fontWeight: "bold" }}>Customer Login</Link>
                     </div>
@@ -81,7 +76,6 @@ class RestaurantSignUp extends Component {
                     <img className="logo1" src={require('../../images/logo.jpg')} alt="" />
 
                     <div className="header-right">
-                        {/* &emsp;<Link to="/restaurantSignUp" className="button">Restaurant SignUp</Link> */}
                         &emsp;&emsp;<Link to="/" className="button">Home</Link>
                         &emsp;<Link to="/restaurantLogin" style={{ color: "white", fontWeight: "bold" }}>Restaurant Login</Link>
                     </div>
@@ -137,14 +131,22 @@ class RestaurantSignUp extends Component {
         )
     }
 }
-function mapState(state) {
-    const { registering } = state.signup;
-    return { registering };
+
+const mapStateToProps = (state) => {
+    console.log("state sign up reducer:",state.resState);
+    return {
+        res:  state.resState.response_msg ||  "",
+        registerFlag: state.resState.registerFlag || null,
+        isAuthenticated: state.resState.isAuthenticated
+    };
+};
+
+
+const mapDispatchToProps = (dispatch) => {
+    return{
+        restaurantSignUp: (restaurant) => dispatch(restaurantSignUp(restaurant))
+    }
 }
 
-const actionCreators = {
-    register: restaurantActions.restaurantSignUp
-}
 
-const connectedRegisterPage = connect(mapState, actionCreators)(RestaurantSignUp);
-export { connectedRegisterPage as RestaurantSignUp };
+export default connect(mapStateToProps, mapDispatchToProps)(RestaurantSignUp);

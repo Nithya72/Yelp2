@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import '../../App.css';
 import { CheckBox } from '../../CheckBox.js';
-import axios from 'axios';
-import cookie from 'react-cookies';
 import { Redirect } from 'react-router';
 import StarRatings from 'react-star-ratings';
 import Map from '../Maps/Map.js';
+import { searchRestaurants } from '../../actions/landingActions/searchRestaurantActions';
+import { connect } from 'react-redux';
+import { getYelpUsers } from '../../actions/yelpUsersActions/getYelpUsersActions';
 
 
 class CustResLanding extends Component {
@@ -15,13 +16,11 @@ class CustResLanding extends Component {
         super(props);
         //maintain the state required for this component
 
-
-        // console.log("CustResLanding - Customer Login: ", this.props.location.state.customer)
         this.state = {
-            customer: this.props.location.state.customer,
-            restaurants: [],
-            searchList: [],
-            filteredRestaurants: [],
+            customer: this.props.customer[0],
+            restaurants: this.props.restaurants,
+            searchList: this.props.restaurants,
+            filteredRestaurants: this.props.restaurants,
             successFlag: null,
             msg: null,
             error: "",
@@ -41,40 +40,30 @@ class CustResLanding extends Component {
             searchName: "",
             searchLocation: "",
             searchFlag: false,
-            searchErrorMsg: "No Search Result Found"
+            searchErrorMsg: "No Search Result Found",
+            submitYelpUsers: false
 
         }
         this.submitRestaurant = this.submitRestaurant.bind(this);
         this.handleCheckBox = this.handleCheckBox.bind(this);
         this.handleDelivery = this.handleDelivery.bind(this);
         this.searchHandler = this.searchHandler.bind(this);
-        this.redirectHandler = this.redirectHandler.bind(this);
         this.searchNameHandler = this.searchNameHandler.bind(this);
         this.searchLocationHandler = this.searchLocationHandler.bind(this);
+        this.redirectToYelpUsers = this.redirectToYelpUsers.bind(this);
     }
-    componentDidMount() {
-        console.log("On page load")
-        axios.get('http://localhost:3001/custLanding')
-            .then((response) => {
 
-                console.log("Status Code : ", response.status);
-                if (response.status === 200) {
-                    console.log("Restaurants Fetched: ", response.data);
-                    console.log("State Restaurants: ", this.state.restaurants);
-                    this.setState({
-                        successFlag: true,
-                        restaurants: this.state.restaurants.concat(response.data),
-                        searchList: response.data,
-                        filteredRestaurants: response.data
-                    })
-                }
-            })
-            .catch((error) => {
-                console.log("Error here: ", error)
+    componentDidUpdate(prevProps) {
+        if (this.state.restaurants !== this.props.restaurants) {
+            this.setState({
+                restaurants: this.props.restaurants,
+                filteredRestaurants: this.props.restaurants
             });
+        }
     }
 
     handleCheckBox = (event) => {
+
         let neighbors = this.state.neighborhoods
 
         neighbors.forEach(neighbor => {
@@ -141,7 +130,7 @@ class CustResLanding extends Component {
 
         console.log("Search List:", this.state.searchList)
 
-        if (selectedDeliveryOptions.length == 3) {
+        if (selectedDeliveryOptions.length === 3) {
             this.setState({
                 filteredRestaurants: this.state.searchList
             })
@@ -174,44 +163,13 @@ class CustResLanding extends Component {
     searchHandler = (e) => {
         e.preventDefault();
 
-        axios.defaults.withCredentials = true;
-
         console.log("searchName: ", this.state.searchName + " searchLocation: ", this.state.searchLocation);
         const data = {
             searchName: this.state.searchName,
             searchLocation: this.state.searchLocation
         }
-        axios.post('http://localhost:3001/searchRestaurants', data)
-            .then(response => {
-                console.log("Status Code : ", response.status);
-                if (response.status === 200) {
-                    console.log("Successful Search: ", response.data);
-                    this.setState({
-                        searchFlag: true,
-                        searchList: response.data,
-                        filteredRestaurants: response.data
-                    })
-                }
-                else {
-                    this.setState({
-                        searchFlag: false,
-                        filteredRestaurants: []
-                    })
-                }
-            })
-            .catch(error => {
-                console.log("Here we captured the error")
-                this.setState({
-                    searchFlag: false,
-                    filteredRestaurants: []
-                })
-            });
-    }
 
-    redirectHandler = (e) => {
-        this.setState({
-            redirectToProfile: true,
-        })
+        this.props.searchRestaurants(data);
     }
 
     searchNameHandler = (e) => {
@@ -232,29 +190,32 @@ class CustResLanding extends Component {
             redirectRest: true,
             restaurant: restData
         })
+    }
 
+    redirectToYelpUsers = (e) => {
+        this.setState({
+            submitYelpUsers: true
+        })
+
+        this.props.yelpUsers(this.state.customer._id);
     }
 
     render() {
-        console.log("Then here: ", this.state.filteredRestaurants)
 
+        console.log("Inside component did mount:", (!this.state.filteredRestaurants || this.state.filteredRestaurants.length === 0) );
         let redirectVar = null;
-        let errorMsg = null;
-        if (!cookie.load('cookie')) {
-            redirectVar = <Redirect to="/customerLogin" />
-        }
+        let error_msg = null;
 
         if (this.state.redirectRest) {
             redirectVar = <Redirect to={{ pathname: "/restaurants", state: { restaurant: this.state.restaurant, customer: this.state.customer, restaurants: this.state.restaurants } }} />
         }
 
-        if (this.state.redirectToProfile) {
-            redirectVar = <Redirect to={{ pathname: "/customerProfile", state: { customer: this.state.customer } }} />
+        if (!this.state.filteredRestaurants || this.state.filteredRestaurants.length === 0) {
+            error_msg = <div style={{ fontWeight: "bold", fontSize: "20px", marginTop: "20px", color: "#f43938" }}>{this.props.errorMsg}</div>
         }
 
-        if (this.state.filteredRestaurants && this.state.filteredRestaurants.length == 0) {
-            console.log("Inside errorr:")
-            errorMsg = <div style={{ fontWeight: "bold", fontSize: "20px", marginTop: "20px", color: "#f43938" }}>{this.state.searchErrorMsg}</div>
+        if(this.state.submitYelpUsers && this.props.getYelpUserFlag){
+            redirectVar = <Redirect to={{ pathname: "/yelpUsers" }} />
         }
 
         return (
@@ -290,10 +251,11 @@ class CustResLanding extends Component {
                                 <div className="dropdown">
                                     <div className="material-icons" data-toggle="dropdown">account_circle</div>
                                     <ul class="dropdown-menu pull-right">
-                                        <li style={{ display: "block", padding: "3px 20px", lineHeight: "1.42857143", color: "#333", fontWeight: "400" }} onClick={this.redirectHandler}>About me</li>
+                                        <li><a href="/customerProfile">About me</a></li>
+                                        <li style={{ display: "block", padding: "3px 20px", lineHeight: "1.42857143", color: "#333", fontWeight: "400" }} onClick={this.redirectToYelpUsers}>Yelp Users</li>
                                         <li><a href="/">Orders</a></li>
                                         <li><a href="/">Events</a></li>
-                                        <li><a href="/customerLogin">Sign Out</a></li>
+                                        <li><a href="/customerLogout">Sign Out</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -324,8 +286,6 @@ class CustResLanding extends Component {
                                 </div>
                             </div>
 
-
-
                             <div style={{ marginTop: "15px" }}>
                                 <div style={{ fontWeight: "bold", fontFamily: "Open Sans,Helvetica Neue,Helvetica,Arial,sans-serif", fontSize: "16px" }}> Neighborhoods </div>
                                 <div className="check-list">
@@ -341,7 +301,6 @@ class CustResLanding extends Component {
                                     <div style={{ color: "darkgray" }}> __________________________ </div>
                                 </div>
                             </div>
-
 
                             <div style={{ marginTop: "15px" }}>
                                 <div style={{ fontWeight: "bold", fontFamily: "Open Sans,Helvetica Neue,Helvetica,Arial,sans-serif", fontSize: "16px" }}> Distance </div>
@@ -372,19 +331,17 @@ class CustResLanding extends Component {
                             </div>
                         </div>
 
-                        {/* restaurants population - starts here */}
-
                         <div className="col list">
                             <span style={{ fontWeight: "bold", fontSize: "20px" }}>Browsing San Jose, CA Businesses</span>
 
-                            {errorMsg}
-                            {this.state.filteredRestaurants.map(restaurant => (
+                            {(this.state.filteredRestaurants !== null && this.state.filteredRestaurants.length !== 0) ?
+            
+                            this.state.filteredRestaurants.map(restaurant => (
                                 <table className="rest-table">
                                     <tbody >
                                         <tr>
 
                                             <td><img className="rest-images" src={require("../../images/profile_pics/" + restaurant.ProfilePic)} alt="" /></td>
-                                            {/* src={require('../../images/logo.jpg')} */}
 
                                             <table>
                                                 <tbody>
@@ -407,11 +364,10 @@ class CustResLanding extends Component {
                                         </tr>
                                     </tbody>
                                 </table>
-                            ))
+                            )) : error_msg
                             }
                         </div>
 
-                        {/* restaurants population - ends here */}
                         <div id="map" className="col map" >
                             {console.log("LOAD MAP ***********", this.state)}
                             <Map {...this.state} />
@@ -423,5 +379,25 @@ class CustResLanding extends Component {
         )
     }
 }
+const mapStateToProps = (state) => {
+    console.log("state customer landing reducer:", state.cusStore);
+    return {
+        customer: state.cusStore.customer || "",
+        restaurants: state.cusStore.restaurants || "",
+        filteredRestaurants: state.cusStore.restaurants || "",
+        errorMsg: state.cusStore.errorMsg || "",
+        orderDetails: state.cusStore.orderDetails || "",
+        registeredEvents: state.cusStore.registeredEvents || "" ,
+        getYelpUserFlag: state.cusStore.getYelpUserFlag
 
-export default CustResLanding;
+    };
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        searchRestaurants: (payload) => dispatch(searchRestaurants(payload)),
+        yelpUsers: (payload) => dispatch(getYelpUsers(payload))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CustResLanding);

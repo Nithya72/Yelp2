@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import '../../App.css';
-import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { Redirect } from 'react-router';
-
+import { connect } from 'react-redux';
+import { customerLogin } from '../../actions/authActions/cusLoginActions';
 
 export class CustomerLogin extends Component {
     constructor(props) {
@@ -16,7 +16,8 @@ export class CustomerLogin extends Component {
             successFlag: null,
             msg: null,
             error: "",
-            customer: null
+            customer: null,
+            submitted: false
         }
 
         this.submitLogin = this.submitLogin.bind(this);
@@ -35,39 +36,16 @@ export class CustomerLogin extends Component {
     }
     submitLogin = (e) => {
 
+
         e.preventDefault();
+        this.setState({ submitted: true });
+
         const data = {
             emailID: this.state.emailID,
             password: this.state.password
         }
-        //set the with credentials to true
-        axios.defaults.withCredentials = true;
-
-        axios.post('http://localhost:3001/customerLogin', data)
-            .then(response => {
-                console.log("Status Code : ", response.status);
-                if (response.status === 200) {
-                    console.log("Successful Login: ", response.data);
-                    this.setState({
-                        successFlag: true,
-                        customer: response.data
-                    })
-                }
-                else {
-                    console.log("Login Failed: ", response.data);
-                    this.setState({
-                        successFlag: false,
-                        msg: response.data
-                    })
-                }
-            })
-            .catch(error => {
-                console.log("Here we captured the error")
-                this.setState({
-                    successFlag: false,
-                    msg: "Oops! We couldn't register you now. Try after sometime."
-                })
-            });
+        
+        this.props.customerLogin(data); 
     }
 
     render() {
@@ -75,12 +53,11 @@ export class CustomerLogin extends Component {
         var final_msg = null;
         let redirectVar = null;
 
-        if (this.state.successFlag === true) {
-            redirectVar = <Redirect to={{ pathname:"/custResLanding", state:{ customer : this.state.customer} }} />
-        } else if (this.state.successFlag === false) {
-            final_msg = <div class="alert alert-danger" role="alert">{this.state.msg}</div>
+        if (this.props.loginFlag && this.props.isAuthenticated) {
+            redirectVar = <Redirect to={{ pathname:"/custResLanding" }} />
+        } else if (this.props.loginFlag === false) {
+            final_msg = <div class="alert alert-danger" role="alert">{this.props.error_msg}</div>
         }
-
 
         return (
             <div >
@@ -104,7 +81,7 @@ export class CustomerLogin extends Component {
 
                         <div className="title"> Customers - Sign in to Yelp</div>
 
-                        <form action="http://127.0.0.1:3000/customerLogin" method="post">
+                        <form>
 
                             <div class="form-group">
                                 <input onChange={this.emailIDHandler} type="email" class="form-control" name="emailID" required="required" placeholder="Email ID" />
@@ -130,5 +107,24 @@ export class CustomerLogin extends Component {
         )
     }
 }
-// export default withRouter(CustomerSignUp);
-export default CustomerLogin;
+const mapStateToProps = (state) => {
+    console.log("state customer login reducer:",state.cusStore);
+    return {
+        customer:  state.cusStore.customer ||  "",
+        restaurants:  state.cusStore.restaurants ||  "",
+        loginFlag: state.cusStore.loginFlag,
+        //loginFlag: false,
+        error_msg: state.cusStore.errorMsg || "",
+        isAuthenticated : state.cusStore.isAuthenticated
+    };
+};
+
+
+const mapDispatchToProps = (dispatch) => {
+    return{
+        customerLogin: (payload) => dispatch(customerLogin(payload))
+    }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(CustomerLogin);

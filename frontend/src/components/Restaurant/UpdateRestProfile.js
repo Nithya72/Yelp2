@@ -1,22 +1,23 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import axios from 'axios';
 import { Redirect } from 'react-router';
-import { restaurantActions } from '../../actions';
+import { updateResProfile } from '../../actions/profileActions/updateResProfileActions';
+import { updateResProfilePic } from '../../actions/profilePicActions/updateResProfilePicActions';
 
 class UpdateRestProfile extends Component {
 
     constructor(props) {
         super(props);
+
+        console.log("Inside Update Profile: ", this.props.restaurant[0]);
+
         this.state = {
-            restaurant: this.props.location.state.restaurant,
+            restaurant: this.props.restaurant[0],
             submitted: false,
             restProfilePic: null,
             redirectToRestProfile: false,
             successfulUpload: null
         };
-
-        console.log("Props: ", this.props.location.state);
 
         this.formChangeHandler = this.formChangeHandler.bind(this);
         this.submitUpdateRestProfile = this.submitUpdateRestProfile.bind(this);
@@ -54,33 +55,38 @@ class UpdateRestProfile extends Component {
 
         const picData = new FormData();
         picData.append("profilePic", this.state.restProfilePic, this.state.restProfilePic.name);
-        picData.append("id", this.state.restaurant.RestaurantId);
+        picData.append("id", this.state.restaurant._id);
         picData.append("table", "Restaurants");
 
-        const { restaurant } = this.state;
+        this.setState({
+            successfulUpload: "true"
+        })
 
-        axios.post("http://localhost:3001/uploadProfilePic", picData)
-            .then((response) => {
-                if (response.status === 200) {
-                    this.setState({
-                        successfulUpload: "true",
-                        restaurant: {
-                            ...restaurant,
-                            restProfilePic: response.data
-                        }
-                    })
-                } else {
-                    this.setState({
-                        successfulUpload: "false"
-                    })
-                }
-            })
-            .catch((error) => {
-                console.log("Error here: ", error)
-                this.setState({
-                    successfulUpload: "false"
-                })
-            });
+        this.props.updateResProfilePic(picData);
+
+
+        // axios.post(configPath.api_host+"/restaurant/profile/pic", picData)
+        //     .then((response) => {
+        //         if (response.status === 200) {
+        //             this.setState({
+        //                 successfulUpload: "true",
+        //                 restaurant: {
+        //                     ...restaurant,
+        //                     restProfilePic: response.data
+        //                 }
+        //             })
+        //         } else {
+        //             this.setState({
+        //                 successfulUpload: "false"
+        //             })
+        //         }
+        //     })
+        //     .catch((error) => {
+        //         console.log("Error here: ", error)
+        //         this.setState({
+        //             successfulUpload: "false"
+        //         })
+        //     });
     }
 
     submitUpdateRestProfile = (e) => {
@@ -95,13 +101,11 @@ class UpdateRestProfile extends Component {
 
     render() {
 
-        // const { registering } = this.props;
         const { restaurant, submitted } = this.state;
         var uploadMsg = null;
         let redirectVar = null;
 
         if (this.state.successfulUpload === "true") {
-            // redirectVar = <Redirect to={{ pathname: "/restaurantProfile", state: { restaurant: this.state.restaurant } }} />
             uploadMsg = <div style={{ color:"darkgreen", fontWeight: "bold" }}> &emsp;Successfully uploaded </div>
         } else if (this.state.successfulUpload === "false") {
             uploadMsg = <div style={{ fontWeight: "bold" }}> &emsp;Couldn't upload </div>
@@ -109,6 +113,10 @@ class UpdateRestProfile extends Component {
 
 
         if (this.state.redirectToRestProfile) {
+            redirectVar = <Redirect to={{ pathname: "/restaurantProfile", state: { restaurant: this.state.restaurant } }} />
+        }
+
+        if(submitted && this.props.updateFlag){
             redirectVar = <Redirect to={{ pathname: "/restaurantProfile", state: { restaurant: this.state.restaurant } }} />
         }
 
@@ -149,7 +157,7 @@ class UpdateRestProfile extends Component {
                                         <li style={{ display: "block", padding: "3px 20px", lineHeight: "1.42857143", color: "#333", fontWeight: "400" }} onClick={this.redirectHandler}>Profile</li>
                                         <li><a href="/">Orders</a></li>
                                         <li><a href="/">Events</a></li>
-                                        <li><a href="/restaurantLogin">Sign Out</a></li>
+                                        <li><a href="/restaurantLogout">Sign Out</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -230,14 +238,20 @@ class UpdateRestProfile extends Component {
     }
 }
 
-function mapState(state) {
-    const { loggingIn } = state.login;
-    return { loggingIn };
-}
-
-const actionCreators = {
-    updateProfile: restaurantActions.updateRestProfile
+const mapStateToProps = (state) => {
+    console.log("state update rest profile reducer:",state.resState);
+    return {
+        restaurant:  state.resState.restaurant ||  "",
+        updateFlag: state.resState.updateFlag || null
+    };
 };
 
-const connectedRestProfile = connect(mapState, actionCreators)(UpdateRestProfile);
-export { connectedRestProfile as UpdateRestProfile };
+
+const mapDispatchToProps = (dispatch) => {
+    return{
+        updateProfile: (restaurant) => dispatch(updateResProfile(restaurant)),
+        updateResProfilePic: (payload) => dispatch(updateResProfilePic(payload))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(UpdateRestProfile);
