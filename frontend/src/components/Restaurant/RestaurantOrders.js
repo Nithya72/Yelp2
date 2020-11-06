@@ -74,7 +74,10 @@ class RestaurantOrders extends Component {
 
     componentDidUpdate(prevProps) {
 
-        if (this.state.orderDetails !== this.props.orderDetails) {
+        console.log("componentDidUpdate: state", this.state.orderDetails);
+
+        if (JSON.stringify(this.state.orderDetails) !== JSON.stringify(this.props.orderDetails)) {
+            console.log("componentDidUpdate: inside");
             this.setState({
                 orderFiltered: this.props.orderDetails,
                 orderDetails: this.props.orderDetails

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import configPath from '../../config';
-import jwt_decode from "jwt-decode";
+// import jwt_decode from "jwt-decode";
 
 const loginCustomerDispatcher = payload => {
     console.log("Inside loginCustomerDispatcher action: ", payload);
@@ -18,7 +18,7 @@ export const customerLogin = (restaurant) => {
             .then(response => {
 
                 console.log("response.data: ", response.data);
-                var decodedResponse = jwt_decode(response.data.token);
+                // var decodedResponse = jwt_decode(response.data.token);
                 var restaurants = response.data.payload.restaurants;
                 var customer = response.data.payload.customer;
 
@@ -38,7 +38,7 @@ export const customerLogin = (restaurant) => {
 
                 dispatch(loginCustomerDispatcher({
                     //type: "CUSTOMER_LOGOUT",
-                    errorMsg: "Invalid Username || Password",
+                    errorMsg: "Invalid Username or Password",
                     restaurants: null,
                     customer: null,
                     loginFlag: false

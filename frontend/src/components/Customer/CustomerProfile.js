@@ -54,18 +54,18 @@ class CustomerProfile extends Component {
 
     }
 
-    componentDidMount(){
+    componentDidMount() {
         this.applyPagination();
     }
 
-    applyPagination(){
+    applyPagination() {
         var orders = this.state.orderDetails;
-        var slice = orders.slice(this.state.offset, this.state.offset+this.state.perPage);
+        var slice = orders.slice(this.state.offset, this.state.offset + this.state.perPage);
 
         this.setState({
             pageCount: Math.ceil(orders.length / this.state.perPage),
-            orgOrdersToDisplay : orders,
-            ordersToDisplay : slice
+            orgOrdersToDisplay: orders,
+            ordersToDisplay: slice
         })
     }
 
@@ -81,9 +81,9 @@ class CustomerProfile extends Component {
         });
     }
 
-    loadMoreReviews(){
+    loadMoreReviews() {
         const data = this.state.orgOrdersToDisplay;
-        const slice = data.slice(this.state.offset, this.state.offset+this.state.perPage)
+        const slice = data.slice(this.state.offset, this.state.offset + this.state.perPage)
 
         this.setState({
             pageCount: Math.ceil(data.length / this.state.perPage),
@@ -101,13 +101,14 @@ class CustomerProfile extends Component {
             });
         }
 
-        if (this.state.orderDetails !== this.props.orderDetails) {
+        if (this.props.getOrderFlag && this.state.orderDetails !== this.props.orderDetails) {
             console.log("Inside did update - orderDetails")
             this.setState({
                 orderFlag: true,
                 orderDetails: this.props.orderDetails,
                 orderFiltered: this.props.orderDetails
             });
+            this.applyPagination();
         }
 
         if (this.state.registeredEvents !== this.props.registeredEvents) {
@@ -117,7 +118,7 @@ class CustomerProfile extends Component {
             });
         }
 
-        if(this.state.submitChat && this.props.chatMsgFlag){
+        if (this.state.submitChat && this.props.chatMsgFlag) {
             this.setState({
                 showModal: false,
                 submitChat: false
@@ -186,7 +187,7 @@ class CustomerProfile extends Component {
             submitOrders: true
         })
         this.props.getCusOrders(customerId);
-   
+
     }
 
 
@@ -206,7 +207,7 @@ class CustomerProfile extends Component {
     }
 
     sendMessageHandler = (e) => {
-       
+
         e.preventDefault();
 
         this.setState({
@@ -237,7 +238,7 @@ class CustomerProfile extends Component {
         });
     }
 
-    redirectToMessages(e){
+    redirectToMessages(e) {
         this.setState({
             redirectToMsgs: true
         })
@@ -251,7 +252,7 @@ class CustomerProfile extends Component {
         var orders = null;
         var emptyOrders = null;
 
-        const {msgtitle, message } = this.state;
+        const { msgtitle, message } = this.state;
 
         console.log("this.state.ordersToDisplay: ", this.state.ordersToDisplay);
 
@@ -268,11 +269,11 @@ class CustomerProfile extends Component {
             registeredEventsError = <div style={{ fontWeight: "bold" }}>You have registered for the below events</div>
         }
 
-        if(this.state.redirectToMsgs && this.props.custMsgFlag){
+        if (this.state.redirectToMsgs && this.props.custMsgFlag) {
             redirectVar = <Redirect to={{ pathname: "/customerMessages" }} />
         }
 
-        if (this.state.orderFlag && this.props.getOrderFlag) {
+        if (this.props.getOrderFlag) { //this.state.orderFlag && 
             orders = <div>
                 <div style={{ fontWeight: "bold", color: "#d32323", fontSize: "22px", marginBottom: "8px" }}>Order History</div>
                 <div><span style={{ color: "#0373bb", fontWeight: "bold", fontSize: "17px" }} onClick={() => this.orderStatusFilterHandler("all")}> All Orders | </span>
@@ -410,8 +411,8 @@ class CustomerProfile extends Component {
                             )) : null}
                         {emptyOrders}
 
-                        <div style={{marginLeft: "160px"}}><ReactPaginate previousLabel = {"prev"} nextLabel = {"next"} breakLabel = {"..."} breakClassName = {"break-me"} pageCount ={this.state.pageCount}  marginPagesDisplayed = {2} pageRangeDisplayed = {5} onPageChange={this.handlePageclick} containerClassName = {"pagination"} subContainerClassName = {"pages pagination"} activeClassName = {"active"} /> </div>
-                            
+                        <div style={{ marginLeft: "160px" }}><ReactPaginate previousLabel={"prev"} nextLabel={"next"} breakLabel={"..."} breakClassName={"break-me"} pageCount={this.state.pageCount} marginPagesDisplayed={2} pageRangeDisplayed={5} onPageChange={this.handlePageclick} containerClassName={"pagination"} subContainerClassName={"pages pagination"} activeClassName={"active"} /> </div>
+
                         <div style={{ fontWeight: "bold", color: "#d32323", fontSize: "22px", marginBottom: "8px", marginTop: "10px" }}>Notifications</div>
                         No new friend requests or compliments at this time.
                         <div style={{ color: "#e6e6e6", marginBottom: "7px" }}> ________________________________________________________ </div>
@@ -452,28 +453,28 @@ class CustomerProfile extends Component {
                         {this.state.customer.ThingsLove}
                     </div>
 
-                    <ReactModal isOpen={this.state.showModal} contentLabel="Minimal Modal Example" 
-                    style={{
-                        overlay:{
-                            backgroundColor: 'rgba(183, 183, 183, 0.75)'
-                        },
-                           
+                    <ReactModal isOpen={this.state.showModal} contentLabel="Minimal Modal Example"
+                        style={{
+                            overlay: {
+                                backgroundColor: 'rgba(183, 183, 183, 0.75)'
+                            },
+
                             content: {
-                            top: "22%",
-                            left: "32%",
-                            width: '500px',
-                            height: '400px',
-                            verticalAlign: "center"
+                                top: "22%",
+                                left: "32%",
+                                width: '500px',
+                                height: '400px',
+                                verticalAlign: "center"
 
                             }
                         }}>
-                        <div style={{ width: "20px", height: "20px", fontWeight:"bolder" }}>
+                        <div style={{ width: "20px", height: "20px", fontWeight: "bolder" }}>
                             <button onClick={this.closeModalHandler}>X</button>
                         </div>
 
                         <div>
-                            <form name="form" style={{marginLeft:"100px"}}>
-                            <div style={{ fontSize:"25px", fontWeight:"bold", marginBottom:"25px"}}> Your Message... </div>
+                            <form name="form" style={{ marginLeft: "100px" }}>
+                                <div style={{ fontSize: "25px", fontWeight: "bold", marginBottom: "25px" }}> Your Message... </div>
                                 <div className="form-group">
                                     <input onChange={this.formChangeHandler} type="text" className="form-control" name="msgtitle" value={msgtitle} placeholder="Enter a title here" />
                                 </div>
@@ -489,7 +490,6 @@ class CustomerProfile extends Component {
                             </form>
                         </div>
                     </ReactModal>
-
                 </div>
             </div>
         )

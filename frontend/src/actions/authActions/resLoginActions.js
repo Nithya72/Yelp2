@@ -16,11 +16,8 @@ export const restaurantLogin = (restaurant) => {
         axios.defaults.withCredentials = true;
         axios.post(configPath.api_host + '/restaurant/login', restaurant)
             .then(response => {
-                console.log("response_msg1: ", response.data);
+         
                 var decodedResponse = jwt_decode(response.data);
-
-                console.log("response_msg: ", decodedResponse);
-
                 var restaurant = decodedResponse.restaurant;
 
                 if (response.status === 200) {

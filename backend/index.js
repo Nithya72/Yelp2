@@ -30,7 +30,7 @@ app.use(function (req, res, next) {
     next();
 });
 
-connectDB();
+// connectDB();
 
 
 app.use(express.json({ extended: false }));

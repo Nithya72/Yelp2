@@ -14,6 +14,8 @@ class RestaurantProfile extends Component {
     constructor(props) {
         super(props);
 
+        console.log("Constrcutor - res Profile: ", this.props.restaurant[0])
+
         this.state = {
             restaurant: this.props.restaurant[0],
             submitted: false,
@@ -129,7 +131,7 @@ class RestaurantProfile extends Component {
             redirectVar = <Redirect to={{ pathname: "/updateRestProfile" }} />
         }
 
-        if (this.state.redirectToEvents) {
+        if (this.state.redirectToEvents && this.props.getEventFlag) {
             redirectVar = <Redirect to={{ pathname: "/restaurantEvents" }} />
         }
         if (this.state.redirectToMenu) {
@@ -264,6 +266,7 @@ const mapStateToProps = (state) => {
         getOrderFlag: state.resState.getOrderFlag,
         getEventFlag: state.resState.getEventFlag,
         restMsgFlag: state.resState.restMsgFlag
+        // eventDetails: state.resState.eventDetails || ""
     };
 };
 
