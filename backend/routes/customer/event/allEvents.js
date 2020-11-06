@@ -1,24 +1,22 @@
 "use strict";
 const express = require("express");
-const Events = require('../../../models/Events');
-const { ObjectId } = require("mongodb");
 const router = express.Router();
 const { checkAuth, auth } = require('../../../utils/passport');
 
 auth();
 
 router.get('/', checkAuth, async (req, res) => {
+    console.log("Req Body - get all Events: ", req.body);
 
-    try {
-        const events = await Events.find();
-        console.log("Get All Events: ", events);
-
-        res.status(200).json(events);
-
-    } catch (err) {
-        console.log("DB error: ", err.message);
-        res.status(500).send("DB Error - Add Menu");
-    }
-
+    kafka.make_request('get_all_events', req.body, function(err,results){
+   
+        if (err){
+            console.log("Inside err");
+            res.status(500).send("Kafka Error");
+        } 
+        else if (results.status == 200 || results.status == 404 ){
+            res.status(results.status).json(results.events);
+        }  
+    })
 });
 module.exports = router;

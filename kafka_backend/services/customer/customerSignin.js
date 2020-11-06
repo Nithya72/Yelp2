@@ -1,5 +1,4 @@
 "use strict";
-const express = require("express");
 const Customers = require('../models/Customers');
 const Restaurants = require('../models/Restaurants');
 var crypto = require('crypto');
@@ -20,13 +19,14 @@ const handle_request = async (msg, callback) => {
     var hash = encrypt.update(msg.password, 'utf8', 'hex');
     hash += encrypt.final('hex');
 
-    const customer = Customers.find({ CustEmailId: msg.emailID, CustPassword: hash });
+    const customer = await Customers.find({ CustEmailId: msg.emailID, CustPassword: hash });
+    // console.log("customer details: ", customer);
 
     if (!customer) {
         res.status = 404; res.response = "Invalid Username or Password";
         callback(null, res);
     } else {
-        const restaurants = Restaurants.find();
+        const restaurants = await Restaurants.find();
 
         const customerId = {
             _id: customer[0]._id
@@ -37,6 +37,7 @@ const handle_request = async (msg, callback) => {
         }
 
         res.status = 200; res.customerId = customerId; res.payload = payload;
+        // console.log("service res: ", res);
         callback(null, res);
     }
 };

@@ -7,33 +7,34 @@ const { checkAuth, auth } = require('../../../utils/passport');
 auth();
 
 router.post('/', checkAuth, async (req, res) => {
-    console.log("Req Body - Get Orders: ", req.body);
-    try {
-        const events = await Events.findByIdAndUpdate({ _id: req.body.RegEventId }, {$push: { RegisteredUsers: req.body.RegCustomerId }}, {new: true});
-        console.log("updated events:", events);
-        res.status(200).send('You are now succesfully registered!');
-    } catch (err) {
-        console.log("DB error: ", err.message);
-        res.status(500).send("DB Error - Add Menu");
-    }
+    console.log("Req Body - Register for Events: ", req.body);
 
+    kafka.make_request('register_events', req.body, function(err,results){
+   
+        if (err){
+            console.log("Inside err");
+            res.status(500).send("Kafka Error");
+        } 
+        else if (results.status == 200 || results.status == 404 ){
+            res.status(results.status).json(results.eventMsg);
+        }  
+    })
 });
 
+
 router.get('/:id', checkAuth, async (req, res) => {
+    console.log("get registered events:", req.params.id);
 
-    try {
-        console.log("customer id:", req.params.id);
-
-        const events = await Events.find({ RegisteredUsers: { $in : [req.params.id]} });
-        console.log("Get Registered Events: ", events);
-
-        res.status(200).json(events);
-
-    } catch (err) {
-        console.log("DB error: ", err.message);
-        res.status(500).send("DB Error - Add Menu");
-    }
-
+    kafka.make_request('get_registered_events', req.params.id, function(err,results){
+   
+        if (err){
+            console.log("Inside err:", err);
+            res.status(500).send("Kafka Error");
+        } 
+        else if (results.status == 200 || results.status == 404 ){
+            res.status(results.status).json(results.events);
+        }  
+    })
 });
 
 module.exports = router;
