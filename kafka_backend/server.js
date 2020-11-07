@@ -42,7 +42,7 @@ function handleTopicRequest(topic_name,fname){
     var producer = connection.getProducer();
     console.log('server is running ');
     consumer.on('message', function (message) {
-        console.log('message received for ' + topic_name +" ", fname);
+        console.log('\n\n message received for ' + topic_name +" ", fname);
         console.log(JSON.stringify(message.value));
         var data = JSON.parse(message.value);
         

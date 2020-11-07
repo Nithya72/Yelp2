@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import StarRatings from 'react-star-ratings';
+import ReactPaginate from 'react-paginate';
 
 class RestaurantMenu extends Component {
 
@@ -15,7 +16,13 @@ class RestaurantMenu extends Component {
             successFlag: false,
             dishToUpdate: null,
             redirectToMenuUpdate: false,
-            redirectToMenuAdd: false
+            redirectToMenuAdd: false,
+
+            offset: 0,
+            perPage: 3,
+            currentPage: 0,
+            dishesToDisplay: [],
+            orgDishesToDisplay: []
         }
  
         this.menuAddHandler = this.menuAddHandler.bind(this);
@@ -37,6 +44,44 @@ class RestaurantMenu extends Component {
         })
 
     }
+
+    componentDidMount(){
+        this.applyPagination();
+    }
+
+    applyPagination(){
+        var menu = this.props.restaurant[0].Menu;
+        var slice = menu.slice(this.state.offset, this.state.offset+this.state.perPage);
+
+        this.setState({
+            pageCount: Math.ceil(menu.length / this.state.perPage),
+            orgDishesToDisplay : menu,
+            dishesToDisplay : slice
+        })
+    }
+
+    handlePageclick = (e) => {
+        const selectedPage = e.selected;
+        const offset = selectedPage * this.state.perPage;
+
+        this.setState({
+            currentPage: selectedPage,
+            offset: offset
+        }, () => {
+            this.loadMoreMenu()
+        });
+    }
+
+    loadMoreMenu(){
+        const data = this.state.orgDishesToDisplay;
+        const slice = data.slice(this.state.offset, this.state.offset+this.state.perPage)
+
+        this.setState({
+            pageCount: Math.ceil(data.length / this.state.perPage),
+            dishesToDisplay: slice
+        })
+    }
+
 
     render() {
         console.log("Entire Menu: ", this.state.entireMenu);
@@ -102,7 +147,7 @@ class RestaurantMenu extends Component {
                         <div><button onClick={() => this.menuAddHandler("add")} className="btn btn-success sign-up-button" style={{fontSize:"18px", width:"180px"}} type="submit">Add a New Dish</button></div>
                     </div>
                     <div style={{ marginLeft: "400px", fontFamily: "Open Sans,Helvetica Neue,Helvetica,Arial,sans-serif" }}>
-                        {this.state.entireMenu.map(menu => (
+                        {this.state.dishesToDisplay.map(menu => (
                             <table className="rest-table" style={{ borderRadius: "3px", width: "600px" }}>
                                 <tbody >
                                     <tr>
@@ -132,6 +177,7 @@ class RestaurantMenu extends Component {
                             </table>
                         ))
                         }
+                         <div style={{marginLeft: "200px"}}><ReactPaginate previousLabel = {"prev"} nextLabel = {"next"} breakLabel = {"..."} breakClassName = {"break-me"} pageCount ={this.state.pageCount}  marginPagesDisplayed = {2} pageRangeDisplayed = {5} onPageChange={this.handlePageclick} containerClassName = {"pagination"} subContainerClassName = {"pages pagination"} activeClassName = {"active"} /> </div>
 
                     </div>
                 </div>

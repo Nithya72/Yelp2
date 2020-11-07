@@ -26,7 +26,7 @@ class RestaurantEvents extends Component {
             submitRegistrations: false,
 
             offset: 0,
-            perPage: 2,
+            perPage: 3,
             currentPage: 0,
             eventsToDisplay: [],
             orgEventsToDisplay: []
@@ -179,7 +179,7 @@ class RestaurantEvents extends Component {
                                         <table style={{ marginLeft: "20px", width: "375px" }}>
                                             <tbody>
                                                 <tr><td style={{ fontSize: "15px", fontWeight: "bold", color: "#0073bb", marginTop: "10px" }}><span className="rest-name-link" onClick={() => this.submitEvent(event)}> {event.EventName}</span></td></tr>
-                                                <div style={{ fontSize: "15px", marginTop: "5px" }}>	<i class='far fa-calendar-alt'></i>&nbsp;&nbsp;{event.EventDay}, {(event.EventDate).substring(0, 10)}, {event.EventTime}</div>
+                                                <div style={{ fontSize: "15px", marginTop: "5px" }}>	<i class='far fa-calendar-alt'></i>&nbsp;&nbsp;{event.EventDay}, {(event.EventDate).substring(0, 10)}, {event.EventTime}</div><br />
                                                 <tr>
                                                     <button onClick={() => this.registeredUsersHandler(event._id)} class="event-ppl-button" type="submit">See Registered Users</button>
                                                 </tr>
@@ -203,7 +203,7 @@ class RestaurantEvents extends Component {
                             </tbody>
                         </table>
                     )) :  errorMsg}
-                    <div style={{marginLeft: "300px", marginTop: "30px"}}><ReactPaginate previousLabel = {"prev"} nextLabel = {"next"} breakLabel = {"..."} breakClassName = {"break-me"} pageCount ={this.state.pageCount}  marginPagesDisplayed = {2} pageRangeDisplayed = {5} onPageChange={this.handlePageclick} containerClassName = {"pagination"} subContainerClassName = {"pages pagination"} activeClassName = {"active"} /> </div>
+                    <div style={{marginLeft: "250px", marginTop: "30px"}}><ReactPaginate previousLabel = {"prev"} nextLabel = {"next"} breakLabel = {"..."} breakClassName = {"break-me"} pageCount ={this.state.pageCount}  marginPagesDisplayed = {2} pageRangeDisplayed = {5} onPageChange={this.handlePageclick} containerClassName = {"pagination"} subContainerClassName = {"pages pagination"} activeClassName = {"active"} /> </div>
                 </div>
             </div >
         )

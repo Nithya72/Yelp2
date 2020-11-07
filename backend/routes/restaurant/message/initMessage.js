@@ -9,7 +9,7 @@ resAuth();
 router.post('/', checkAuth, async (req, res) => {
     console.log("Req Body - Initiaze Conversation : ", req.body);
 
-    kafka.make_request('res_init_message', req.params.id, function(err,results){
+    kafka.make_request('res_init_message', req.body, function(err,results){
    
         if (err){
             console.log("Inside err:", err);
