@@ -5,81 +5,57 @@ var expect = require('chai').expect;
 const api_url = "http://localhost:3001";
 
 
-it("Test Restaurants List", function(done){
-chai
-    .request(api_url)
-    .get("/custLanding")
-    .send()
-    .end(function(err, res){
-        expect(res).to.have.status(200);
-        expect(res.body[3].RestName).to.equal("The Cheesecake Factory");
-        done();
-    });
+it("Test Get All Upcoming Events", function (done) {
+    chai
+        .request(api_url)
+        .get("/customer/allevents")
+        .end(function (err, res) {
+            expect(res).to.have.status(200);
+            expect(res.body[3].EventName).to.equal("E.A.T (Engage & Taste)");
+            done();
+        });
 });
 
-
-it("Test Orders List", function(done){
-chai
-    .request(api_url)
-    .post("/getOrders")
-    .send({
-        "id": 1,
-        "type": "customer"
-    })
-    .end(function(err, res){
-        expect(res).to.have.status(200);
-        expect(res.body[0].OrderDishes).to.equal("Fries,Pasta,Tiramisu");
-        done();
-    });
+it("Test - Get All Events Posted", function (done) {
+    chai
+        .request(api_url)
+        .post("/restaurant/events")
+        .send({ id: "5f99fd4bc64ebfa87f419d75" })
+        .end(function (err, res) {
+            expect(res).to.have.status(200);
+            expect(res.body[1].EventHashtag).to.equal("#LocalAdventureChallenge");
+            done();
+        });
 });
 
-
-it("Test Events List", function(done){
+it("Test - Customer Orders", function (done) {
     chai
         .request(api_url)
-        .post("/getEvents")
-        .send({
-            "id": 1,
-            "user": "customer"
-        })
-        .end(function(err, res){
+        .get("/customer/orders/5f99fa26eef70002be8acba5")
+        .end(function (err, res) {
             expect(res).to.have.status(200);
-            expect(res.body[1].EventId).to.equal(2);
+            expect(res.body[0].Restaurant.RestName).to.equal("The Cheesecake Factory");
             done();
         });
-    });
+});
 
-    
-
-
-it("Test Event Registration Details", function(done){
+it("Test - Load Messages", function (done) {
     chai
         .request(api_url)
-        .post("/getRegisteredEvents")
-        .send({
-            "customerId": "1"
-        })
-        .end(function(err, res){
+        .get("/customer/message/5f99fa26eef70002be8acba5")
+        .end(function (err, res) {
             expect(res).to.have.status(200);
-            expect(res.body[0].EventDay).to.equal("Saturday");
+            expect(res.body[2].customers[0].name).to.equal("Nithya Anbalagan");
             done();
         });
-    });
+});
 
-    
-
-
-it("Test Menu List", function(done){
+it("Test - All Yelp Users", function (done) {
     chai
         .request(api_url)
-        .post("/getMenu")
-        .send({
-            "restaurantId": "4"
-        })
-        .end(function(err, res){
+        .get("/customer/yelp/users/5f99fa26eef70002be8acba5")
+        .end(function (err, res) {
             expect(res).to.have.status(200);
-            expect(res.body[0].DishName).to.equal("Fries");
             done();
         });
-    });
-    
+});

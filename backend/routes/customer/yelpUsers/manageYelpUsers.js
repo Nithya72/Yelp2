@@ -6,6 +6,7 @@ var kafka = require('../../../kafka/client');
 
 auth();
 
+
 router.get('/:id', checkAuth, async (req, res) => {
     console.log("Req Body - get yelp users : ", req.params.id);
 

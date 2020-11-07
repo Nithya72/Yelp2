@@ -4,9 +4,10 @@ const router = express.Router();
 const { checkAuth, auth } = require('../../../utils/passport');
 var kafka = require('../../../kafka/client');
 
-auth();
+// auth();
+// checkAuth
 
-router.get('/', checkAuth, async (req, res) => {
+router.get('/', async (req, res) => {
     console.log("Req Body - get all Events: ", req.body);
 
     kafka.make_request('get_all_events', req.body, function(err,results){

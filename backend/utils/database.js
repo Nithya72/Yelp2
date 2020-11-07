@@ -10,6 +10,7 @@ try{
         useNewUrlParser: true,
         useUnifiedTopology: true,
         useFindAndModify: false,
+        useCreateIndex: true,
         poolSize: 500,
         bufferMaxEntries: 0
     });
