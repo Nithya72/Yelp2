@@ -1,5 +1,5 @@
 "use strict";
-const Customers = require('../models/Customers');
+const Customers = require('../../models/Customers');
 
 
 const handle_request = async (msg, callback) => {

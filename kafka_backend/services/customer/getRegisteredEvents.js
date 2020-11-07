@@ -1,5 +1,5 @@
 "use strict";
-const Events = require('../models/Events');
+const Events = require('../../models/Events');
 
 const handle_request = async (msg, callback) => {
     console.log("Service - get registered events : ", msg);

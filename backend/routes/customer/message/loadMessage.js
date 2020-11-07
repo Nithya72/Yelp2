@@ -1,8 +1,8 @@
 "use strict";
 const express = require("express");
-const Messages = require("../../../models/Messages");
 const router = express.Router();
 const { checkAuth, auth } = require('../../../utils/passport');
+var kafka = require('../../../kafka/client');
 
 auth();
 

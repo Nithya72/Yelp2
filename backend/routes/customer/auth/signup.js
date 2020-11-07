@@ -7,7 +7,7 @@ const config = require('../../../utils/config');
 var kafka = require('../../../kafka/client');
 
 router.post('/', async (req, res) => {
-    console.log("Routes - req.body - Sign up : ", req.body);
+    console.log("Routes - Customer - Sign up : ", req.body);
 
     kafka.make_request('cus_signup', req.body, function(err,results){
         

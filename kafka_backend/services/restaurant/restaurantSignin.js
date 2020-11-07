@@ -11,33 +11,26 @@ const iv = Buffer.alloc(16, 0);
 
 
 const handle_request = async (msg, callback) => {
-    console.log("Req Body - customerLogin : ", msg);
+    console.log("Req Body - restaurantLogin : ", msg);
     var res = {};
     //Reference - https://nodejs.org/api/crypto.html#crypto_crypto_createcipheriv_algorithm_key_iv_options
 
     const encrypt = crypto.createCipheriv(algorithm, key, iv);
-    var hash = encrypt.update(msg.password, 'utf8', 'hex');
+    var hash = encrypt.update(msg.restPassword, 'utf8', 'hex');
     hash += encrypt.final('hex');
 
-    const customer = await Customers.find({ CustEmailId: msg.emailID, CustPassword: hash });
-    // console.log("customer details: ", customer);
+    const restaurant = await Restaurants.find({RestEmailId: msg.restEmailID, RestPassword: hash});
+    // console.log(" restaurant details: ", restaurant);
 
-    if (!customer) {
+    if (!restaurant) {
         res.status = 404; res.response = "Invalid Username or Password";
         callback(null, res);
     } else {
-        const restaurants = await Restaurants.find();
-
-        const customerId = {
-            _id: customer[0]._id
-        }
-        const payload = {
-            customer: customer,
-            restaurants: restaurants
-        }
-
-        res.status = 200; res.customerId = customerId; res.payload = payload;
-        // console.log("service res: ", res);
+        const response = {
+            _id: restaurant[0]._id,
+            restaurant: restaurant
+        }       
+        res.status = 200; res.response = response;
         callback(null, res);
     }
 };

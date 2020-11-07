@@ -3,7 +3,7 @@ import axios from 'axios';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { updateMenuDetails } from '../../actions/menuActions/updateMenuActions';
-import configPath from '../../config';
+import { updateDishPic } from '../../actions/profilePicActions/updateDishPicActions';
 
 class UpdateMenu extends Component {
 
@@ -79,28 +79,30 @@ class UpdateMenu extends Component {
 
         const { customer } = this.state;
 
-        axios.post(configPath.api_host +"/uploadProfilePic", picData)
-            .then((response) => {
-                if (response.status === 200) {
-                    this.setState({
-                        successfulUpload: "true",
-                        customer: {
-                            ...customer,
-                            DishImg: response.data
-                        }
-                    })
-                } else {
-                    this.setState({
-                        successfulUpload: "false"
-                    })
-                }
-            })
-            .catch((error) => {
-                console.log("Error here: ", error)
-                this.setState({
-                    successfulUpload: "false"
-                })
-            });
+        this.props.updateDishPic(picData);
+
+        // axios.post(configPath.api_host +"/uploadProfilePic", picData)
+        //     .then((response) => {
+        //         if (response.status === 200) {
+        //             this.setState({
+        //                 successfulUpload: "true",
+        //                 customer: {
+        //                     ...customer,
+        //                     DishImg: response.data
+        //                 }
+        //             })
+        //         } else {
+        //             this.setState({
+        //                 successfulUpload: "false"
+        //             })
+        //         }
+        //     })
+        //     .catch((error) => {
+        //         console.log("Error here: ", error)
+        //         this.setState({
+        //             successfulUpload: "false"
+        //         })
+        //     });
     }
 
     render() {
@@ -285,7 +287,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        updateMenu: data => dispatch(updateMenuDetails(data))
+        updateMenu: data => dispatch(updateMenuDetails(data)),
+        updateDishPic: data => dispatch(updateDishPic(data))
     }
 }
 

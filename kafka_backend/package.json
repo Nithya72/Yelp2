@@ -18,11 +18,13 @@
     "kafka-node": "^2.6.1",
     "mongodb": "^3.6.2",
     "mongoose": "^5.10.9",
+    "mongoose-sequence": "^5.3.0",
     "multer": "^1.4.2",
     "nodemailer": "^4.6.4",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
+    "path": "^0.12.7",
     "uuidv4": "^1.0.0"
   }
 }

@@ -144,7 +144,7 @@ class YelpUsers extends Component {
             })
         }
 
-        this.setState({ filteredYelpUsers: filtered })
+        this.setState({ usersToDisplay: filtered })
     }
 
     userFilterHandler = (e) => {
@@ -161,12 +161,12 @@ class YelpUsers extends Component {
             });
 
             this.setState({
-                filteredYelpUsers: sortedList,
+                usersToDisplay: sortedList,
             });
 
         } else if (e === "all") {
             this.setState({
-                filteredYelpUsers: this.state.yelpUsers,
+                usersToDisplay: this.state.yelpUsers,
             });
         }
     }

@@ -1,6 +1,6 @@
 "use strict";
 const express = require("express");
-const Customers = require('../../models/Customers');
+const Restaurants = require('../../models/Restaurants');
 var crypto = require('crypto');
 
 //Algorithm for encrypting passwords
@@ -11,16 +11,16 @@ const iv = Buffer.alloc(16, 0);
 
 
 const handle_request = async (msg, callback) => {
-    console.log("Req Body - customer Sign up : ", msg);
+    console.log("Req Body - restaurant Sign up : ", msg);
     var res = {};
 
     const encrypt = crypto.createCipheriv(algorithm, key, iv);
-    var hash = encrypt.update(msg.password, 'utf8', 'hex');
+    var hash = encrypt.update(msg.restPassword, 'utf8', 'hex');
     hash += encrypt.final('hex');
 
-    const customer = new Customers({ CustName: msg.userName, CustEmailId: msg.emailID, CustPassword: hash });
+    const restaurant = new Restaurants({ RestName: msg.restName, RestEmailId: msg.restEmailID, RestPassword: hash, Location: msg.Location });
 
-    customer.save((error, data) => {
+    restaurant.save((error, data) => {
         if (error) {
             res.status = 401; res.response = error;
             callback(null, res);

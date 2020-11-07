@@ -106,7 +106,8 @@ class CustomerProfile extends Component {
             this.setState({
                 orderFlag: true,
                 orderDetails: this.props.orderDetails,
-                orderFiltered: this.props.orderDetails
+                orderFiltered: this.props.orderDetails,
+                ordersToDisplay: this.props.orderDetails
             });
             this.applyPagination();
         }
@@ -148,7 +149,7 @@ class CustomerProfile extends Component {
 
         if (status === "all") {
             this.setState({
-                orderFiltered: this.state.orderDetails
+                ordersToDisplay: this.state.orderDetails
             })
         }
         else if (status === "Order Received" || status === "Preparing") {
@@ -161,7 +162,7 @@ class CustomerProfile extends Component {
                 }
             })
             this.setState({
-                orderFiltered: list
+                ordersToDisplay: list
             })
         }
         else if (status === "delivery" || status === "takeout") {
@@ -174,7 +175,7 @@ class CustomerProfile extends Component {
                 }
             })
             this.setState({
-                orderFiltered: list
+                ordersToDisplay: list
             })
         }
 

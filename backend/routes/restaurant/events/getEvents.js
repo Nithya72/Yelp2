@@ -1,27 +1,24 @@
 "use strict";
 const express = require("express");
-const Events = require('../../../models/Events');
-const Customers = require('../../../models/Customers');
 const router = express.Router();
 const { checkAuth, resAuth } = require('../../../utils/passport');
+var kafka = require('../../../kafka/client');
 
 resAuth();
 
 router.post('/', checkAuth, async (req, res) => {
     console.log("Req Body - Get Events: ", req.body);
-    try {
 
-        const events = await Events.find({ Restaurant: req.body.id }).populate({ path: 'RegisteredUsers', select: ['_id', 'CustName'], model: Customers });
-        console.log(" events details: ", events);
-
-        if (!events || events.length == 0) {
-            return res.status(404).send("No Events Posted Yet");
-        }
-        res.status(200).send(events);
-    } catch (err) {
-        console.log("DB error: ", err.message);
-        res.status(500).send("DB Error - Add Menu");
-    }
-
+    kafka.make_request('res_get_events', req.body, function(err,results){
+   
+        if (err){
+            console.log("Inside err:", err);
+            res.status(500).send("Kafka Error");
+        } 
+        else if (results.status == 200 || results.status == 404 ){
+            res.status(results.status).json(results.events);
+        }  
+    })
 });
+
 module.exports = router;

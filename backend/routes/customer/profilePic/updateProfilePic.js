@@ -2,17 +2,17 @@
 const express = require("express");
 const path = require("path");
 const multer = require("multer");
-const Customers = require('../../../models/Customers');
 const router = express.Router();
 const { checkAuth, auth } = require('../../../utils/passport');
+var kafka = require('../../../kafka/client');
+
 
 auth();
-
 //Reference from https://www.geeksforgeeks.org/file-uploading-in-node-js/?ref=lbp
 
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, "./frontend/src/images/profile_pics")
+        cb(null, "../frontend/src/images/profile_pics") //../../../../frontend/src/images/profile_pics
     },
     filename: function (req, file, cb) {
         cb(null, file.fieldname + "-" + Date.now() + ".jpg")
@@ -38,30 +38,33 @@ var upload = multer({
     }
 }).single("profilePic");
 
+
 router.post('/', checkAuth, async (req, res, next) => {
+
     upload(req, res, async (err) => {
 
         console.log("Inside Uploading Details:", req.body.profilePic, " : ", req.body.id);
-        if (err) {
-            console.log("Couldn't uploaded!: ", err);
-            res.send("Failed")
-        }
-        else {
-            var fileName =  res.req.file.filename;
-            console.log("Done! Res", fileName);
-            try{
-                var data = { CustPic: fileName}
 
-                const customer = await Customers.findOneAndUpdate({ _id: req.body.id }, data, { new: true });
-                console.log(" customer updated details: ", customer);
-        
-                res.status(200).json(customer);
-            }
-            catch (err) {
-                console.log("DB error: ", err.message);
-                res.status(500).send("DB Error - Update Customer Profile Pic");
-            }
+        if(err){
+            console.log("Here: ", err);
+            res.status(404).send("Couldn't update profile picture!");
+        }else{
+            var data = {};
+            data.fileName = res.req.file.filename;
+            data.id = req.body.id;
+
+            console.log("Done! Res", data.fileName);
+
+            kafka.make_request('cus_profile_pic', data, function(err,results){   
+                if (err){
+                    console.log("Inside err:", err);
+                    res.status(500).send("Kafka Error");
+                } 
+                else if (results.status == 200 || results.status == 404 ){
+                    res.status(results.status).json(results.customer);
+                }  
+            })   
         }
-    })
+    });
 });
 module.exports = router;

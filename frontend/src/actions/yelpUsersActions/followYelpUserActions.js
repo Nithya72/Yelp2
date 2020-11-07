@@ -17,13 +17,18 @@ export const followYelpUser = (payload) => {
         axios.post(configPath.api_host + '/customer/yelp/users',payload)
             .then(response => {
 
-                var yelpUsersDetails = response.data;
-                console.log("Actions - Get Order Status: ", yelpUsersDetails);
+                console.log("Actions - Updated Yelp Users List: ", response.data);
+                var yelpUsersDetails = response.data.customers;
+                var customer = [response.data.updated];
+
+                console.log("Actions - yelpUsersDetails: ", yelpUsersDetails);
+                console.log("Actions - customer: ", customer);
 
                 if (response.status === 200) {
 
                     dispatch(followYelpUserDispatcher({
                         yelpUsersDetails,
+                        customer,
                         getYelpUserFlag: true
                     })
                     );

@@ -1,5 +1,5 @@
 "use strict";
-const Restaurants = require('../models/Restaurants');
+const Restaurants = require('../../models/Restaurants');
 
 const handle_request = async (msg, callback) => {
     console.log("Service - post reveiws : ", msg);

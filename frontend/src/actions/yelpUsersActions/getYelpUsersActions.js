@@ -19,7 +19,7 @@ export const getYelpUsers = (payload) => {
             .then(response => {
 
                 var yelpUsersDetails = response.data;
-                console.log("Actions - Get Order Status: ", yelpUsersDetails);
+                console.log("Actions - Get Yelp Users: ", yelpUsersDetails);
 
                 if (response.status === 200) {
 

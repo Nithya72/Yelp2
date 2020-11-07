@@ -78,7 +78,8 @@ class RestaurantEvents extends Component {
         if(this.state.postedEvents !== this.props.eventDetails){
             this.setState({          
                 postedEvents: this.props.eventDetails,
-                filteredEvents: this.props.eventDetails
+                filteredEvents: this.props.eventDetails,
+                // eventsToDisplay: this.props.eventDetails
             });
         }
     }

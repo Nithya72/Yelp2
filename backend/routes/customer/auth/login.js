@@ -24,7 +24,7 @@ router.post('/', async (req, res) => {
 
                 console.log("Backend token: ", token);
                 console.log("Backend payload: ", results.payload)
-                res.json({ token: token,  payload: results.payload});
+                res.status(200).json({ token: token,  payload: results.payload});
             });
         }  
     })

@@ -80,7 +80,8 @@ class RestaurantOrders extends Component {
             console.log("componentDidUpdate: inside");
             this.setState({
                 orderFiltered: this.props.orderDetails,
-                orderDetails: this.props.orderDetails
+                orderDetails: this.props.orderDetails,
+                // ordersToDisplay: this.props.orderDetails,
             });
         }
     }
@@ -101,7 +102,7 @@ class RestaurantOrders extends Component {
 
         if (status === "all") {
             this.setState({
-                orderFiltered: this.props.orderDetails
+                ordersToDisplay: this.props.orderDetails
             })
         }
         else if (status === "Delivered") {
@@ -113,7 +114,7 @@ class RestaurantOrders extends Component {
                 }
             })
             this.setState({
-                orderFiltered: list
+                ordersToDisplay: list
             })
         }
         else if (status === "Cancelled") {
@@ -125,7 +126,7 @@ class RestaurantOrders extends Component {
                 }
             })
             this.setState({
-                orderFiltered: list
+                ordersToDisplay: list
             })
         }
         else {
@@ -137,7 +138,7 @@ class RestaurantOrders extends Component {
                 }
             })
             this.setState({
-                orderFiltered: list
+                ordersToDisplay: list
             })
         }
 

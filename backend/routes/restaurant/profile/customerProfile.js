@@ -1,25 +1,23 @@
 "use strict";
 const express = require("express");
-const Customers = require('../../../models/Customers');
 const router = express.Router();
 const { checkAuth, resAuth } = require('../../../utils/passport');
+var kafka = require('../../../kafka/client');
 
 resAuth();
-
 router.get('/:id', checkAuth, async (req, res) => {
     console.log("Req Body - Customer Profile : ", req.params.id);
 
-    try {
-
-        const customer = await Customers.findById(req.params.id);
-        console.log(" customer details: ", customer);
-
-        res.status(200).json(customer);
-
-    } catch (err) {
-        console.log("DB error: ", err.message);
-        res.status(500).send("DB Error");
-    }
-
+    kafka.make_request('res_get_customer', req.params.id, function(err,results){
+   
+        if (err){
+            console.log("Inside err:", err);
+            res.status(500).send("Kafka Error");
+        } 
+        else if (results.status == 200 || results.status == 404 ){
+            res.status(results.status).json(results.customer);
+        }  
+    })
 });
+
 module.exports = router;

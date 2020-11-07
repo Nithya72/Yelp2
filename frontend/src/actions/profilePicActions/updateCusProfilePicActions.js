@@ -13,6 +13,9 @@ const updateCusProfilePicDispatcher = payload => {
 export const updateCusProfilePic = (payload) => {
 
     return dispatch => {
+
+        console.log("payload: customer profile pic: ", payload);
+
         axios.defaults.headers.common['authorization'] = localStorage.getItem('cToken');
         axios.post(configPath.api_host + '/customer/profile/pic', payload)
             .then(response => {
