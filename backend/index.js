@@ -48,7 +48,7 @@ app.use('/restaurant/customer', require('./routes/restaurant/profile/customerPro
 app.use('/restaurant/message', require('./routes/restaurant/message/initMessage'));
 app.use('/restaurant/messages', require('./routes/restaurant/message/handleMessage'));
 app.use('/restaurant/profile/pic', require('./routes/restaurant/profilePic/updateProfilePic'));
-
+app.use('/restaurant/menu/pic', require('./routes/restaurant/menu/updateDishPic'));
 
 app.use('/customer/signup', require('./routes/customer/auth/signup'));
 app.use('/customer/login', require('./routes/customer/auth/login'));

@@ -33,6 +33,8 @@ var resSendMessage = require('./services/restaurant/resSendMessage');
 var resUpdateProfilePic = require('./services/restaurant/updateProfilePic'); 
 var addMenu = require('./services/restaurant/addMenu');
 var updateMenu = require('./services/restaurant/updateMenu');
+var updateDishPic = require('./services/restaurant/updateDishPic');
+
 
 function handleTopicRequest(topic_name,fname){
     //var topic_name = 'root_topic';
@@ -115,3 +117,4 @@ handleTopicRequest("res_init_message", resInitMessage);
 handleTopicRequest("res_load_message", resLoadMessage);
 handleTopicRequest("res_send_message", resSendMessage);
 handleTopicRequest("res_profile_pic", resUpdateProfilePic);
+handleTopicRequest("res_dish_pic", updateDishPic);

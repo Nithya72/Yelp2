@@ -117,6 +117,13 @@ const resState = (state = initialState, action) => {
             ...payload,
             isAuthenticated: true
           }
+
+        case "DISH_PIC_UPDATE":
+          return{
+            ...state,
+            ...payload,
+            isAuthenticated: true
+          }
           
     
     default:

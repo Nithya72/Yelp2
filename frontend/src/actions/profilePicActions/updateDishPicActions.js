@@ -23,7 +23,7 @@ export const updateDishPic = (payload) => {
                 if (response.status === 200) {
                     dispatch(updateDishPicDispatcher({
                         restaurant,
-                        updateFlag: true
+                        updateDishPicFlag: true
                     })
                     );
                 }
@@ -31,8 +31,8 @@ export const updateDishPic = (payload) => {
                 console.log("error: ", err.data);
 
                 dispatch(updateDishPicDispatcher({
-                    errorMsg: "Couldn't upload profile pic!",
-                    updateFlag: false
+                    errorMsg: "Couldn't upload dish pic!",
+                    updateDishPicFlag: false
                 })
                 );
 

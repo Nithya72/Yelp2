@@ -19,12 +19,12 @@ class UpdateMenu extends Component {
             redirectToProfile: false,
             successFlag: false,
             successfulUpload: null,
-            dishProfilePic: null
+            dishProfilePic: null,
+            submitDishPic: false
         }
 
         this.updateDishHandler = this.updateDishHandler.bind(this);
         this.formChangeHandler = this.formChangeHandler.bind(this);
-        this.redirectToProfile = this.redirectToProfile.bind(this);
         this.pictureHandler = this.pictureHandler.bind(this);
         this.submitProfilePic = this.submitProfilePic.bind(this);
     }
@@ -39,13 +39,6 @@ class UpdateMenu extends Component {
             }
         });
     }
-
-    redirectToProfile(e) {
-        this.setState({
-            redirectToProfile: true
-        })
-    }
-
 
     updateDishHandler(e) {
 
@@ -74,35 +67,15 @@ class UpdateMenu extends Component {
 
         const picData = new FormData();
         picData.append("profilePic", this.state.dishProfilePic, this.state.dishProfilePic.name);
-        picData.append("id", this.state.dish.DishId);
-        picData.append("table", "Dishes");
-
-        const { customer } = this.state;
+        picData.append("restId", this.props.restaurant[0]._id);
+        picData.append("id", this.state.dish._id);
+        
+        this.setState({
+            submitDishPic: true
+        })
 
         this.props.updateDishPic(picData);
 
-        // axios.post(configPath.api_host +"/uploadProfilePic", picData)
-        //     .then((response) => {
-        //         if (response.status === 200) {
-        //             this.setState({
-        //                 successfulUpload: "true",
-        //                 customer: {
-        //                     ...customer,
-        //                     DishImg: response.data
-        //                 }
-        //             })
-        //         } else {
-        //             this.setState({
-        //                 successfulUpload: "false"
-        //             })
-        //         }
-        //     })
-        //     .catch((error) => {
-        //         console.log("Error here: ", error)
-        //         this.setState({
-        //             successfulUpload: "false"
-        //         })
-        //     });
     }
 
     render() {
@@ -134,18 +107,13 @@ class UpdateMenu extends Component {
             button = <button onClick={this.addDishHandler} class="btn btn-success sign-up-button" type="submit">Add the Dish</button>;
         }
         var redirectVar = null;
-        if (this.state.redirectToProfile) {
-            redirectVar = <Redirect to={{ pathname: "/restaurantProfile", state: { restaurant: this.state.restaurant, fromOrders: true } }} />
-        }
 
         if (this.state.submitted && this.props.updateFlag) {
             redirectVar = <Redirect to={{ pathname: "/restaurantMenu" }} />
         }
 
-        if (this.state.successfulUpload === "true") {
-            redirectVar = <Redirect to={{ pathname: "/restaurantMenu", state: { restaurant: this.state.restaurant } }} />
-        } else if (this.state.successfulUpload === "false") {
-            uploadMsg = <div style={{ fontWeight: "bold" }}> &emsp;Couldn't upload </div>
+        if(this.props.updateDishPicFlag && this.state.submitDishPic){
+            redirectVar = <Redirect to={{ pathname: "/restaurantMenu" }} />
         }
 
         return (
@@ -181,7 +149,7 @@ class UpdateMenu extends Component {
                                 <div className="dropdown">
                                     <div className="material-icons" data-toggle="dropdown">account_circle</div>
                                     <ul class="dropdown-menu pull-right">
-                                        <li style={{ display: "block", padding: "3px 20px", lineHeight: "1.42857143", color: "#333", fontWeight: "400" }} onClick={this.redirectToProfile}>Profile</li>
+                                        <li><a href="/restaurantProfile">Profile</a></li>
                                         <li style={{ display: "block", padding: "3px 20px", lineHeight: "1.42857143", color: "#333", fontWeight: "400" }} onClick={this.redirectHandler}>Order History</li>
                                         <li style={{ display: "block", padding: "3px 20px", lineHeight: "1.42857143", color: "#333", fontWeight: "400" }} onClick={this.redirectToEvents}>Events Posted</li>
                                         <li><a href="/restaurantLogout">Sign Out</a></li>
@@ -280,7 +248,8 @@ const mapStateToProps = (state) => {
     console.log("state rest add/update menu reducer:", state.resState);
     return {
         restaurant: state.resState.restaurant || "",
-        updateFlag: state.resState.updateFlag
+        updateFlag: state.resState.updateFlag,
+        updateDishPicFlag: state.resState.updateDishPicFlag
     };
 };
 
@@ -288,7 +257,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         updateMenu: data => dispatch(updateMenuDetails(data)),
-        updateDishPic: data => dispatch(updateDishPic(data))
+        updateDishPic: data => dispatch(updateDishPic(data)),
     }
 }
 
