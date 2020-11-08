@@ -7,7 +7,7 @@ var cors = require('cors');
 var connectDB = require('./utils/database');
 
 app.set('view engine', 'ejs');
-app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
+app.use(cors({ origin: 'http://54.176.195.7:3000', credentials: true }));
 
 app.use(session({
     secret: 'cmpe273_kafka_passport_mongo',
@@ -22,7 +22,7 @@ app.use(bodyParser.json());
 // io.on('connection', () =>{ console.log('a user is connected') });
 
 app.use(function (req, res, next) {
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000'); //http://localhost:3000
+    res.setHeader('Access-Control-Allow-Origin', 'http://54.176.195.7:3000'); 
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT,DELETE');
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers');
