@@ -3,8 +3,9 @@ var JwtStrategy = require('passport-jwt').Strategy;
 var ExtractJwt = require('passport-jwt').ExtractJwt;
 const passport = require('passport');
 const { secret } = require('../utils/config');
-const Customers = require('../../kafka_backend/models/Customers');
-const Restaurants = require('../../kafka_backend/models/Restaurants');
+const Customers = require('../models/Customers');
+const Restaurants = require('../models/Restaurants');
+
 const jwt = require('jsonwebtoken');
 
 
