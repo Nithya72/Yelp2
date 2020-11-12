@@ -31,22 +31,22 @@ The Yelp prototype is a web application which can be used by customers to browse
  ### **Snapshots from the application:**
  #### **Customer Login:**
 <p align="center">
-  <img src="https://github.com/Nithya72/Yelp/blob/develop/login.png" width="1000" height="575"/>
+  <img src="https://github.com/Nithya72/Yelp2/blob/develop/login.png" width="750" height="500"/>
 </p>
 
  #### **Restaurant Profile:**
 <p align="center">
-  <img src="https://github.com/Nithya72/Yelp/blob/develop/resProfile.png" width="1000" height="635"/>
+  <img src="https://github.com/Nithya72/Yelp2/blob/develop/resProfile.png" width="750" height="500"/>
 </p>
 
  #### **Customer Profile:**
 <p align="center">
-  <img src="https://github.com/Nithya72/Yelp/blob/develop/custProfile.png" width="1000" height="625"/>
+  <img src="https://github.com/Nithya72/Yelp2/blob/develop/custProfile.png" width="750" height="500"/>
 </p>
 
  #### **Upcoming Events:**
 <p align="center">
-  <img src="https://github.com/Nithya72/Yelp/blob/develop/events.png" width="1000" height="625"/>
+  <img src="https://github.com/Nithya72/Yelp2/blob/develop/events.png" width="750" height="500"/>
 </p>
 
 
