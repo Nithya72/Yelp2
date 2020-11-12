@@ -3,19 +3,22 @@
 The Yelp prototype is a web application which can be used by customers to browse restaurants and order foods from their favorite restaurants. This application has features for 2 actors: Customer and Restaurant Owner. The summary of the features available to the actors are as follows:
 
 ### **Customer:**
-   1. Signup and Login to the application
+   1. Signup and Login to the application.
    2. Search for restaurants based on their name, dishes they serve, location and the delivery options that the restaurant offer.
    3. Place an order to deliver to their address or to pick up from the restaurant.
    4. Rate/review the restaurant.
    5. Check out for upcoming events happening in the neighborhood.
    6. Register for an event.
+   7. Search for other yelp users and follow their profile.
+   8. Send replies to restaurants.
 
 ### **Restaurant Owner:**
-   1. Signup and Login to the application
+   1. Signup and Login to the application.
    2. Maintain a menu for the customers to place order from.
-   3. Process food orders
-   4. Post events conducted by the restaurant
+   3. Process food orders.
+   4. Post events conducted by the restaurant.
    5. View the number of participants of the events posted. 
+   6. Send message to customers.
 
 ### **Technologies used:**
   MySQL, Express, React, Node.js, Redux, Passport.js, JWT, Kafka, HTML5, CSS
