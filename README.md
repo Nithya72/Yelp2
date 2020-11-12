@@ -18,7 +18,7 @@ The Yelp prototype is a web application which can be used by customers to browse
    5. View the number of participants of the events posted. 
 
 ### **Technologies used:**
-  MySQL, Express, React, Node.js, Redux, HTML5, CSS
+  MySQL, Express, React, Node.js, Redux, Passport.js, JWT, Kafka, HTML5, CSS
   
   
  ### **Link for the video demo:**
